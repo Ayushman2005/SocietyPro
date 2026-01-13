@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Select Role | Society Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="auth-body">
+    <div class="auth-overlay"></div>
+
+    <div class="auth-container">
+      <div
+        style="
+          font-size: 42px;
+          color: var(--primary-orange);
+          margin-bottom: 15px;
+        "
+      >
+        <i class="ri-building-4-line"></i>
+      </div>
+
+      <h1>Welcome Back</h1>
+      <p>Please select your login type to continue.</p>
+
+      <button class="auth-btn" onclick="location.href='/user/login'">
+        <i class="ri-user-smile-line"></i> Resident Login
+      </button>
+
+      <button
+        class="auth-btn"
+        onclick="location.href='/admin/login'"
+        style="
+          background: transparent;
+          border: 1px solid var(--primary-orange);
+          color: var(--primary-orange);
+          margin-top: 15px;
+        "
+      >
+        <i class="ri-shield-user-line"></i> Administration Login
+      </button>
+
+      <div
+        style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #333"
+      >
+        <a class="auth-link" href="/" style="margin-top: 0">
+          <i class="ri-home-4-line"></i> Return to Homepage
+        </a>
+      </div>
+      <div style="margin-top: 15px">
+        <p style="font-size: 13px; color: #888; margin-bottom: 8px">
+          New to the society?
+        </p>
+        <button
+          class="auth-btn"
+          onclick="location.href='/register'"
+          style="background: #333; border: 1px solid #555; color: white"
+        >
+          <i class="ri-user-add-line"></i> Create Account
+        </button>
+      </div>
+      <footer style="margin-top: 20px; font-size: 11px; color: #666">
+        &copy; 2026 Society Management System
+      </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoices | Society Manager</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+<div class="dashboard-container">
+  <aside class="sidebar">
+    <div class="logo"><i class="ri-building-2-line"></i> SocietyApp</div>
+    <ul class="menu">
+      <li><a href="/admin/dashboard"><i class="ri-dashboard-line"></i> Dashboard</a></li>
+      <li><a href="/admin/tenants"><i class="ri-user-line"></i> Tenants</a></li>
+      <li><a href="/admin/invoices" class="active"><i class="ri-file-list-3-line"></i> Invoices</a></li>
+      <li><a href="/admin/settings"><i class="ri-settings-4-line"></i> Settings</a></li>
+    </ul>
+    <a href="/logout" class="logout-btn"><i class="ri-logout-box-line"></i> Logout</a>
+  </aside>
+
+  <main class="main-content">
+    <div class="header-section">
+      <div class="header-title"><h1>All Invoices</h1></div>
+      <div class="header"><h2></h2></div> 
+    </div>
+
+    <div class="table-box">
+        <table>
+            <thead>
+                <tr>
+                    <th>Invoice ID</th>
+                    <th>Resident</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inv in invoices %}
+                <tr class="card">
+                    <td>#INV-{{ inv[0] }}</td>
+                    <td>{{ inv[1] }}</td>
+                    <td style="font-weight:bold;">₹ {{ inv[2] }}</td>
+                    <td>
+                        <span class="status {% if inv[3]=='Paid' %}paid{% else %}unpaid{% endif %}">
+                            {{ inv[3] }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+  </main>
+</div>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

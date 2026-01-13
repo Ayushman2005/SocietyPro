@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tenants | Society Manager</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+<div class="dashboard-container">
+  <aside class="sidebar">
+    <div class="logo"><i class="ri-building-2-line"></i> SocietyApp</div>
+    <ul class="menu">
+      <li><a href="/admin/dashboard"><i class="ri-dashboard-line"></i> Dashboard</a></li>
+      <li><a href="/admin/tenants" class="active"><i class="ri-user-line"></i> Tenants</a></li>
+      <li><a href="/admin/invoices"><i class="ri-file-list-3-line"></i> Invoices</a></li>
+      <li><a href="/admin/settings"><i class="ri-settings-4-line"></i> Settings</a></li>
+    </ul>
+    <a href="/logout" class="logout-btn"><i class="ri-logout-box-line"></i> Logout</a>
+  </aside>
+
+  <main class="main-content">
+    <div class="header-section">
+      <div class="header-title">
+        <h1>Tenants Management</h1>
+        <p>Manage society residents and access.</p>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="bills-section">
+        <h3 class="section-title">Registered Residents</h3>
+        <div class="cards">
+            {% for t in tenants %}
+            <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h3>{{ t[1] }}</h3>
+                    <span style="font-size:12px; color:#94a3b8;">User ID: {{ t[0] }}</span>
+                </div>
+                <div style="background:#334155; padding:8px; border-radius:50%;">
+                    <i class="ri-user-smile-line"></i>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="section-title">Register New Tenant</h3>
+        <div class="form-box">
+          <form method="post" action="/admin/tenants">
+            <label style="font-size:13px; color:#94a3b8;">Tenant Email</label>
+            <input type="email" name="email" placeholder="resident@example.com" required>
+            <label style="font-size:13px; color:#94a3b8;">Default Password</label>
+            <input type="text" name="password" placeholder="Assign a password" required>
+            <button type="submit"><i class="ri-user-add-line"></i> Add Tenant</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

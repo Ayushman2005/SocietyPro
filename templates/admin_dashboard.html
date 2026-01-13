@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard | Society Manager</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo"><i class="ri-building-2-line"></i> SocietyApp</div>
+        <ul class="menu">
+          <li>
+            <a href="/admin/dashboard" class="active"
+              ><i class="ri-dashboard-line"></i> Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="/admin/tenants"><i class="ri-user-line"></i> Tenants</a>
+          </li>
+          <li>
+            <a href="/admin/invoices"
+              ><i class="ri-file-list-3-line"></i> Invoices</a
+            >
+          </li>
+          <li>
+            <a href="/admin/settings"
+              ><i class="ri-settings-4-line"></i> Settings</a
+            >
+          </li>
+        </ul>
+        <a href="/logout" class="logout-btn">
+          <i class="ri-logout-box-line"></i> Logout
+        </a>
+      </aside>
+
+      <main class="main-content">
+        <div class="header-section">
+          <div class="header-title">
+            <h1>Overview</h1>
+            <p>Welcome back, Admin. Here is what's happening today.</p>
+          </div>
+          <div class="header"><h2></h2></div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Total Fund</h3>
+            <div class="value" id="totalRevenue">₹ 0</div>
+            <i
+              class="ri-money-dollar-circle-line stat-icon"
+              style="color: #10b981"
+            ></i>
+          </div>
+          <div class="stat-card">
+            <h3>Pending Bills</h3>
+            <div class="value" id="pendingCount">0</div>
+            <i class="ri-time-line stat-icon" style="color: #f97316"></i>
+          </div>
+          <div class="stat-card">
+            <h3>Total Invoices</h3>
+            <div class="value">{{ bills|length }}</div>
+            <i
+              class="ri-file-paper-2-line stat-icon"
+              style="color: #6366f1"
+            ></i>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <div class="bills-section">
+            <h3 class="section-title">Recent Invoices</h3>
+            <div class="cards">
+              {% for b in bills %}
+              <div
+                class="card"
+                data-amount="{{ b[2] }}"
+                data-status="{{ b[3] }}"
+              >
+                <div class="card-header">
+                  <span>#INV-{{ b[0] }}</span>
+                  <a
+                    href="/admin/download_invoice/{{ b[0] }}"
+                    title="Download Invoice"
+                    style="color: var(--primary-orange); font-size: 18px"
+                  >
+                    <i class="ri-download-cloud-2-line"></i>
+                  </a>
+                </div>
+
+                <h3>{{ b[1] }}</h3>
+
+                <div class="card-amount">₹ {{ b[2] }}</div>
+
+                <span
+                  class="status {% if b[3]=='Paid' %}paid{% else %}unpaid{% endif %}"
+                >
+                  {{ b[3] }}
+                </span>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3 class="section-title">Create New Bill</h3>
+            <div class="form-box">
+              <form method="post" action="/admin/add_bill">
+                <label style="font-size: 13px; color: #94a3b8"
+                  >Select Resident</label
+                >
+                <select
+                  name="user_id"
+                  required
+                  style="
+                    width: 100%;
+                    padding: 12px;
+                    margin: 10px 0;
+                    background: #000;
+                    border: 1px solid #333;
+                    color: white;
+                    border-radius: 6px;
+                    outline: none;
+                  "
+                >
+                  <option value="" disabled selected>Select a User</option>
+                  {% for u in users %}
+                  <option value="{{ u[0] }}">
+                    {{ u[1] }} (ID: {{ u[0] }})
+                  </option>
+                  {% endfor %}
+                </select>
+
+                <label style="font-size: 13px; color: #94a3b8"
+                  >Amount (INR)</label
+                >
+                <input
+                  type="number"
+                  name="amount"
+                  placeholder="e.g. 5000"
+                  required
+                />
+
+                <button type="submit">
+                  <i class="ri-add-circle-line"></i> Generate Invoice
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // This script calculates the Total Fund and Pending Bills
+      document.addEventListener("DOMContentLoaded", () => {
+        let total = 0;
+        let pending = 0;
+
+        // Select all cards we just created in the loop above
+        const cards = document.querySelectorAll(".card");
+
+        cards.forEach((card) => {
+          // Read the data attributes we added (b[2] and b[3])
+          const amount = parseFloat(card.getAttribute("data-amount"));
+          const status = card.getAttribute("data-status");
+
+          // Add to total
+          if (!isNaN(amount)) {
+            total += amount;
+          }
+          // Count if pending
+          if (status === "Unpaid") {
+            pending++;
+          }
+        });
+
+        // Update the top stats
+        document.getElementById("totalRevenue").innerText =
+          "₹ " + total.toLocaleString("en-IN");
+        document.getElementById("pendingCount").innerText = pending;
+      });
+    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

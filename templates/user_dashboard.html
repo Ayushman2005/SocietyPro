@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>User Dashboard | Society Management</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo">
+          <i class="ri-building-4-line"></i> Resident Portal
+        </div>
+
+        <ul class="menu">
+          <li>
+            <a href="#" class="active"
+              ><i class="ri-dashboard-line"></i> My Bills</a
+            >
+          </li>
+          <li>
+            <a href="#"><i class="ri-user-settings-line"></i> My Profile</a>
+          </li>
+          <li>
+            <a href="#"
+              ><i class="ri-customer-service-2-line"></i> Complaints</a
+            >
+          </li>
+          <li>
+            <a href="#"><i class="ri-notification-3-line"></i> Notices</a>
+          </li>
+        </ul>
+
+        <a href="/logout" class="logout-btn">
+          <i class="ri-logout-box-line"></i> Logout
+        </a>
+      </aside>
+
+      <main class="main-content">
+        <div class="header-section">
+          <div class="header-title">
+            <h1>My Dashboard</h1>
+            <p>View your payment history and pending maintenance bills.</p>
+          </div>
+          <div class="header"><h2></h2></div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Total Pending Amount</h3>
+            <div class="value" id="totalPending">₹ 0</div>
+            <i
+              class="ri-wallet-3-line stat-icon"
+              style="color: var(--primary-orange)"
+            ></i>
+          </div>
+          <div class="stat-card">
+            <h3>Unpaid Invoices</h3>
+            <div class="value" id="unpaidCount">0</div>
+            <i
+              class="ri-file-warning-line stat-icon"
+              style="color: #ef4444"
+            ></i>
+          </div>
+          <div class="stat-card">
+            <h3>Account Status</h3>
+            <div class="value" style="font-size: 20px; color: #10b981">
+              Active Member
+            </div>
+            <i class="ri-user-follow-line stat-icon"></i>
+          </div>
+        </div>
+
+        <h3 class="section-title">Maintenance Invoices</h3>
+
+        <div class="cards">
+          {% for b in bills %}
+          <div class="card" data-amount="{{ b[0] }}" data-status="{{ b[1] }}">
+            <div class="card-header">
+              <span>#INV-{{ loop.index }}</span>
+              <i class="ri-bill-line"></i>
+            </div>
+
+            <h3>Monthly Maintenance</h3>
+
+            <div class="card-amount">₹ {{ b[0] }}</div>
+
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <span
+                class="status {% if b[1]=='Paid' %}paid{% else %}unpaid{% endif %}"
+              >
+                {{ b[1] }}
+              </span>
+
+              {% if b[1] == 'Unpaid' %}
+              <button
+                style="
+                  background: white;
+                  border: none;
+                  padding: 5px 10px;
+                  border-radius: 4px;
+                  font-weight: bold;
+                  cursor: pointer;
+                  font-size: 11px;
+                "
+              >
+                Pay Now
+              </button>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        let totalPending = 0;
+        let unpaidCount = 0;
+
+        const cards = document.querySelectorAll(".card");
+
+        cards.forEach((card) => {
+          const amount = parseFloat(card.getAttribute("data-amount"));
+          const status = card.getAttribute("data-status");
+
+          if (status === "Unpaid" && !isNaN(amount)) {
+            totalPending += amount;
+            unpaidCount++;
+          }
+        });
+
+        document.getElementById("totalPending").innerText =
+          "₹ " + totalPending.toLocaleString("en-IN");
+        document.getElementById("unpaidCount").innerText = unpaidCount;
+      });
+    </script>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

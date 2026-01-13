@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Society Management System</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="landing-body">
+    <header class="navbar">
+      <div class="logo"><i class="ri-building-4-line"></i> SocietyPro</div>
+      <nav class="nav-links">
+        <a href="#home">Home</a>
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a href="/login" class="login-btn">
+          <i class="ri-login-circle-line"></i> Account
+        </a>
+      </nav>
+    </header>
+
+    <section id="home" class="hero">
+      <div class="hero-content">
+        <h1>Smart Living,<br />Simplified Management.</h1>
+        <p>
+          Experience the future of residential society management. Handle
+          billing, complaints, gate security, and notices—all from one secure
+          dashboard.
+        </p>
+        <div style="display: flex; gap: 10px">
+          <button onclick="location.href='/login'" class="btn-primary">
+            Get Started
+          </button>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img
+          src="{{ url_for('static', filename='building.png') }}"
+          alt="Modern Building"
+        />
+      </div>
+    </section>
+
+    <div class="stats-banner">
+      <div class="stat-item">
+        <div class="stat-number" data-target="500">100000+</div>
+        <div class="stat-label">Flats Managed</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" data-target="1200">2500000+</div>
+        <div class="stat-label">Happy Residents</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" data-target="24">24x7
+          
+        </div>
+        <div class="stat-label">Hours Support</div>
+      </div>
+    </div>
+
+    <section id="features" class="features">
+      <div class="feature-card">
+        <div class="icon">🏢</div>
+        <h3>Flat Management</h3>
+        <p>
+          Digital directory of all residents with owner and tenant details
+          securely stored.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">💳</div>
+        <h3>Auto-Billing</h3>
+        <p>
+          Generate maintenance bills automatically and track payments in
+          real-time.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📢</div>
+        <h3>Digital Notices</h3>
+        <p>
+          Send instant announcements to all residents via the digital notice
+          board.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🛡️</div>
+        <h3>Gate Security</h3>
+        <p>Monitor visitor entry and exit logs to ensure society safety.</p>
+      </div>
+    </section>
+
+    <section id="about" class="about-section">
+      <div class="about-image">
+        <img
+          src="{{ url_for('static', filename='society.jpg') }}"
+          alt="Community"
+        />
+      </div>
+      <div class="about-text">
+        <h2>Why Choose SocietyPro?</h2>
+        <p>
+          Managing a residential complex involves countless tasks—from
+          collecting maintenance fees to resolving resident complaints. Manual
+          paperwork is slow, error-prone, and frustrating.
+        </p>
+        <p>
+          <strong>SocietyPro</strong> unifies everything into a simple
+          cloud-based platform. Whether you are an RWA Chairman, a Treasurer, or
+          a Resident, our system brings transparency and efficiency to your
+          daily community living.
+        </p>
+        <ul class="about-list">
+          <li>
+            <i
+              class="ri-check-double-line"
+              style="color: var(--primary-orange)"
+            ></i>
+            Cloud-Based & Accessible Anywhere
+          </li>
+          <li>
+            <i
+              class="ri-check-double-line"
+              style="color: var(--primary-orange)"
+            ></i>
+            Instant Complaint Resolution Tracking
+          </li>
+          <li>
+            <i
+              class="ri-check-double-line"
+              style="color: var(--primary-orange)"
+            ></i>
+            Financial Transparency for Auditors
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <footer id="contact" class="contact-footer">
+      <div class="contact-info">
+        <h2>Contact Us</h2>
+        <p>Have questions? Reach out to our support team.</p>
+
+        <div class="contact-row">
+          <i class="ri-map-pin-line" style="color: var(--primary-orange)"></i>
+          <span>Sector 62, Noida, India - 201309</span>
+        </div>
+        <div class="contact-row">
+          <i class="ri-mail-send-line" style="color: var(--primary-orange)"></i>
+          <span>support@societypro.com</span>
+        </div>
+        <div class="contact-row">
+          <i class="ri-phone-line" style="color: var(--primary-orange)"></i>
+          <span>+91 98765 43210</span>
+        </div>
+      </div>
+
+      <form class="footer-form">
+        <h3>Send a Message</h3>
+        <input type="text" placeholder="Your Name" required />
+        <input type="email" placeholder="Your Email" required />
+        <textarea rows="4" placeholder="How can we help?" required></textarea>
+        <button class="btn-primary" style="width: 100%">Submit Inquiry</button>
+      </form>
+    </footer>
+
+    <div class="copyright">
+      &copy; 2026 SocietyPro Management System. All rights reserved.
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
