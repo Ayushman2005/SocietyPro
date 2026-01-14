@@ -9,14 +9,11 @@ import io
 from datetime import date
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "society_secret_key")
 
-# ---------- DATABASE CONFIGURATION (Standard MySQL) ----------
-# Removed Aiven-specific SSL settings
 db_config = {
     "host": os.getenv("DB_HOST", "localhost"),
     "user": os.getenv("DB_USER", "root"),
@@ -130,18 +127,15 @@ def admin_dashboard():
     db = get_db_connection()
     cur = db.cursor()
     
-    # 1. Fetch Bills
     cur.execute("SELECT bills.id, users.email, bills.amount, bills.status FROM bills JOIN users ON bills.user_id = users.id")
     bills = cur.fetchall()
 
-    # 2. Fetch Users (for the "Create Bill" dropdown)
     cur.execute("SELECT id, email FROM users")
     users = cur.fetchall()
 
     cur.close()
     db.close()
 
-    # Pass both 'bills' and 'users' to the template
     return render_template("admin_dashboard.html", bills=bills, users=users)
 
 # ---------- ADMIN: TENANTS ----------
@@ -265,24 +259,17 @@ def download_invoice(bill_id):
     c = canvas.Canvas(buffer, pagesize=letter)
     width, height = letter
 
-    # --- DESIGN START ---
-    
-    # 1. Header Section (Orange Banner)
-    # FIX: Use colors.HexColor inside setFillColor
     c.setFillColor(colors.HexColor("#ff8c00")) 
     c.rect(0, height - 100, width, 100, fill=1, stroke=0) 
     
-    # Society Name (Black Text on Orange)
     c.setFillColor(colors.black)
     c.setFont("Helvetica-Bold", 24)
     c.drawString(50, height - 60, "Society Management System")
     
-    # Address (White Text on Orange)
     c.setFillColor(colors.white)
     c.setFont("Helvetica", 12)
     c.drawString(50, height - 80, "Sector 62, Noida, India - 201309")
 
-    # 2. Invoice Info (Right Side)
     c.setFillColor(colors.black)
     c.setFont("Helvetica-Bold", 16)
     c.drawRightString(width - 50, height - 140, "INVOICE")
@@ -291,13 +278,11 @@ def download_invoice(bill_id):
     c.drawRightString(width - 50, height - 160, f"#{invoice_id:04d}")
     c.drawRightString(width - 50, height - 175, f"Date: {today_date}")
     
-    # 3. Bill To Section
     c.setFont("Helvetica-Bold", 12)
     c.drawString(50, height - 160, "Bill To:")
     c.setFont("Helvetica", 12)
     c.drawString(50, height - 175, user_email)
 
-    # --- TABLE SECTION ---
     data = [
         ["Description", "Amount (INR)"],
         ["Monthly Society Maintenance", f"Rs. {amount:,.2f}"],
@@ -320,12 +305,10 @@ def download_invoice(bill_id):
     table.wrapOn(c, width, height)
     table.drawOn(c, 50, height - 350)
 
-    # 4. Status Watermark
     if status == "Paid":
         c.saveState()
         c.translate(width/2, height/2)
         c.rotate(45)
-        # Transparent Green (R, G, B, Alpha)
         c.setFillColorRGB(0, 1, 0, 0.3) 
         c.setFont("Helvetica-Bold", 80)
         c.drawCentredString(0, 0, "PAID")
@@ -334,7 +317,6 @@ def download_invoice(bill_id):
         c.saveState()
         c.translate(width/2, height/2)
         c.rotate(45)
-        # Transparent Red
         c.setFillColorRGB(1, 0, 0, 0.1) 
         c.setFont("Helvetica-Bold", 80)
         c.drawCentredString(0, 0, "UNPAID")
