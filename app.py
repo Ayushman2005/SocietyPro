@@ -328,7 +328,126 @@ def download_invoice(bill_id):
     buffer.seek(0)
     from flask import send_file
     return send_file(buffer, as_attachment=True, download_name=f"Invoice_{invoice_id}.pdf", mimetype='application/pdf')
+@app.route("/forgot_password", methods=["GET", "POST"])
+def forgot_password():
+    msg = ""
+    if request.method == "POST":
+        email = request.form["email"]
+        new_pass = request.form["new_password"]
+        role = request.form["role"] # 'user' or 'admin'
+        
+        table = "admins" if role == "admin" else "users"
+        
+        db = get_db_connection()
+        cur = db.cursor()
+        
+        # Check if email exists
+        cur.execute(f"SELECT id FROM {table} WHERE email = %s", (email,))
+        user = cur.fetchone()
+        
+        if user:
+            # Update Password
+            cur.execute(f"UPDATE {table} SET password = %s WHERE email = %s", (new_pass, email))
+            db.commit()
+            msg = "✅ Password reset successful! You can login now."
+        else:
+            msg = "❌ Email not found in our records."
+            
+        cur.close()
+        db.close()
+        
+    return render_template("forgot_password.html", msg=msg)
 
+
+# 2. USER: COMPLAINTS
+@app.route("/user/complaints", methods=["GET", "POST"])
+def user_complaints():
+    if "user" not in session: return redirect("/user/login")
+    
+    user_id = session["user"]
+    db = get_db_connection()
+    cur = db.cursor()
+    
+    # Handle New Complaint Submission
+    if request.method == "POST":
+        subject = request.form["subject"]
+        description = request.form["description"]
+        cur.execute("INSERT INTO complaints (user_id, subject, description) VALUES (%s, %s, %s)", 
+                    (user_id, subject, description))
+        db.commit()
+    
+    # Fetch User's Complaints
+    cur.execute("SELECT subject, description, status, created_at FROM complaints WHERE user_id = %s ORDER BY id DESC", (user_id,))
+    my_complaints = cur.fetchall()
+    
+    cur.close()
+    db.close()
+    return render_template("user_complaints.html", complaints=my_complaints)
+
+
+# 3. ADMIN: COMPLAINTS MANAGEMENT
+@app.route("/admin/complaints", methods=["GET", "POST"])
+def admin_complaints():
+    if "admin" not in session: return redirect("/admin/login")
+    
+    db = get_db_connection()
+    cur = db.cursor()
+    
+    # Handle Status Update (Resolve)
+    if request.method == "POST":
+        complaint_id = request.form["complaint_id"]
+        status = request.form["status"]
+        cur.execute("UPDATE complaints SET status = %s WHERE id = %s", (status, complaint_id))
+        db.commit()
+    
+    # Fetch All Complaints with User Info
+    cur.execute("""
+        SELECT complaints.id, users.email, complaints.subject, complaints.description, complaints.status, complaints.created_at 
+        FROM complaints 
+        JOIN users ON complaints.user_id = users.id 
+        ORDER BY complaints.id DESC
+    """)
+    all_complaints = cur.fetchall()
+    
+    cur.close()
+    db.close()
+    return render_template("admin_complaints.html", complaints=all_complaints)
+
+
+# 4. PROFILE EDITING (Both User & Admin)
+@app.route("/profile", methods=["GET", "POST"])
+def profile():
+    if "user" not in session and "admin" not in session:
+        return redirect("/")
+        
+    role = "admin" if "admin" in session else "user"
+    user_id = session[role]
+    table = "admins" if role == "admin" else "users"
+    
+    db = get_db_connection()
+    cur = db.cursor()
+    
+    msg = ""
+    
+    if request.method == "POST":
+        new_email = request.form["email"]
+        new_pass = request.form["password"]
+        
+        try:
+            cur.execute(f"UPDATE {table} SET email=%s, password=%s WHERE id=%s", (new_email, new_pass, user_id))
+            db.commit()
+            msg = "✅ Profile updated successfully!"
+        except mysql.connector.Error:
+            msg = "❌ Error: Email might already be taken."
+            
+    # Fetch current details
+    cur.execute(f"SELECT email, password FROM {table} WHERE id=%s", (user_id,))
+    data = cur.fetchone()
+    
+    cur.close()
+    db.close()
+    
+    return render_template("profile.html", user=data, role=role, msg=msg)
 # ---------- LOGOUT ----------
 @app.route("/logout")
 def logout():

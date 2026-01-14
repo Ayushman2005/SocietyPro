@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>My Complaints</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo">SocietyPro</div>
+        <ul class="menu">
+          <li>
+            <a href="/user/dashboard"
+              ><i class="ri-dashboard-line"></i> Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="/user/complaints" class="active"
+              ><i class="ri-feedback-line"></i> Complaints</a
+            >
+          </li>
+          <li>
+            <a href="/profile"
+              ><i class="ri-user-settings-line"></i> My Profile</a
+            >
+          </li>
+        </ul>
+        <a href="/logout" class="logout-btn">Logout</a>
+      </aside>
+
+      <main class="main-content">
+        <h1 class="section-title">Lodge a Complaint</h1>
+
+        <div class="content-grid">
+          <div class="form-box">
+            <form method="post">
+              <label style="color: #aaa">Subject</label>
+              <input
+                type="text"
+                name="subject"
+                placeholder="e.g., Water Leakage"
+                required
+              />
+
+              <label style="color: #aaa">Description</label>
+              <textarea
+                name="description"
+                rows="4"
+                style="
+                  width: 100%;
+                  padding: 10px;
+                  background: black;
+                  border: 1px solid #333;
+                  color: white;
+                  margin-bottom: 10px;
+                "
+                required
+              ></textarea>
+
+              <button type="submit">Submit Complaint</button>
+            </form>
+          </div>
+
+          <div>
+            <h3 class="section-title">My History</h3>
+            <div class="cards" style="display: block">
+              {% for c in complaints %}
+              <div class="card" style="margin-bottom: 15px">
+                <div class="card-header">
+                  <span>{{ c[3] }}</span>
+                  <span
+                    class="status"
+                    {% if c[2]=='Resolved' %}paid{% else %}unpaid{% endif %}
+                  >
+                    {{ c[2] }}
+                  </span>
+                </div>
+                <h3>{{ c[0] }}</h3>
+                <p style="color: #aaa; font-size: 14px">{{ c[1] }}</p>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

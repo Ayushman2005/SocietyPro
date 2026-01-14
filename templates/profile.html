@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Edit Profile</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo">Profile</div>
+        <ul class="menu">
+          {% if role == 'admin' %}
+          <li>
+            <a href="/admin/dashboard"
+              ><i class="ri-arrow-left-line"></i> Back to Dashboard</a
+            >
+          </li>
+          {% else %}
+          <li>
+            <a href="/user/dashboard"
+              ><i class="ri-arrow-left-line"></i> Back to Dashboard</a
+            >
+          </li>
+          {% endif %}
+        </ul>
+        <a href="/logout" class="logout-btn">Logout</a>
+      </aside>
+
+      <main class="main-content">
+        <h1 class="section-title">My Profile</h1>
+
+        {% if msg %}
+        <div
+          style="
+            padding: 15px;
+            background: #333;
+            color: var(--primary-orange);
+            border-radius: 8px;
+            margin-bottom: 20px;
+          "
+        >
+          {{ msg }}
+        </div>
+        {% endif %}
+
+        <div class="form-box" style="max-width: 600px">
+          <form method="post">
+            <label style="color: #aaa">Email Address</label>
+            <input type="email" name="email" value="{{ user[0] }}" required />
+
+            <label style="color: #aaa">Password (Plain Text)</label>
+            <input type="text" name="password" value="{{ user[1] }}" required />
+
+            <button type="submit">Save Changes</button>
+          </form>
+        </div>
+      </main>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

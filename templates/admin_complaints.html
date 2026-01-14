@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Manage Complaints</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo">SocietyApp</div>
+        <ul class="menu">
+          <li>
+            <a href="/admin/dashboard"
+              ><i class="ri-dashboard-line"></i> Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="/admin/tenants"><i class="ri-user-line"></i> Tenants</a>
+          </li>
+          <li>
+            <a href="/admin/invoices"
+              ><i class="ri-file-list-3-line"></i> Invoices</a
+            >
+          </li>
+          <li>
+            <a href="/admin/complaints" class="active"
+              ><i class="ri-feedback-line"></i> Complaints</a
+            >
+          </li>
+          <li>
+            <a href="/admin/settings"
+              ><i class="ri-settings-4-line"></i> Settings</a
+            >
+          </li>
+          <li>
+            <a href="/profile"
+              ><i class="ri-user-settings-line"></i> My Profile</a
+            >
+          </li>
+        </ul>
+        <a href="/logout" class="logout-btn">Logout</a>
+      </aside>
+
+      <main class="main-content">
+        <h1 class="section-title">Resident Complaints</h1>
+
+        <div class="cards">
+          {% for c in complaints %}
+          <div class="card">
+            <div class="card-header">
+              <span>From: {{ c[1] }}</span> <span>{{ c[5] }}</span>
+            </div>
+            <h3>{{ c[2] }}</h3>
+            <p style="color: #aaa; font-size: 14px; margin-bottom: 15px">
+              {{ c[3] }}
+            </p>
+
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <span
+                class="status"
+                style="background: {% if c[4]=='Resolved' %}#10b981{% else %}#f97316{% endif %}; color:black;"
+              >
+                {{ c[4] }}
+              </span>
+
+              {% if c[4] != 'Resolved' %}
+              <form method="post" style="display: inline">
+                <input type="hidden" name="complaint_id" value="{{ c[0] }}" />
+                <input type="hidden" name="status" value="Resolved" />
+                <button
+                  type="submit"
+                  style="padding: 5px 10px; font-size: 12px; width: auto"
+                >
+                  Mark Resolved
+                </button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </main>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

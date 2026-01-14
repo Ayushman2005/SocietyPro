@@ -11,11 +11,12 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.placeholder = "🔍 Search bills...";
     searchInput.style.padding = "8px 15px";
     searchInput.style.borderRadius = "20px";
-    searchInput.style.border = "none";
+    searchInput.style.border = "1px solid var(--border-color)";
     searchInput.style.marginLeft = "15px";
     searchInput.style.outline = "none";
     searchInput.style.fontSize = "14px";
-    searchInput.style.color = "#333";
+    searchInput.style.color = "var(--text-white)";
+    searchInput.style.backgroundColor = "var(--bg-input)";
 
     // Insert after the Title
     const title = dashboardHeader.querySelector("h2");
@@ -29,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cards.forEach((card) => {
         const text = card.textContent.toLowerCase();
         if (text.includes(term)) {
-          card.style.display = "block";
+          card.style.display = text.includes(term) ? "block" : "none";
           // Re-apply animation for filtered items
           card.style.animation = "fadeIn 0.5s ease forwards";
         } else {
@@ -59,6 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleBtn.style.top = "50%";
     toggleBtn.style.transform = "translateY(-50%)";
     toggleBtn.style.cursor = "pointer";
+    toggleBtn.style.opacity = "0.7";
     toggleBtn.style.fontSize = "18px";
     toggleBtn.style.userSelect = "none";
     toggleBtn.title = "Show Password";
@@ -249,6 +251,34 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
         e.preventDefault();
         alert("Error: Amount and User ID must be positive numbers.");
+      }
+    });
+  }
+  // --- 0. THEME TOGGLE LOGIC ---
+  const themeBtn = document.getElementById("theme-toggle");
+  const body = document.body;
+  const icon = themeBtn ? themeBtn.querySelector("i") : null;
+
+  // 1. Check LocalStorage on Load
+  const currentTheme = localStorage.getItem("theme");
+  if (currentTheme === "light") {
+    body.classList.add("light-mode");
+    if(icon) icon.className = "ri-moon-line"; // Show Moon icon in light mode
+  }
+
+  // 2. Button Click Event
+  if (themeBtn) {
+    themeBtn.addEventListener("click", (e) => {
+      e.preventDefault(); // Prevent link jump
+      body.classList.toggle("light-mode");
+
+      // Update Icon & Save Preference
+      if (body.classList.contains("light-mode")) {
+        localStorage.setItem("theme", "light");
+        if(icon) icon.className = "ri-moon-line";
+      } else {
+        localStorage.setItem("theme", "dark");
+        if(icon) icon.className = "ri-sun-line";
       }
     });
   }

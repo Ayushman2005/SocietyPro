@@ -5,13 +5,13 @@
 
 :root {
   /* THEME PALETTE */
-  --primary-orange: #ff8c00; /* Main Brand Color */
-  --primary-hover: #e67e00; /* Darker Orange for hovers */
+  --primary-orange: #ff8c00;
+  --primary-hover: #e67e00;
   --primary-gradient: linear-gradient(135deg, #ff8c00, #ff6a00);
 
-  --bg-dark: #0f0f0f; /* Deepest Black (Body) */
-  --bg-card: #1c1c1c; /* Card Background */
-  --bg-sidebar: #111111; /* Sidebar Background */
+  --bg-dark: #0f0f0f;
+  --bg-card: #1c1c1c;
+  --bg-sidebar: #111111;
   --bg-input: #000000; /* Input Background */
 
   --text-white: #ffffff;
@@ -169,10 +169,6 @@ img {
 .hero-image img {
   width: 350px;
   height: 350px;
-  border-radius: 50%;
-  border: 5px solid rgba(255, 255, 255, 0.3);
-  object-fit: cover;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 /* Stats Banner */
