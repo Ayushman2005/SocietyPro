@@ -173,26 +173,6 @@ document.addEventListener("DOMContentLoaded", () => {
       observer.observe(statsSection);
     }
 
-    // --- 2. CONTACT FORM HANDLER ---
-    const contactForm = document.querySelector(".footer-form");
-    if (contactForm) {
-      contactForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const btn = contactForm.querySelector("button");
-        const originalText = btn.innerText;
-
-        // Simulation of sending
-        btn.innerText = "Sending...";
-        btn.style.opacity = "0.7";
-
-        setTimeout(() => {
-          alert("Thank you! Your message has been sent to our support team.");
-          contactForm.reset();
-          btn.innerText = originalText;
-          btn.style.opacity = "1";
-        }, 1500);
-      });
-    }
     document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
       anchor.addEventListener("click", function (e) {
         e.preventDefault();

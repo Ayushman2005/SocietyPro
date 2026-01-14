@@ -42,13 +42,13 @@
             >
           </li>
           <li>
-          <a href="/admin/complaints"
-            ><i class="ri-feedback-line"></i> Complaints</a
-          >
-        </li>
-        <li>
-          <a href="/profile"><i class="ri-user-settings-line"></i> Profile</a>
-        </li>
+            <a href="/admin/complaints"
+              ><i class="ri-feedback-line"></i> Complaints</a
+            >
+          </li>
+          <li>
+            <a href="/profile"><i class="ri-user-settings-line"></i> Profile</a>
+          </li>
         </ul>
         <a href="/logout" class="logout-btn">
           <i class="ri-logout-box-line"></i> Logout
@@ -63,31 +63,59 @@
           </div>
           <div class="header"><h2></h2></div>
         </div>
+        <div class="fund-card-compact">
+          <div class="fund-info">
+            <div class="fund-header">
+              <span class="fund-title">TOTAL FUND</span>
+              <span class="fund-icon">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path
+                    d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+                  ></path>
+                </svg>
+              </span>
+            </div>
+            <h2 class="fund-amount">₹ {{ "{:,.0f}".format(total_fund) }}</h2>
+          </div>
 
-        <div class="stats-grid">
-          <div class="stat-card">
-            <h3>Total Fund</h3>
-            <div class="value" id="totalRevenue">₹ 0</div>
-            <i
-              class="ri-money-dollar-circle-line stat-icon"
-              style="color: #10b981"
-            ></i>
-          </div>
-          <div class="stat-card">
-            <h3>Pending Bills</h3>
-            <div class="value" id="pendingCount">0</div>
-            <i class="ri-time-line stat-icon" style="color: #f97316"></i>
-          </div>
-          <div class="stat-card">
-            <h3>Total Invoices</h3>
-            <div class="value">{{ bills|length }}</div>
-            <i
-              class="ri-file-paper-2-line stat-icon"
-              style="color: #6366f1"
-            ></i>
-          </div>
+          <form action="/admin/update_fund" method="POST" class="fund-form">
+            <div class="input-group">
+              <input
+                type="number"
+                name="amount"
+                placeholder="Update fund..."
+                step="0.01"
+                required
+              />
+              <button type="submit">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
+                  ></path>
+                  <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                  <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+              </button>
+            </div>
+          </form>
         </div>
-
         <div class="content-grid">
           <div class="bills-section">
             <h3 class="section-title">Recent Invoices</h3>
@@ -100,19 +128,35 @@
               >
                 <div class="card-header">
                   <span>#INV-{{ b[0] }}</span>
-                  <a
-                    href="/admin/download_invoice/{{ b[0] }}"
-                    title="Download Invoice"
-                    style="color: var(--primary-orange); font-size: 18px"
-                  >
-                    <i class="ri-download-cloud-2-line"></i>
-                  </a>
+
+                  <div class="actions">
+                    <a
+                      href="/admin/download_invoice/{{ b[0] }}"
+                      title="Download Invoice"
+                      style="
+                        color: var(--primary-orange);
+                        font-size: 18px;
+                        margin-right: 10px;
+                      "
+                    >
+                      <i class="ri-download-cloud-2-line"></i>
+                    </a>
+
+                    <a
+                      href="/admin/delete_bill/{{ b[0] }}"
+                      onclick="return confirm('Are you sure you want to delete this invoice permanently?');"
+                      title="Delete Invoice"
+                      style="color: #ef4444; font-size: 18px"
+                    >
+                      <i class="ri-delete-bin-line"></i>
+                    </a>
+                  </div>
                 </div>
 
-                <h3>{{ b[1] }}</h3>
-
-                <div class="card-amount">₹ {{ b[2] }}</div>
-
+                <h3 style="font-size: 14px; color: #ccc; margin-bottom: 5px">
+                  {{ b[1] }}
+                </h3>
+                <h2 class="invoice-amount">₹ {{ b[2] }}</h2>
                 <span
                   class="status {% if b[3]=='Paid' %}paid{% else %}unpaid{% endif %}"
                 >
@@ -171,7 +215,22 @@
         </div>
       </main>
     </div>
-
+    <div id="deleteModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-icon-box">
+          <i class="ri-delete-bin-line"></i>
+        </div>
+        <h3>Are you sure?</h3>
+        <p>
+          Do you really want to delete this invoice? This process cannot be
+          undone.
+        </p>
+        <div class="modal-buttons">
+          <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+          <a id="confirmDeleteBtn" href="#" class="btn-confirm">Yes, Delete</a>
+        </div>
+      </div>
+    </div>
     <script>
       // This script calculates the Total Fund and Pending Bills
       document.addEventListener("DOMContentLoaded", () => {

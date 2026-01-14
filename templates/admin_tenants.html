@@ -43,6 +43,14 @@
               ><i class="ri-settings-4-line"></i> Settings</a
             >
           </li>
+          <li>
+            <a href="/admin/complaints"
+              ><i class="ri-feedback-line"></i> Complaints</a
+            >
+          </li>
+          <li>
+            <a href="/profile"><i class="ri-user-settings-line"></i> Profile</a>
+          </li>
         </ul>
         <a href="/logout" class="logout-btn"
           ><i class="ri-logout-box-line"></i> Logout</a
@@ -52,64 +60,106 @@
       <main class="main-content">
         <div class="header-section">
           <div class="header-title">
-            <h1>Tenants Management</h1>
-            <p>Manage society residents and access.</p>
+            <h1>Manage Tenants</h1>
+            <p>Add, edit, or remove society members.</p>
           </div>
         </div>
 
         <div class="content-grid">
-          <div class="bills-section">
-            <h3 class="section-title">Registered Residents</h3>
-            <div class="cards">
-              {% for t in tenants %}
-              <div
-                class="card"
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                "
-              >
-                <div>
-                  <h3>{{ t[1] }}</h3>
-                  <span style="font-size: 12px; color: #94a3b8"
-                    >User ID: {{ t[0] }}</span
-                  >
-                </div>
-                <div
-                  style="background: #334155; padding: 8px; border-radius: 50%"
-                >
-                  <i class="ri-user-smile-line"></i>
-                </div>
-              </div>
-              {% endfor %}
+          <div
+            class="grid-left"
+            style="
+              background: #1c1c1c;
+              padding: 20px;
+              border-radius: 12px;
+              border: 1px solid #333;
+            "
+          >
+            <h3 class="section-title">Registered Tenants</h3>
+            <div class="table-box">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for t in tenants %}
+                  <tr>
+                    <td>#{{ t[0] }}</td>
+                    <td>{{ t[1] }}</td>
+                    <td>
+                      <button
+                        onclick="openEditModal('{{ t[0] }}', '{{ t[1] }}')"
+                        style="
+                          background: none;
+                          border: none;
+                          color: #3b82f6;
+                          cursor: pointer;
+                          font-size: 18px;
+                          margin-right: 10px;
+                        "
+                        title="Edit"
+                      >
+                        <i class="ri-edit-line"></i>
+                      </button>
+
+                      <a
+                        href="/admin/delete_tenant/{{ t[0] }}"
+                        onclick="return confirm('Are you sure? This will delete the user AND their bill history.');"
+                        style="color: #ef4444; font-size: 18px"
+                        title="Delete"
+                      >
+                        <i class="ri-delete-bin-line"></i>
+                      </a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
           </div>
 
-          <div class="form-section">
-            <h3 class="section-title">Register New Tenant</h3>
+          <div class="grid-right">
             <div class="form-box">
-              <form method="post" action="/admin/tenants">
-                <label style="font-size: 13px; color: #94a3b8"
-                  >Tenant Email</label
+              <h3 class="section-title" id="formTitle">Add New Tenant</h3>
+
+              <form id="tenantForm" action="/admin/tenants" method="POST">
+                <input type="hidden" name="user_id" id="editUserId" />
+
+                <label style="color: #ccc; font-size: 13px"
+                  >Email Address</label
                 >
                 <input
                   type="email"
                   name="email"
-                  placeholder="resident@example.com"
+                  id="editEmail"
+                  placeholder="user@example.com"
                   required
                 />
-                <label style="font-size: 13px; color: #94a3b8"
-                  >Default Password</label
-                >
+
+                <label style="color: #ccc; font-size: 13px">Password</label>
                 <input
                   type="text"
                   name="password"
-                  placeholder="Assign a password"
+                  id="editPassword"
+                  placeholder="Assign password"
                   required
                 />
-                <button type="submit">
+
+                <button type="submit" id="submitBtn">
                   <i class="ri-user-add-line"></i> Add Tenant
+                </button>
+
+                <button
+                  type="button"
+                  id="cancelBtn"
+                  onclick="resetForm()"
+                  style="display: none; background: #333; margin-top: 10px"
+                >
+                  Cancel Edit
                 </button>
               </form>
             </div>
@@ -117,6 +167,44 @@
         </div>
       </main>
     </div>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <script>
+      function openEditModal(id, email) {
+        // 1. Change Title
+        document.getElementById("formTitle").innerText =
+          "Edit Tenant (ID: " + id + ")";
+
+        // 2. Populate Fields
+        document.getElementById("editUserId").value = id;
+        document.getElementById("editEmail").value = email;
+        document.getElementById("editPassword").value = ""; // Don't show old password for security, ask for new one
+        document.getElementById("editPassword").placeholder =
+          "Enter new password";
+
+        // 3. Change Form Action to Edit Route
+        document.getElementById("tenantForm").action = "/admin/edit_tenant";
+
+        // 4. Change Button Text
+        document.getElementById("submitBtn").innerHTML =
+          "<i class='ri-save-line'></i> Update Tenant";
+
+        // 5. Show Cancel Button
+        document.getElementById("cancelBtn").style.display = "block";
+      }
+
+      function resetForm() {
+        // Reset to "Add Mode"
+        document.getElementById("formTitle").innerText = "Add New Tenant";
+        document.getElementById("editUserId").value = "";
+        document.getElementById("editEmail").value = "";
+        document.getElementById("editPassword").value = "";
+        document.getElementById("editPassword").placeholder = "Assign password";
+
+        document.getElementById("tenantForm").action = "/admin/tenants";
+        document.getElementById("submitBtn").innerHTML =
+          "<i class='ri-user-add-line'></i> Add Tenant";
+        document.getElementById("cancelBtn").style.display = "none";
+      }
+    </script>
   </body>
 </html>

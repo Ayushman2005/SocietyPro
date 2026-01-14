@@ -2,50 +2,42 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>User Dashboard - SocietyPro</title>
+    <title>Resident Dashboard - SocietyPro</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
-      rel="icon"
-      type="image/png"
-      href="https://cdn-icons-png.flaticon.com/128/17514/17514961.png"
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
     />
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
-      rel="stylesheet"
     />
   </head>
   <body class="dashboard-body">
     <div class="dashboard-container">
       <aside class="sidebar">
         <div class="logo">
-          <i class="ri-building-4-line"></i> Resident Portal
+          <i class="ri-home-smile-2-line"></i> ResidentPanel
         </div>
 
         <ul class="menu">
           <li>
-            <a href="#" class="active"
-              ><i class="ri-dashboard-line"></i> My Bills</a
-            >
+            <a href="/user/dashboard" class="active">
+              <i class="ri-dashboard-line"></i> My Overview
+            </a>
           </li>
           <li>
-            <a href="#"><i class="ri-user-settings-line"></i> My Profile</a>
+            <a href="/user/complaints">
+              <i class="ri-feedback-line"></i> Complaints
+            </a>
           </li>
           <li>
-            <a href="#"><i class="ri-notification-3-line"></i> Notices</a>
+            <a href="/profile">
+              <i class="ri-user-settings-line"></i> My Profile
+            </a>
           </li>
-          <li>
-          <a href="/user/complaints"
-            ><i class="ri-feedback-line"></i> Complaints</a
-          >
-        </li>
-        <li>
-          <a href="/profile"><i class="ri-user-settings-line"></i> Profile</a>
-        </li>
         </ul>
+
         <a href="/logout" class="logout-btn">
           <i class="ri-logout-box-line"></i> Logout
         </a>
@@ -54,46 +46,84 @@
       <main class="main-content">
         <div class="header-section">
           <div class="header-title">
-            <h1>My Dashboard</h1>
-            <p>View your payment history and pending maintenance bills.</p>
+            <h1>Welcome Home</h1>
+            <p>Track your maintenance payments and society updates.</p>
           </div>
-          <div class="header"><h2></h2></div>
         </div>
 
-        <div class="stats-grid">
-          <div class="stat-card">
-            <h3>Total Pending Amount</h3>
-            <div class="value" id="totalPending">₹ 0</div>
-            <i
-              class="ri-wallet-3-line stat-icon"
-              style="color: var(--primary-orange)"
-            ></i>
-          </div>
-          <div class="stat-card">
-            <h3>Unpaid Invoices</h3>
-            <div class="value" id="unpaidCount">0</div>
-            <i
-              class="ri-file-warning-line stat-icon"
-              style="color: #ef4444"
-            ></i>
-          </div>
-          <div class="stat-card">
-            <h3>Account Status</h3>
-            <div class="value" style="font-size: 20px; color: #10b981">
-              Active Member
+        <div
+          class="stats-banner"
+          style="
+            background: transparent;
+            border: none;
+            padding: 0;
+            gap: 20px;
+            justify-content: flex-start;
+          "
+        >
+          <div
+            class="feature-card"
+            style="text-align: left; padding: 20px; min-width: 250px"
+          >
+            <div
+              class="icon"
+              style="
+                font-size: 24px;
+                color: var(--primary-orange);
+                margin-bottom: 5px;
+              "
+            >
+              <i class="ri-wallet-3-line"></i>
             </div>
-            <i class="ri-user-follow-line stat-icon"></i>
+            <h3 style="font-size: 14px; color: #888; margin-bottom: 5px">
+              Total Dues
+            </h3>
+            <div
+              class="stat-number"
+              id="totalPendingDisplay"
+              style="font-size: 28px"
+            >
+              Calculating...
+            </div>
+          </div>
+
+          <div
+            class="feature-card"
+            style="text-align: left; padding: 20px; min-width: 250px"
+          >
+            <div
+              class="icon"
+              style="font-size: 24px; color: #ef4444; margin-bottom: 5px"
+            >
+              <i class="ri-file-warning-line"></i>
+            </div>
+            <h3 style="font-size: 14px; color: #888; margin-bottom: 5px">
+              Unpaid Bills
+            </h3>
+            <div
+              class="stat-number"
+              id="unpaidCountDisplay"
+              style="font-size: 28px"
+            >
+              0
+            </div>
           </div>
         </div>
 
-        <h3 class="section-title">Maintenance Invoices</h3>
+        <h3 class="section-title" style="margin-top: 40px">
+          My Invoice History
+        </h3>
 
         <div class="cards">
-          {% for b in bills %}
-          <div class="card" data-amount="{{ b[0] }}" data-status="{{ b[1] }}">
+          {% if bills %} {% for b in bills %}
+          <div
+            class="card bill-card"
+            data-amount="{{ b[0] }}"
+            data-status="{{ b[1] }}"
+          >
             <div class="card-header">
-              <span>#INV-{{ loop.index }}</span>
-              <i class="ri-bill-line"></i>
+              <span>INVOICE #00{{ loop.index }}</span>
+              <i class="ri-article-line"></i>
             </div>
 
             <h3>Monthly Maintenance</h3>
@@ -105,10 +135,11 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                margin-top: 10px;
               "
             >
               <span
-                class="status {% if b[1]=='Paid' %}paid{% else %}unpaid{% endif %}"
+                class="status {% if b[1] == 'Paid' %}paid{% else %}unpaid{% endif %}"
               >
                 {{ b[1] }}
               </span>
@@ -116,45 +147,57 @@
               {% if b[1] == 'Unpaid' %}
               <button
                 style="
+                  padding: 6px 12px;
+                  font-size: 12px;
                   background: white;
+                  color: black;
                   border: none;
-                  padding: 5px 10px;
                   border-radius: 4px;
-                  font-weight: bold;
                   cursor: pointer;
-                  font-size: 11px;
                 "
               >
-                Pay Now
+                Pay Now <i class="ri-arrow-right-line"></i>
               </button>
+              {% else %}
+              <span style="font-size: 12px; color: #10b981">
+                <i class="ri-checkbox-circle-line"></i> Cleared
+              </span>
               {% endif %}
             </div>
           </div>
-          {% endfor %}
+          {% endfor %} {% else %}
+          <p style="color: #666; padding: 20px">
+            No invoices found for your account.
+          </p>
+          {% endif %}
         </div>
       </main>
     </div>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        let totalPending = 0;
-        let unpaidCount = 0;
+        let totalDue = 0;
+        let pendingCount = 0;
 
-        const cards = document.querySelectorAll(".card");
+        // Select all bill cards
+        const bills = document.querySelectorAll(".bill-card");
 
-        cards.forEach((card) => {
+        bills.forEach((card) => {
+          // Read data attributes set in the HTML loop
           const amount = parseFloat(card.getAttribute("data-amount"));
           const status = card.getAttribute("data-status");
 
+          // Calculate only if status is Unpaid
           if (status === "Unpaid" && !isNaN(amount)) {
-            totalPending += amount;
-            unpaidCount++;
+            totalDue += amount;
+            pendingCount++;
           }
         });
 
-        document.getElementById("totalPending").innerText =
-          "₹ " + totalPending.toLocaleString("en-IN");
-        document.getElementById("unpaidCount").innerText = unpaidCount;
+        // Update the UI
+        document.getElementById("totalPendingDisplay").innerText =
+          "₹ " + totalDue.toLocaleString("en-IN");
+        document.getElementById("unpaidCountDisplay").innerText = pendingCount;
       });
     </script>
 
