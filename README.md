@@ -6,9 +6,9 @@
 
 ## 👥 Team Members
 This project was designed and developed by:
-* **Ayushman** (Team Lead / Full Stack Developer)
-* **Satwik Barik** (Frontend & Design)
-* **Nilamani Kundu** (Database & Backend Logic)
+* **Ayushman Kar** (Full Stack Developer)
+* **Satwik Barik** (Full Stack Developer)
+* **Nilamani Kundu** (Full Stack Developer)
 
 ---
 
