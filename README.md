@@ -63,7 +63,7 @@ cd SocietyPro
 * Import the provided database.sql file to create the tables (users, admins, bills, complaints).
 * Optional: Insert an admin user manually if not included in the SQL script:
 ```bash
-INSERT INTO admins (email, password) VALUES ('admin@society.com', 'admin123');
+INSERT INTO admins (email, password) VALUES ('admin@gmail.com', 'Admin@1234');
 ```
 
 ### 3. Configure Environment Variables
