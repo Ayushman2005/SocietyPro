@@ -40,7 +40,8 @@ This project was designed and developed by:
 * **Backend:** Python 3.10+, Flask Framework
 * **Database:** MySQL
 * **Frontend:** HTML5, CSS3, JavaScript, Jinja2 Templates
-* **Libraries:** * `mysql-connector-python` (Database Connection)
+* **Libraries:**
+    * `mysql-connector-python` (Database Connection)
     * `reportlab` (PDF Generation)
     * `smtplib` (Email Services)
 
@@ -54,23 +55,20 @@ Follow these steps to run the project locally:
 ```bash
 git clone [https://github.com/Ayushman2005/SocietyPro.git](https://github.com/Ayushman2005/SocietyPro.git)
 cd SocietyPro
-2. Set Up the Database
-Open MySQL Workbench or your preferred SQL client.
+```
 
-Create a database named society_db.
-
-Import the provided database.sql file to create the tables (users, admins, bills, complaints).
-
-Optional: Insert an admin user manually if not included in the SQL script:
-
-SQL
-
+### 2. Set Up the Database
+* Open MySQL Workbench or your preferred SQL client.
+* Create a database named society_db.
+* Import the provided database.sql file to create the tables (users, admins, bills, complaints).
+* Optional: Insert an admin user manually if not included in the SQL script:
+```bash
 INSERT INTO admins (email, password) VALUES ('admin@society.com', 'admin123');
-3. Configure Environment Variables
-Create a .env file in the root directory and add your credentials:
+```
 
-Code snippet
-
+### 3. Configure Environment Variables
+* Create a .env file in the root directory and add your credentials:
+```bash
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=your_mysql_password
@@ -82,23 +80,28 @@ MAIL_SERVER=smtp.gmail.com
 MAIL_PORT=587
 MAIL_USERNAME=your_email@gmail.com
 MAIL_PASSWORD=your_app_password
+```
 
-4. Install Dependencies
-Bash
-
+### 4. Install Dependencies:
+```bash
 pip install -r requirements.txt
-5. Run the Application
-Bash
-
+```
+### 5. Run the Application
+```bash
 python app.py
+```
 Visit http://127.0.0.1:5000 in your browser.
 
-🔮 Future Enhancements (Machine Learning)
+---
+
+### 🔮 Future Enhancements (Machine Learning)
 We are actively working on integrating ML models to make SocietyPro smarter:
+* Smart Complaint Classifier: Using NLP to automatically tag complaints (e.g., "Plumbing", "Electrical").
+* Late Payment Predictor: A regression model to identify accounts at risk of defaulting on dues.
 
-Smart Complaint Classifier: Using NLP to automatically tag complaints (e.g., "Plumbing", "Electrical").
+---
 
-Late Payment Predictor: A regression model to identify accounts at risk of defaulting on dues.
+### 📄 License
+* This project is created for educational purposes. All rights reserved by the team members listed above.
 
-📄 License
-This project is created for educational purposes. All rights reserved by the team members listed above.
+---
