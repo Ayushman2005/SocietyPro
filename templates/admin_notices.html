@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Manage Notices</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo">SocietyApp</div>
+        <ul class="menu">
+          <li>
+            <a href="/admin/dashboard"
+              ><i class="ri-dashboard-line"></i> Dashboard</a
+            >
+          </li>
+          <li>
+            <a href="/admin/tenants"><i class="ri-user-line"></i> Tenants</a>
+          </li>
+          <li>
+            <a href="/admin/notices" class="active"
+              ><i class="ri-notification-3-line"></i> Notices</a
+            >
+          </li>
+          <li>
+            <a href="/admin/invoices"
+              ><i class="ri-file-list-3-line"></i> Invoices</a
+            >
+          </li>
+          <li>
+            <a href="/admin/complaints"
+              ><i class="ri-feedback-line"></i> Complaints</a
+            >
+          </li>
+          <li>
+            <a href="/admin/settings"
+              ><i class="ri-settings-4-line"></i> Settings</a
+            >
+          </li>
+        </ul>
+        <a href="/logout" class="logout-btn">Logout</a>
+      </aside>
+
+      <main class="main-content">
+        <h1 class="section-title">Digital Notice Board</h1>
+
+        <div class="content-grid">
+          <div>
+            <h3 class="section-title">Posted Notices</h3>
+            <div class="cards" style="grid-template-columns: 1fr">
+              {% for n in notices %}
+              <div
+                class="card"
+                style="
+                  position: relative;
+                  border-left: 4px solid var(--primary-orange);
+                "
+              >
+                <div class="card-header">
+                  <span>{{ n[3] }}</span>
+                  <div>
+                    <button
+                      onclick="openEditModal('{{ n[0] }}', '{{ n[1] }}', '{{ n[2] }}')"
+                      style="
+                        background: none;
+                        border: none;
+                        color: #3b82f6;
+                        cursor: pointer;
+                        margin-right: 10px;
+                      "
+                    >
+                      <i class="ri-edit-line"></i>
+                    </button>
+                    <a
+                      href="/admin/delete_notice/{{ n[0] }}"
+                      onclick="return confirm('Delete this notice?')"
+                      style="color: #ef4444"
+                    >
+                      <i class="ri-delete-bin-line"></i>
+                    </a>
+                  </div>
+                </div>
+                <h3>{{ n[1] }}</h3>
+                <p style="color: #ccc; font-size: 14px">{{ n[2] }}</p>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="form-box" style="height: fit-content">
+            <h3 class="section-title" id="formTitle">Post New Notice</h3>
+            <form id="noticeForm" action="/admin/notices" method="POST">
+              <input type="hidden" name="notice_id" id="noticeId" />
+
+              <label style="color: #aaa">Title</label>
+              <input
+                type="text"
+                name="title"
+                id="noticeTitle"
+                placeholder="e.g. Water Tank Cleaning"
+                required
+              />
+
+              <label style="color: #aaa">Content</label>
+              <textarea
+                name="content"
+                id="noticeContent"
+                rows="5"
+                style="
+                  width: 100%;
+                  background: black;
+                  border: 1px solid #333;
+                  color: white;
+                  padding: 10px;
+                  border-radius: 6px;
+                  margin-bottom: 10px;
+                "
+                placeholder="Type the details here..."
+                required
+              ></textarea>
+
+              <button type="submit" id="submitBtn">Post Notice</button>
+
+              <button
+                type="button"
+                id="cancelBtn"
+                onclick="resetForm()"
+                style="display: none; background: #333; margin-top: 10px"
+              >
+                Cancel Edit
+              </button>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      function openEditModal(id, title, content) {
+        document.getElementById("formTitle").innerText = "Edit Notice";
+        document.getElementById("noticeForm").action = "/admin/edit_notice";
+        document.getElementById("noticeId").value = id;
+        document.getElementById("noticeTitle").value = title;
+        document.getElementById("noticeContent").value = content;
+        document.getElementById("submitBtn").innerText = "Update Notice";
+        document.getElementById("cancelBtn").style.display = "block";
+      }
+
+      function resetForm() {
+        document.getElementById("formTitle").innerText = "Post New Notice";
+        document.getElementById("noticeForm").action = "/admin/notices";
+        document.getElementById("noticeId").value = "";
+        document.getElementById("noticeTitle").value = "";
+        document.getElementById("noticeContent").value = "";
+        document.getElementById("submitBtn").innerText = "Post Notice";
+        document.getElementById("cancelBtn").style.display = "none";
+      }
+    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

@@ -36,6 +36,14 @@ def get_db_connection():
 def index():
     return render_template("index.html")
 
+@app.route("/features")
+def features():
+    return render_template("features.html")
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
 @app.route("/login")
 def login_page():
     return render_template("page.html")
@@ -93,9 +101,6 @@ def register():
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
-        
-        # SECURITY FIX: Force role to always be 'user'
-        # Do not let the form decide the role!
         role = "user" 
 
         try:
@@ -321,7 +326,73 @@ def user_dashboard():
     db.close()
 
     return render_template("user_dashboard.html", bills=bills)
+# ---------- ADMIN: MANAGE NOTICES ----------
+@app.route("/admin/notices", methods=["GET", "POST"])
+def admin_notices():
+    if "admin" not in session: return redirect("/admin/login")
+    
+    db = get_db_connection()
+    cur = db.cursor()
 
+    # Handle Adding New Notice
+    if request.method == "POST":
+        title = request.form["title"]
+        content = request.form["content"]
+        cur.execute("INSERT INTO notices (title, content) VALUES (%s, %s)", (title, content))
+        db.commit()
+
+    # Fetch All Notices
+    cur.execute("SELECT id, title, content, DATE_FORMAT(created_at, '%d %b %Y') as date FROM notices ORDER BY id DESC")
+    notices = cur.fetchall()
+    
+    cur.close()
+    db.close()
+    
+    return render_template("admin_notices.html", notices=notices)
+
+@app.route("/admin/edit_notice", methods=["POST"])
+def edit_notice():
+    if "admin" not in session: return redirect("/admin/login")
+    
+    notice_id = request.form["notice_id"]
+    title = request.form["title"]
+    content = request.form["content"]
+    
+    db = get_db_connection()
+    cur = db.cursor()
+    cur.execute("UPDATE notices SET title=%s, content=%s WHERE id=%s", (title, content, notice_id))
+    db.commit()
+    cur.close()
+    db.close()
+    
+    return redirect("/admin/notices")
+
+@app.route("/admin/delete_notice/<int:id>")
+def delete_notice(id):
+    if "admin" not in session: return redirect("/admin/login")
+    
+    db = get_db_connection()
+    cur = db.cursor()
+    cur.execute("DELETE FROM notices WHERE id=%s", (id,))
+    db.commit()
+    cur.close()
+    db.close()
+    
+    return redirect("/admin/notices")
+
+# ---------- USER: VIEW NOTICES ----------
+@app.route("/user/notices")
+def user_notices():
+    if "user" not in session: return redirect("/user/login")
+    
+    db = get_db_connection()
+    cur = db.cursor()
+    cur.execute("SELECT title, content, DATE_FORMAT(created_at, '%d %b %Y') as date FROM notices ORDER BY id DESC")
+    notices = cur.fetchall()
+    cur.close()
+    db.close()
+    
+    return render_template("user_notices.html", notices=notices)
 # ---------- DOWNLOAD INVOICE PDF ----------
 @app.route("/admin/download_invoice/<int:bill_id>")
 def download_invoice(bill_id):

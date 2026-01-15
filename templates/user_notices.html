@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Notices</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo">Resident Portal</div>
+        <ul class="menu">
+          <li>
+            <a href="/user/dashboard"
+              ><i class="ri-dashboard-line"></i> My Bills</a
+            >
+          </li>
+          <li>
+            <a href="/user/notices" class="active"
+              ><i class="ri-notification-3-line"></i> Notices</a
+            >
+          </li>
+          <li>
+            <a href="/user/complaints"
+              ><i class="ri-feedback-line"></i> Complaints</a
+            >
+          </li>
+          <li>
+            <a href="/profile"><i class="ri-user-settings-line"></i> Profile</a>
+          </li>
+        </ul>
+        <a href="/logout" class="logout-btn">Logout</a>
+      </aside>
+
+      <main class="main-content">
+        <h1 class="section-title">📢 Community Announcements</h1>
+
+        <div class="cards" style="grid-template-columns: 1fr">
+          {% if notices %} {% for n in notices %}
+          <div
+            class="card"
+            style="border-left: 4px solid var(--primary-orange)"
+          >
+            <div class="card-header">
+              <span style="color: var(--primary-orange)"
+                ><i class="ri-calendar-event-line"></i> {{ n[2] }}</span
+              >
+            </div>
+            <h3 style="font-size: 20px; margin: 10px 0; color: white">
+              {{ n[0] }}
+            </h3>
+            <p style="color: #ccc; line-height: 1.6; font-size: 15px">
+              {{ n[1] }}
+            </p>
+          </div>
+          {% endfor %} {% else %}
+          <div style="text-align: center; padding: 40px; color: #666">
+            <i
+              class="ri-notification-off-line"
+              style="font-size: 40px; margin-bottom: 10px"
+            ></i>
+            <p>No notices have been posted yet.</p>
+          </div>
+          {% endif %}
+        </div>
+      </main>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
