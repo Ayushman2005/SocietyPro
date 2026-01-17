@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Notices</title>
+    <title>Visitor Gate Pass</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
@@ -71,39 +71,58 @@
         </a>
       </aside>
 
-      <main class="main-content">
-        <h1 class="section-title">📢 Community Announcements</h1>
 
-        <div class="cards" style="grid-template-columns: 1fr">
-          {% if notices %} {% for n in notices %}
+      <main class="main-content">
+        <h1 class="section-title">🛑 Visitor Gate Pass</h1>
+
+        <div class="form-box" style="margin-bottom: 30px">
+          <h3><i class="ri-user-add-line"></i> Pre-Approve Guest</h3>
+          <form method="POST">
+            <div
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px"
+            >
+              <input
+                type="text"
+                name="name"
+                placeholder="Visitor Name"
+                required
+              />
+              <input
+                type="text"
+                name="phone"
+                placeholder="Phone Number"
+                required
+              />
+              <input type="date" name="date" required />
+              <input type="time" name="time" required />
+            </div>
+            <button type="submit" style="width: 100%; margin-top: 10px">
+              Generate Pass
+            </button>
+          </form>
+        </div>
+
+        <div class="cards">
+          {% for v in visitors %}
           <div
             class="card"
-            style="border-left: 4px solid var(--primary-orange)"
+            style="border-left: 4px solid {% if v[4] == 'Expected' %}#3b82f6{% else %}#10b981{% endif %};"
           >
             <div class="card-header">
-              <span style="color: var(--primary-orange)"
-                ><i class="ri-calendar-event-line"></i> {{ n[2] }}</span
+              <span style="font-size: 12px; opacity: 0.7"
+                >{{ v[2] }} | {{ v[3] }}</span
+              >
+              <span
+                class="status {{ 'unpaid' if v[4] == 'Expected' else 'paid' }}"
+                >{{ v[4] }}</span
               >
             </div>
-            <h3 style="font-size: 20px; margin: 10px 0; color: white">
-              {{ n[0] }}
-            </h3>
-            <p style="color: #ccc; line-height: 1.6; font-size: 15px">
-              {{ n[1] }}
-            </p>
+            <h3>{{ v[0] }}</h3>
+            <p><i class="ri-phone-line"></i> {{ v[1] }}</p>
           </div>
-          {% endfor %} {% else %}
-          <div style="text-align: center; padding: 40px; color: #666">
-            <i
-              class="ri-notification-off-line"
-              style="font-size: 40px; margin-bottom: 10px"
-            ></i>
-            <p>No notices have been posted yet.</p>
-          </div>
-          {% endif %}
+          {% endfor %}
         </div>
       </main>
     </div>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
 </html>

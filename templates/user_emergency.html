@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Emergency Contacts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* --- CUSTOM STYLES FOR EMERGENCY PAGE --- */
+
+      .emergency-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-top: 20px;
+      }
+
+      .e-card {
+        position: relative;
+        background: #1e1e1e;
+        border-radius: 16px;
+        overflow: hidden;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #333;
+      }
+
+      /* Hover Effect: Lift up and glow */
+      .e-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      /* Top Section of Card */
+      .e-content {
+        padding: 25px;
+        position: relative;
+        z-index: 2;
+      }
+
+      /* Big Watermark Icon in Background */
+      .watermark-icon {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        font-size: 100px;
+        opacity: 0.1;
+        transform: rotate(15deg);
+        z-index: 1;
+      }
+
+      .role-badge {
+        display: inline-block;
+        font-size: 12px;
+        text-transform: uppercase;
+        font-weight: bold;
+        padding: 4px 10px;
+        border-radius: 20px;
+        margin-bottom: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(4px);
+      }
+
+      .contact-name {
+        font-size: 22px;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 5px;
+      }
+
+      /* Bottom Section: Call Button */
+      .call-btn {
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 15px;
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+        transition: background 0.2s;
+      }
+
+      .call-btn i {
+        font-size: 22px;
+      }
+
+      /* --- COLOR THEMES --- */
+
+      /* RED THEME (Emergency) */
+      .theme-red .role-badge {
+        color: #ff6b6b;
+        background: rgba(255, 107, 107, 0.15);
+      }
+      .theme-red .watermark-icon {
+        color: #ef4444;
+      }
+      .theme-red .call-btn {
+        background: linear-gradient(45deg, #dc2626, #b91c1c);
+      }
+      .theme-red:hover .call-btn {
+        background: linear-gradient(45deg, #ef4444, #dc2626);
+      }
+      .theme-red {
+        border-left: 5px solid #ef4444;
+      }
+
+      /* GREEN THEME (Security) */
+      .theme-green .role-badge {
+        color: #4ade80;
+        background: rgba(74, 222, 128, 0.15);
+      }
+      .theme-green .watermark-icon {
+        color: #10b981;
+      }
+      .theme-green .call-btn {
+        background: linear-gradient(45deg, #059669, #047857);
+      }
+      .theme-green:hover .call-btn {
+        background: linear-gradient(45deg, #10b981, #059669);
+      }
+      .theme-green {
+        border-left: 5px solid #10b981;
+      }
+
+      /* BLUE THEME (Admin) */
+      .theme-blue .role-badge {
+        color: #60a5fa;
+        background: rgba(96, 165, 250, 0.15);
+      }
+      .theme-blue .watermark-icon {
+        color: #3b82f6;
+      }
+      .theme-blue .call-btn {
+        background: linear-gradient(45deg, #2563eb, #1d4ed8);
+      }
+      .theme-blue:hover .call-btn {
+        background: linear-gradient(45deg, #3b82f6, #2563eb);
+      }
+      .theme-blue {
+        border-left: 5px solid #3b82f6;
+      }
+
+      /* ORANGE THEME (Maintenance) */
+      .theme-orange .role-badge {
+        color: #fbbf24;
+        background: rgba(251, 191, 36, 0.15);
+      }
+      .theme-orange .watermark-icon {
+        color: #f59e0b;
+      }
+      .theme-orange .call-btn {
+        background: linear-gradient(45deg, #d97706, #b45309);
+      }
+      .theme-orange:hover .call-btn {
+        background: linear-gradient(45deg, #f59e0b, #d97706);
+      }
+      .theme-orange {
+        border-left: 5px solid #f59e0b;
+      }
+    </style>
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo">Resident Portal</div>
+        <ul class="menu">
+    <li>
+        <a href="/user/dashboard" class="{% if request.path == '/user/dashboard' %}active{% endif %}">
+            <i class="ri-dashboard-line"></i> Dashboard
+        </a>
+    </li>
+
+    <li>
+        <a href="/user/visitors" class="{% if request.path == '/user/visitors' %}active{% endif %}">
+            <i class="ri-shield-user-line"></i> Visitors
+        </a>
+    </li>
+<li>
+    <a href="/user/bookings" class="{% if request.path == '/user/bookings' %}active{% endif %}">
+        <i class="ri-calendar-check-line"></i> Bookings
+    </a>
+</li>
+    <li>
+        <a href="/user/polls" class="{% if request.path == '/user/polls' %}active{% endif %}">
+            <i class="ri-bar-chart-box-line"></i> Polls
+        </a>
+    </li>
+
+    <li>
+        <a href="/user/notices" class="{% if request.path == '/user/notices' %}active{% endif %}">
+            <i class="ri-notification-3-line"></i> Notices
+        </a>
+    </li>
+
+    <li>
+        <a href="/user/complaints" class="{% if request.path == '/user/complaints' %}active{% endif %}">
+            <i class="ri-feedback-line"></i> Complaints
+        </a>
+    </li>
+
+    <li>
+        <a href="/user/emergency" class="{% if request.path == '/user/emergency' %}active{% endif %}">
+            <i class="ri-phone-fill"></i> Emergency
+        </a>
+    </li>
+
+    <li>
+        <a href="/profile" class="{% if request.path == '/profile' %}active{% endif %}">
+            <i class="ri-user-settings-line"></i> Profile
+        </a>
+    </li>
+</ul>
+        <a href="/logout" class="logout-btn">Logout</a>
+      </aside>
+
+      <main class="main-content">
+        <h1
+          class="section-title"
+          style="color: white; border-bottom: none; margin-bottom: 5px"
+        >
+          <i class="ri-alarm-warning-fill" style="color: #ef4444"></i> Emergency
+          & Helpline
+        </h1>
+        <p style="color: #aaa; margin-bottom: 30px; font-size: 16px">
+          Tap any card below to make an immediate call.
+        </p>
+
+        <div class="emergency-grid">
+          {% for c in contacts %}
+          <div class="e-card theme-{{ c.theme }}">
+            <i class="{{ c.icon }} watermark-icon"></i>
+
+            <div class="e-content">
+              <span class="role-badge">{{ c.role }}</span>
+              <div class="contact-name">{{ c.name }}</div>
+              <div style="color: #888; font-size: 13px; margin-top: 5px">
+                Available 24/7
+              </div>
+            </div>
+
+            <a href="tel:{{ c.phone }}" class="call-btn">
+              <i class="ri-phone-fill"></i> {{ c.phone }}
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      </main>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

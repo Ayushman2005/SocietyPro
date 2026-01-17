@@ -1,8 +1,7 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <title>Manage Complaints</title>
+    <title>Admin - Visitor Logs</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
@@ -32,7 +31,7 @@
           </li>
 
           <li>
-            <a href="/admin/visitors"
+            <a href="/admin/visitors" class="active"
               ><i class="ri-shield-user-line"></i> Visitors</a
             >
           </li>
@@ -53,7 +52,7 @@
           </li>
 
           <li>
-            <a href="/admin/complaints" class="active"
+            <a href="/admin/complaints"
               ><i class="ri-feedback-line"></i> Complaints</a
             >
           </li>
@@ -69,51 +68,33 @@
       </aside>
 
       <main class="main-content">
-        <h1 class="section-title">Resident Complaints</h1>
+        <h1 class="section-title">🛑 Daily Visitor Logs</h1>
 
-        <div class="cards">
-          {% for c in complaints %}
-          <div class="card">
-            <div class="card-header">
-              <span>From: {{ c[1] }}</span> <span>{{ c[5] }}</span>
-            </div>
-            <h3>{{ c[2] }}</h3>
-            <p style="color: #aaa; font-size: 14px; margin-bottom: 15px">
-              {{ c[3] }}
-            </p>
-
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-              "
-            >
-              <span
-                class="status"
-                style="background: {% if c[4]=='Resolved' %}#10b981{% else %}#f97316{% endif %}; color:black;"
-              >
-                {{ c[4] }}
-              </span>
-
-              {% if c[4] != 'Resolved' %}
-              <form method="post" style="display: inline">
-                <input type="hidden" name="complaint_id" value="{{ c[0] }}" />
-                <input type="hidden" name="status" value="Resolved" />
-                <button
-                  type="submit"
-                  style="padding: 5px 10px; font-size: 12px; width: auto"
-                >
-                  Mark Resolved
-                </button>
-              </form>
-              {% endif %}
-            </div>
-          </div>
-          {% endfor %}
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Visitor Name</th>
+                <th>Host (Resident)</th>
+                <th>Phone</th>
+                <th>Date & Time</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for v in visitors %}
+              <tr>
+                <td style="font-weight: bold; color: white">{{ v[1] }}</td>
+                <td>{{ v[6] }}</td>
+                <td>{{ v[2] }}</td>
+                <td>{{ v[3] }} ({{ v[4] }})</td>
+                <td><span class="status paid">{{ v[5] }}</span></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
       </main>
     </div>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
 </html>

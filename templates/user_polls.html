@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Community Polls</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo">
+          <i class="ri-home-smile-2-line"></i> Resident Panel
+        </div>
+
+        <ul class="menu">
+    <li>
+        <a href="/user/dashboard" class="{% if request.path == '/user/dashboard' %}active{% endif %}">
+            <i class="ri-dashboard-line"></i> Dashboard
+        </a>
+    </li>
+
+    <li>
+        <a href="/user/visitors" class="{% if request.path == '/user/visitors' %}active{% endif %}">
+            <i class="ri-shield-user-line"></i> Visitors
+        </a>
+    </li>
+
+    <li>
+        <a href="/user/polls" class="{% if request.path == '/user/polls' %}active{% endif %}">
+            <i class="ri-bar-chart-box-line"></i> Polls
+        </a>
+    </li>
+
+    <li>
+        <a href="/user/notices" class="{% if request.path == '/user/notices' %}active{% endif %}">
+            <i class="ri-notification-3-line"></i> Notices
+        </a>
+    </li>
+
+    <li>
+        <a href="/user/complaints" class="{% if request.path == '/user/complaints' %}active{% endif %}">
+            <i class="ri-feedback-line"></i> Complaints
+        </a>
+    </li>
+
+    <li>
+        <a href="/user/emergency" class="{% if request.path == '/user/emergency' %}active{% endif %}">
+            <i class="ri-phone-fill"></i> Emergency
+        </a>
+    </li>
+<li>
+    <a href="/user/bookings" class="{% if request.path == '/user/bookings' %}active{% endif %}">
+        <i class="ri-calendar-check-line"></i> Bookings
+    </a>
+</li>
+    <li>
+        <a href="/profile" class="{% if request.path == '/profile' %}active{% endif %}">
+            <i class="ri-user-settings-line"></i> Profile
+        </a>
+    </li>
+</ul>
+
+        <a href="/logout" class="logout-btn">
+          <i class="ri-logout-box-line"></i> Logout
+        </a>
+      </aside>
+
+      <main class="main-content">
+        <h1 class="section-title">📊 Community Polls</h1>
+
+        <div class="cards" style="grid-template-columns: 1fr">
+          {% for p in polls %}
+          <div class="card">
+            <h3>Q: {{ p[1] }}</h3>
+            <div style="margin-top: 15px">
+              {% if p[7] == 0 and p[4] == 'Active' %}
+              <form method="POST">
+                <input type="hidden" name="poll_id" value="{{ p[0] }}" />
+                <button
+                  type="submit"
+                  name="choice"
+                  value="option1"
+                  class="vote-btn"
+                >
+                  <i class="ri-checkbox-blank-circle-line"></i> {{ p[2] }}
+                </button>
+                <button
+                  type="submit"
+                  name="choice"
+                  value="option2"
+                  class="vote-btn"
+                >
+                  <i class="ri-checkbox-blank-circle-line"></i> {{ p[3] }}
+                </button>
+              </form>
+
+              {% else %} {% set total = p[5] + p[6] %} {% set pct1 = (p[5] /
+              total * 100) if total > 0 else 0 %} {% set pct2 = (p[6] / total *
+              100) if total > 0 else 0 %}
+
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  font-size: 14px;
+                "
+              >
+                <span>{{ p[2] }}</span> <span>{{ p[5] }} votes</span>
+              </div>
+              <div class="poll-bar-container">
+                <div class="poll-bar" style="width: {{ pct1 }}%;"></div>
+              </div>
+
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  font-size: 14px;
+                "
+              >
+                <span>{{ p[3] }}</span> <span>{{ p[6] }} votes</span>
+              </div>
+              <div class="poll-bar-container">
+                <div
+                  class="poll-bar"
+                  style="width: {{ pct2 }}%; background: #3b82f6;"
+                ></div>
+              </div>
+
+              <p style="text-align: right; font-size: 12px; color: #888">
+                {% if p[7] > 0 %} <i class="ri-check-double-line"></i> You voted
+                {% endif %}
+              </p>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
