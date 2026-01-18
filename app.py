@@ -6,8 +6,10 @@ import mysql.connector
 import os
 import io
 import smtplib
+import random
 from datetime import date
 from dotenv import load_dotenv
+from flask_wtf.csrf import CSRFProtect
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -24,6 +26,8 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "society_secret_key")
+
+csrf = CSRFProtect(app)
 
 db_config = {
     "host": os.getenv("DB_HOST", "localhost"),
@@ -201,30 +205,77 @@ def forgot_password():
     msg = ""
     if request.method == "POST":
         email = request.form["email"]
-        new_password = generate_password_hash(request.form["new_password"])
-        role = request.form["role"]
-
-        table = "admins" if role == "admin" else "users"
-
+        
         db = get_db_connection()
         cur = db.cursor()
-        cur.execute(f"SELECT id FROM {table} WHERE email=%s", (email,))
-
-        if cur.fetchone():
-            cur.execute(
-                f"UPDATE {table} SET password=%s WHERE email=%s",
-                (new_password, email)
-            )
+        
+        # Check if email exists in EITHER Admin or User table
+        cur.execute("SELECT id FROM admins WHERE email=%s", (email,))
+        admin = cur.fetchone()
+        
+        cur.execute("SELECT id FROM users WHERE email=%s", (email,))
+        user = cur.fetchone()
+        
+        if admin or user:
+            # Generate 6-Digit OTP
+            otp = str(random.randint(100000, 999999))
+            
+            # Save OTP to DB (Update if exists, Insert if new)
+            cur.execute("REPLACE INTO password_resets (email, otp) VALUES (%s, %s)", (email, otp))
             db.commit()
-            msg = "✅ Password reset successful!"
+            
+            # --- SECURITY LOG (Simulating Email Sending) ---
+            print(f"\n[EMAIL SIMULATION] 📧 To: {email} | Subject: Password Reset | Body: Your OTP is {otp}\n")
+            
+            cur.close()
+            db.close()
+            
+            # Send user to Step 2
+            return render_template("verify_otp.html", email=email, msg="✅ OTP sent! Check your email (or terminal).")
+        
         else:
-            msg = "❌ Email not found"
-
-        cur.close()
-        db.close()
+            msg = "❌ Email not found in our records."
+            cur.close()
+            db.close()
 
     return render_template("forgot_password.html", msg=msg)
 
+# ======================================================
+# 2. VERIFY & RESET ROUTE (Step 2)
+# ======================================================
+@app.route("/reset_password", methods=["POST"])
+def reset_password():
+    email = request.form["email"]
+    otp_input = request.form["otp"]
+    new_password = request.form["new_password"]
+    
+    db = get_db_connection()
+    cur = db.cursor()
+    
+    # Verify OTP
+    cur.execute("SELECT otp FROM password_resets WHERE email=%s", (email,))
+    record = cur.fetchone()
+    
+    if record and record[0] == otp_input:
+        # OTP Valid: Hash new password
+        hashed_pw = generate_password_hash(new_password)
+        
+        # Update Password (Try updating both tables)
+        cur.execute("UPDATE admins SET password=%s WHERE email=%s", (hashed_pw, email))
+        cur.execute("UPDATE users SET password=%s WHERE email=%s", (hashed_pw, email))
+        
+        # Cleanup: Delete used OTP
+        cur.execute("DELETE FROM password_resets WHERE email=%s", (email,))
+        db.commit()
+        
+        cur.close()
+        db.close()
+        return render_template("page.html") # Redirect to Role Selection
+    
+    else:
+        cur.close()
+        db.close()
+        return render_template("verify_otp.html", email=email, msg="❌ Invalid or Expired OTP")
 # ======================================================
 # PROFILE UPDATE
 # ======================================================
@@ -452,7 +503,7 @@ def admin_tenants():
 # ---------- ADMIN: DELETE TENANT ----------
 
 
-@app.route("/admin/delete_tenant/<int:user_id>")
+@app.route("/admin/delete_tenant/<int:user_id>", methods=["POST"])
 def delete_tenant(user_id):
     if "admin" not in session:
         return redirect("/admin/login")
@@ -980,21 +1031,20 @@ def user_bookings():
 # ---------- ADMIN: HANDLE BOOKING ACTIONS ----------
 
 
-@app.route("/admin/booking_action/<int:id>/<action>")
-def booking_action(id, action):
+@app.route("/admin/booking_action", methods=["POST"])
+def booking_action():
     if "admin" not in session:
         return redirect("/admin/login")
 
-    # Set status based on button clicked
-    if action == "approve":
-        new_status = "Confirmed"
-    else:
-        new_status = "Rejected"
+    # Get data from the form body, not the URL
+    booking_id = request.form.get("id")
+    action = request.form.get("action")
+
+    new_status = "Confirmed" if action == "approve" else "Rejected"
 
     db = get_db_connection()
     cur = db.cursor()
-    cur.execute("UPDATE bookings SET status = %s WHERE id = %s",
-                (new_status, id))
+    cur.execute("UPDATE bookings SET status = %s WHERE id = %s", (new_status, booking_id))
     db.commit()
     cur.close()
     db.close()

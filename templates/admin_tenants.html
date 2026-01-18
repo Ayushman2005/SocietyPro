@@ -1,14 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>Tenants - SocietyPro</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="icon"
-      type="image/png"
-      href="https://cdn-icons-png.flaticon.com/128/143/143438.png"
-    />
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
@@ -29,15 +24,15 @@
             >
           </li>
           <li>
-            <a href="/admin/tenants" class="active">
-              <i class="ri-user-line"></i> Tenants</a>
+            <a href="/admin/tenants" class="active"
+              ><i class="ri-user-line"></i> Tenants</a
+            >
           </li>
           <li>
             <a href="/admin/invoices"
               ><i class="ri-file-list-3-line"></i> Invoices</a
             >
           </li>
-
           <li>
             <a href="/admin/visitors"
               ><i class="ri-shield-user-line"></i> Visitors</a
@@ -58,7 +53,6 @@
               ><i class="ri-notification-3-line"></i> Notices</a
             >
           </li>
-
           <li>
             <a href="/admin/complaints"
               ><i class="ri-feedback-line"></i> Complaints</a
@@ -70,9 +64,9 @@
             >
           </li>
         </ul>
-        <a href="/logout" class="logout-btn">
-          <i class="ri-logout-box-line"></i> Logout
-        </a>
+        <a href="/logout" class="logout-btn"
+          ><i class="ri-logout-box-line"></i> Logout</a
+        >
       </aside>
 
       <main class="main-content">
@@ -124,14 +118,35 @@
                         <i class="ri-edit-line"></i>
                       </button>
 
-                      <a
-                        href="/admin/delete_tenant/{{ t[0] }}"
-                        onclick="return confirm('Are you sure? This will delete the user AND their bill history.');"
-                        style="color: #ef4444; font-size: 18px"
-                        title="Delete"
+                      <form
+                        action="/admin/delete_tenant/{{ t[0] }}"
+                        method="POST"
+                        style="display: inline"
                       >
-                        <i class="ri-delete-bin-line"></i>
-                      </a>
+                        <input
+                          type="hidden"
+                          name="csrf_token"
+                          value="{{ csrf_token() }}"
+                        />
+                        <button
+                          type="submit"
+                          onclick="
+                            return confirm(
+                              'Are you sure? This will delete the user AND their bill history.',
+                            );
+                          "
+                          style="
+                            background: none;
+                            border: none;
+                            color: #ef4444;
+                            font-size: 18px;
+                            cursor: pointer;
+                          "
+                          title="Delete"
+                        >
+                          <i class="ri-delete-bin-line"></i>
+                        </button>
+                      </form>
                     </td>
                   </tr>
                   {% endfor %}
@@ -143,10 +158,14 @@
           <div class="grid-right">
             <div class="form-box">
               <h3 class="section-title" id="formTitle">Add New Tenant</h3>
-
               <form id="tenantForm" action="/admin/tenants" method="POST">
-                <input type="hidden" name="user_id" id="editUserId" />
+                <input
+                  type="hidden"
+                  name="csrf_token"
+                  value="{{ csrf_token() }}"
+                />
 
+                <input type="hidden" name="user_id" id="editUserId" />
                 <label style="color: #ccc; font-size: 13px"
                   >Email Address</label
                 >
@@ -157,7 +176,6 @@
                   placeholder="user@example.com"
                   required
                 />
-
                 <label style="color: #ccc; font-size: 13px">Password</label>
                 <input
                   type="text"
@@ -166,11 +184,9 @@
                   placeholder="Assign password"
                   required
                 />
-
                 <button type="submit" id="submitBtn">
                   <i class="ri-user-add-line"></i> Add Tenant
                 </button>
-
                 <button
                   type="button"
                   id="cancelBtn"
@@ -188,36 +204,25 @@
 
     <script>
       function openEditModal(id, email) {
-        // 1. Change Title
         document.getElementById("formTitle").innerText =
           "Edit Tenant (ID: " + id + ")";
-
-        // 2. Populate Fields
         document.getElementById("editUserId").value = id;
         document.getElementById("editEmail").value = email;
-        document.getElementById("editPassword").value = ""; // Don't show old password for security, ask for new one
+        document.getElementById("editPassword").value = "";
         document.getElementById("editPassword").placeholder =
           "Enter new password";
-
-        // 3. Change Form Action to Edit Route
         document.getElementById("tenantForm").action = "/admin/edit_tenant";
-
-        // 4. Change Button Text
         document.getElementById("submitBtn").innerHTML =
           "<i class='ri-save-line'></i> Update Tenant";
-
-        // 5. Show Cancel Button
         document.getElementById("cancelBtn").style.display = "block";
       }
 
       function resetForm() {
-        // Reset to "Add Mode"
         document.getElementById("formTitle").innerText = "Add New Tenant";
         document.getElementById("editUserId").value = "";
         document.getElementById("editEmail").value = "";
         document.getElementById("editPassword").value = "";
         document.getElementById("editPassword").placeholder = "Assign password";
-
         document.getElementById("tenantForm").action = "/admin/tenants";
         document.getElementById("submitBtn").innerHTML =
           "<i class='ri-user-add-line'></i> Add Tenant";

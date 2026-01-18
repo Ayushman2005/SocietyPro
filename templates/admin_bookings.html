@@ -30,7 +30,6 @@
               ><i class="ri-file-list-3-line"></i> Invoices</a
             >
           </li>
-
           <li>
             <a href="/admin/visitors"
               ><i class="ri-shield-user-line"></i> Visitors</a
@@ -51,7 +50,6 @@
               ><i class="ri-notification-3-line"></i> Notices</a
             >
           </li>
-
           <li>
             <a href="/admin/complaints"
               ><i class="ri-feedback-line"></i> Complaints</a
@@ -63,14 +61,13 @@
             >
           </li>
         </ul>
-        <a href="/logout" class="logout-btn">
-          <i class="ri-logout-box-line"></i> Logout
-        </a>
+        <a href="/logout" class="logout-btn"
+          ><i class="ri-logout-box-line"></i> Logout</a
+        >
       </aside>
 
       <main class="main-content">
         <h1 class="section-title">📅 Facility Reservations</h1>
-
         <div class="table-container">
           <table>
             <thead>
@@ -89,33 +86,36 @@
                 <td style="font-weight: bold; color: var(--primary-orange)">
                   {{ b[1] }}
                 </td>
-
                 <td>{{ b[2] }}</td>
-
                 <td style="font-size: 13px; color: #aaa">{{ b[3] }}</td>
-
                 <td>{{ b[5] }}</td>
-
                 <td>
                   {% if b[4] == 'Pending' %}
-                  <span class="status unpaid">Pending</span>
-                  {% elif b[4] == 'Confirmed' %}
-                  <span class="status paid">Confirmed</span>
-                  {% else %}
+                  <span class="status unpaid">Pending</span> {% elif b[4] ==
+                  'Confirmed' %} <span class="status paid">Confirmed</span> {%
+                  else %}
                   <span class="status" style="background: #333; color: #ccc"
                     >Rejected</span
                   >
                   {% endif %}
                 </td>
-
                 <td>
                   {% if b[4] == 'Pending' %}
                   <div style="display: flex; gap: 10px">
-                    <a
-                      href="/admin/booking_action/{{ b[0] }}/approve"
-                      title="Approve"
+                    <form
+                      action="/admin/booking_action"
+                      method="POST"
+                      style="margin: 0"
                     >
+                      <input
+                        type="hidden"
+                        name="csrf_token"
+                        value="{{ csrf_token() }}"
+                      />
+                      <input type="hidden" name="id" value="{{ b[0] }}" />
+                      <input type="hidden" name="action" value="approve" />
                       <button
+                        type="submit"
                         style="
                           background: #10b981;
                           border: none;
@@ -127,13 +127,22 @@
                       >
                         <i class="ri-check-line"></i>
                       </button>
-                    </a>
+                    </form>
 
-                    <a
-                      href="/admin/booking_action/{{ b[0] }}/reject"
-                      title="Reject"
+                    <form
+                      action="/admin/booking_action"
+                      method="POST"
+                      style="margin: 0"
                     >
+                      <input
+                        type="hidden"
+                        name="csrf_token"
+                        value="{{ csrf_token() }}"
+                      />
+                      <input type="hidden" name="id" value="{{ b[0] }}" />
+                      <input type="hidden" name="action" value="reject" />
                       <button
+                        type="submit"
                         style="
                           background: #ef4444;
                           border: none;
@@ -145,7 +154,7 @@
                       >
                         <i class="ri-close-line"></i>
                       </button>
-                    </a>
+                    </form>
                   </div>
                   {% else %}
                   <span style="font-size: 12px; color: #666">

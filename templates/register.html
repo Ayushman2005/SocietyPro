@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -35,7 +35,17 @@
       <h1>Create Account</h1>
       <p>Join the society management portal.</p>
 
-      <form method="post" action="/register">
+      <form method="post" action="/user/register">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+        <input
+          class="auth-input"
+          type="text"
+          name="name"
+          placeholder="Full Name"
+          required
+        />
+
         <input
           class="auth-input"
           type="email"
@@ -43,6 +53,7 @@
           placeholder="Email Address"
           required
         />
+
         <input
           class="auth-input"
           type="password"
@@ -50,6 +61,7 @@
           placeholder="Create Password"
           required
         />
+
         <input
           class="auth-input"
           type="password"
@@ -100,7 +112,7 @@
       document.querySelector("form").addEventListener("submit", function (e) {
         const pass = document.querySelector('input[name="password"]').value;
         const confirm = document.querySelector(
-          'input[name="confirm_password"]'
+          'input[name="confirm_password"]',
         ).value;
         if (pass !== confirm) {
           e.preventDefault();

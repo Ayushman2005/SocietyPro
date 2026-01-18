@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <title>Manage Notices</title>
@@ -99,7 +99,7 @@
                     </button>
                     <a
                       href="/admin/delete_notice/{{ n[0] }}"
-                      onclick="return confirm('Delete this notice?')"
+                      onclick="return confirm('Delete this notice?');"
                       style="color: #ef4444"
                     >
                       <i class="ri-delete-bin-line"></i>
@@ -113,45 +113,31 @@
             </div>
           </div>
 
-          <div class="form-box" style="height: fit-content">
+          <div class="form-box">
             <h3 class="section-title" id="formTitle">Post New Notice</h3>
             <form id="noticeForm" action="/admin/notices" method="POST">
-              <input type="hidden" name="notice_id" id="noticeId" />
-
-              <label style="color: #aaa">Title</label>
               <input
-                type="text"
-                name="title"
-                id="noticeTitle"
-                placeholder="e.g. Water Tank Cleaning"
-                required
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
               />
 
-              <label style="color: #aaa">Content</label>
+              <input type="hidden" name="notice_id" id="noticeId" />
+              <label>Title</label>
+              <input type="text" name="title" id="noticeTitle" required />
+              <label>Content</label>
               <textarea
                 name="content"
                 id="noticeContent"
                 rows="5"
-                style="
-                  width: 100%;
-                  background: black;
-                  border: 1px solid #333;
-                  color: white;
-                  padding: 10px;
-                  border-radius: 6px;
-                  margin-bottom: 10px;
-                "
-                placeholder="Type the details here..."
                 required
               ></textarea>
-
               <button type="submit" id="submitBtn">Post Notice</button>
-
               <button
                 type="button"
                 id="cancelBtn"
                 onclick="resetForm()"
-                style="display: none; background: #333; margin-top: 10px"
+                style="display: none"
               >
                 Cancel Edit
               </button>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -26,7 +26,6 @@
     <div class="auth-overlay"></div>
 
     <div class="auth-container">
-      <!-- Icon -->
       <div
         style="
           font-size: 40px;
@@ -41,6 +40,8 @@
       <p>Create a new administrator account.</p>
 
       <form method="POST" action="/admin/register">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
         <input
           class="auth-input"
           type="text"
@@ -71,7 +72,6 @@
         </button>
       </form>
 
-      <!-- Login Redirect -->
       <div style="margin-top: 15px; text-align: center">
         <span style="font-size: 13px; color: #666">
           Already have an admin account?
@@ -85,7 +85,6 @@
         </a>
       </div>
 
-      <!-- Navigation -->
       <div
         style="display: flex; justify-content: space-between; margin-top: 20px"
       >

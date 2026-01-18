@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -37,6 +37,8 @@
       <p>Welcome back! Please access your dashboard.</p>
 
       <form method="post" action="/user/login">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
         <input
           class="auth-input"
           type="email"
@@ -59,11 +61,8 @@
         </button>
       </form>
 
-      <!-- 🔹 REGISTER LINK ADDED -->
       <div style="margin-top: 15px; text-align: center">
-        <span style="font-size: 13px; color: #666">
-          New resident?
-        </span>
+        <span style="font-size: 13px; color: #666"> New resident? </span>
         <a
           href="/user/register"
           class="auth-link"
