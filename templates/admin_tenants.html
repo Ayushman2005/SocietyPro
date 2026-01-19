@@ -93,6 +93,7 @@
                 <thead>
                   <tr>
                     <th>ID</th>
+                    <th>Name</th>
                     <th>Email</th>
                     <th>Actions</th>
                   </tr>
@@ -101,10 +102,11 @@
                   {% for t in tenants %}
                   <tr>
                     <td>#{{ t[0] }}</td>
-                    <td>{{ t[1] }}</td>
+                    <td style="font-weight: bold; color: white">{{ t[1] }}</td>
+                    <td>{{ t[2] }}</td>
                     <td>
                       <button
-                        onclick="openEditModal('{{ t[0] }}', '{{ t[1] }}')"
+                        onclick="openEditModal('{{ t[0] }}', '{{ t[1] }}', '{{ t[2] }}')"
                         style="
                           background: none;
                           border: none;
@@ -132,7 +134,7 @@
                           type="submit"
                           onclick="
                             return confirm(
-                              'Are you sure? This will delete the user AND their bill history.',
+                              'Are you sure? This deletes user AND bills.',
                             );
                           "
                           style="
@@ -164,8 +166,17 @@
                   name="csrf_token"
                   value="{{ csrf_token() }}"
                 />
-
                 <input type="hidden" name="user_id" id="editUserId" />
+
+                <label style="color: #ccc; font-size: 13px">Full Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  id="editName"
+                  placeholder="e.g. Rahul Sharma"
+                  required
+                />
+
                 <label style="color: #ccc; font-size: 13px"
                   >Email Address</label
                 >
@@ -176,6 +187,7 @@
                   placeholder="user@example.com"
                   required
                 />
+
                 <label style="color: #ccc; font-size: 13px">Password</label>
                 <input
                   type="text"
@@ -184,6 +196,7 @@
                   placeholder="Assign password"
                   required
                 />
+
                 <button type="submit" id="submitBtn">
                   <i class="ri-user-add-line"></i> Add Tenant
                 </button>
@@ -203,10 +216,11 @@
     </div>
 
     <script>
-      function openEditModal(id, email) {
+      function openEditModal(id, name, email) {
         document.getElementById("formTitle").innerText =
           "Edit Tenant (ID: " + id + ")";
         document.getElementById("editUserId").value = id;
+        document.getElementById("editName").value = name; // Populate Name
         document.getElementById("editEmail").value = email;
         document.getElementById("editPassword").value = "";
         document.getElementById("editPassword").placeholder =
@@ -220,6 +234,7 @@
       function resetForm() {
         document.getElementById("formTitle").innerText = "Add New Tenant";
         document.getElementById("editUserId").value = "";
+        document.getElementById("editName").value = ""; // Clear Name
         document.getElementById("editEmail").value = "";
         document.getElementById("editPassword").value = "";
         document.getElementById("editPassword").placeholder = "Assign password";

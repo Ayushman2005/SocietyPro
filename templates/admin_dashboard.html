@@ -135,8 +135,11 @@
                       <button
                         type="submit"
                         onclick="
-                          return confirm('Delete this invoice permanently?');
+                          return confirm(
+                            'Are you sure you want to delete this invoice permanently?',
+                          );
                         "
+                        title="Delete Invoice"
                         style="
                           background: none;
                           border: none;
