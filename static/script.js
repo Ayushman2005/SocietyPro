@@ -263,3 +263,34 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+// --- 7. HAMBURGER MENU TOGGLE ---
+  const hamburger = document.querySelector(".hamburger");
+  const navLinks = document.querySelector(".nav-links");
+  const navLinksItems = document.querySelectorAll(".nav-links a");
+
+  if (hamburger && navLinks) {
+    hamburger.addEventListener("click", () => {
+      // Toggle Menu Visibility
+      navLinks.classList.toggle("active");
+
+      // Toggle Icon Animation (Menu <-> Close)
+      const icon = hamburger.querySelector("i");
+      if (navLinks.classList.contains("active")) {
+        icon.classList.remove("ri-menu-3-line");
+        icon.classList.add("ri-close-line");
+      } else {
+        icon.classList.remove("ri-close-line");
+        icon.classList.add("ri-menu-3-line");
+      }
+    });
+
+    // Close menu when a link is clicked
+    navLinksItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        navLinks.classList.remove("active");
+        const icon = hamburger.querySelector("i");
+        icon.classList.remove("ri-close-line");
+        icon.classList.add("ri-menu-3-line");
+      });
+    });
+  }
