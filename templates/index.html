@@ -22,7 +22,7 @@
     <header class="navbar">
       <div class="logo"><i class="ri-building-4-line"></i> SocietyPro</div>
       <nav class="nav-links">
-        <a href="/index" class="active">Home</a>
+        <a href="#home">Home</a>
         <a href="/features">Features</a>
         <a href="/about">AboutUS</a>
         <a href="#contact">Contact</a>
@@ -162,6 +162,8 @@
       </div>
 
       <form class="footer-form" action="/submit_contact" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        
         <h3>Send a Message</h3>
         <input type="text" name="name" placeholder="Your Name" required />
 
@@ -176,6 +178,8 @@
 
         <button class="btn-primary" style="width: 100%">Submit Inquiry</button>
       </form>
+    </footer>
+
     <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
 </html>

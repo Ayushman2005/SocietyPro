@@ -34,7 +34,7 @@
       </div>
 
       <h1>Resident Login</h1>
-      <p>Welcome back! Please access your dashboard.</p>
+      <p>Please enter the credentials provided by your Society Admin.</p>
 
       <form method="post" action="/user/login">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -60,17 +60,6 @@
           <i class="ri-arrow-right-line" style="vertical-align: middle"></i>
         </button>
       </form>
-
-      <div style="margin-top: 15px; text-align: center">
-        <span style="font-size: 13px; color: #666"> New resident? </span>
-        <a
-          href="/user/register"
-          class="auth-link"
-          style="font-weight: 600; margin-left: 5px"
-        >
-          Create Account
-        </a>
-      </div>
 
       <div
         style="display: flex; justify-content: space-between; margin-top: 20px"

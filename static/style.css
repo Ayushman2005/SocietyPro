@@ -1053,7 +1053,106 @@ td {
   color: #eee;
   font-size: 14px;
 }
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+.custom-select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #0a0a0a;
+  border: 1px solid #333;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+.custom-select:hover {
+  border-color: #555;
+  background-color: #111;
+}
 
+.custom-select:focus {
+  border-color: var(--primary-orange);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+  background-color: #000;
+}
+.select-wrapper::after {
+  content: '\ea4c';
+  font-family: 'remixicon';
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary-orange);
+  pointer-events: none;
+  font-size: 18px;
+  transition: transform 0.3s;
+}
+.select-wrapper:focus-within::after {
+  transform: translateY(-50%) rotate(180deg);
+}
+.input-group-modern {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.currency-symbol {
+  position: absolute;
+  left: 15px;
+  color: var(--primary-orange);
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.input-group-modern input {
+  width: 100%;
+  padding: 14px 14px 14px 35px;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 12px;
+  outline: none;
+  transition: 0.3s;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.input-group-modern input:focus {
+  border-color: var(--primary-orange);
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+}
+
+.generate-btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 14px;
+  background: linear-gradient(135deg, #ff8c00, #ff6a00);
+  color: black;
+  border: none;
+  border-radius: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
+}
+
+.generate-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 140, 0, 0.5);
+}
 /* Dashboard Responsive */
 @media (max-width: 900px) {
   .dashboard-container {

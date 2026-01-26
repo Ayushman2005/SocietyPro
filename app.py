@@ -133,45 +133,6 @@ def admin_login():
         return "Invalid Admin Credentials ❌"
 
     return render_template("admin_login.html")
-
-# ======================================================
-# USER REGISTER
-# ======================================================
-
-
-@app.route("/user/register", methods=["GET", "POST"])
-def user_register():
-    if request.method == "POST":
-        name = request.form["name"]
-        email = request.form["email"]
-        password = generate_password_hash(request.form["password"])
-
-        db = get_db_connection()
-        cur = db.cursor()
-
-        cur.execute("SELECT id FROM users WHERE email=%s", (email,))
-        if cur.fetchone():
-            return "Email already registered ❌"
-
-        cur.execute(
-            "INSERT INTO users (name, email, password) VALUES (%s,%s,%s)",
-            (name, email, password)
-        )
-
-        user_id = cur.lastrowid
-        cur.execute(
-            "INSERT INTO bills (user_id, amount, status) VALUES (%s, 0, 'Paid')",
-            (user_id,)
-        )
-
-        db.commit()
-        cur.close()
-        db.close()
-
-        return redirect("/user/login")
-
-    return render_template("user_register.html")
-
 # ======================================================
 # USER LOGIN
 # ======================================================
@@ -358,7 +319,7 @@ def admin_dashboard():
     bills = cur.fetchall()
 
     # 3. Fetch Users (Only this Admin's tenants) for the "Create Bill" dropdown
-    cur.execute("SELECT id, name FROM users WHERE admin_id = %s", (admin_id,))
+    cur.execute("SELECT id, name, email FROM users WHERE admin_id = %s", (admin_id,))
     users = cur.fetchall()
 
     cur.close()
@@ -641,25 +602,33 @@ def admin_settings():
     return render_template("admin_settings.html", msg=msg)
 
 # ---------- ADD BILL ----------
-
-
 @app.route("/admin/add_bill", methods=["POST"])
 def add_bill():
     if "admin" not in session:
         return redirect("/admin/login")
 
-    user_id = request.form["user_id"]
-    amount = request.form["amount"]
+    try:
+        user_id = request.form["user_id"]
+        amount = request.form["amount"]
 
-    db = get_db_connection()
-    cur = db.cursor()
-    cur.execute(
-        "INSERT INTO bills (user_id, amount, status) VALUES (%s, %s, 'Unpaid')", (user_id, amount))
-    db.commit()
-    cur.close()
-    db.close()
+        if not user_id or not amount:
+            return "Error: Missing User or Amount", 400
 
-    return redirect("/admin/dashboard")
+        db = get_db_connection()
+        cur = db.cursor()
+        cur.execute(
+            "INSERT INTO bills (user_id, amount, status) VALUES (%s, %s, 'Unpaid')", 
+            (user_id, amount)
+        )
+        db.commit()
+        cur.close()
+        db.close()
+
+        return redirect("/admin/dashboard")
+
+    except Exception as e:
+        print(f"Error generating bill: {e}")
+        return f"An error occurred: {e}", 500
 
 # ---------- USER DASHBOARD ----------
 

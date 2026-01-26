@@ -177,55 +177,85 @@
   <body class="dashboard-body">
     <div class="dashboard-container">
       <aside class="sidebar">
-        <div class="logo">Resident Portal</div>
+        <div class="logo">
+          <i class="ri-home-smile-2-line"></i> Resident Panel
+        </div>
+
         <ul class="menu">
-    <li>
-        <a href="/user/dashboard" class="{% if request.path == '/user/dashboard' %}active{% endif %}">
-            <i class="ri-dashboard-line"></i> Dashboard
-        </a>
-    </li>
+          <li>
+            <a
+              href="/user/dashboard"
+              class="{% if request.path == '/user/dashboard' %}active{% endif %}"
+            >
+              <i class="ri-dashboard-line"></i> Dashboard
+            </a>
+          </li>
 
-    <li>
-        <a href="/user/visitors" class="{% if request.path == '/user/visitors' %}active{% endif %}">
-            <i class="ri-shield-user-line"></i> Visitors
-        </a>
-    </li>
-<li>
-    <a href="/user/bookings" class="{% if request.path == '/user/bookings' %}active{% endif %}">
-        <i class="ri-calendar-check-line"></i> Bookings
-    </a>
-</li>
-    <li>
-        <a href="/user/polls" class="{% if request.path == '/user/polls' %}active{% endif %}">
-            <i class="ri-bar-chart-box-line"></i> Polls
-        </a>
-    </li>
+          <li>
+            <a
+              href="/user/visitors"
+              class="{% if request.path == '/user/visitors' %}active{% endif %}"
+            >
+              <i class="ri-shield-user-line"></i> Visitors
+            </a>
+          </li>
 
-    <li>
-        <a href="/user/notices" class="{% if request.path == '/user/notices' %}active{% endif %}">
-            <i class="ri-notification-3-line"></i> Notices
-        </a>
-    </li>
+          <li>
+            <a
+              href="/user/polls"
+              class="{% if request.path == '/user/polls' %}active{% endif %}"
+            >
+              <i class="ri-bar-chart-box-line"></i> Polls
+            </a>
+          </li>
 
-    <li>
-        <a href="/user/complaints" class="{% if request.path == '/user/complaints' %}active{% endif %}">
-            <i class="ri-feedback-line"></i> Complaints
-        </a>
-    </li>
+          <li>
+            <a
+              href="/user/notices"
+              class="{% if request.path == '/user/notices' %}active{% endif %}"
+            >
+              <i class="ri-notification-3-line"></i> Notices
+            </a>
+          </li>
 
-    <li>
-        <a href="/user/emergency" class="{% if request.path == '/user/emergency' %}active{% endif %}">
-            <i class="ri-phone-fill"></i> Emergency
-        </a>
-    </li>
+          <li>
+            <a
+              href="/user/complaints"
+              class="{% if request.path == '/user/complaints' %}active{% endif %}"
+            >
+              <i class="ri-feedback-line"></i> Complaints
+            </a>
+          </li>
 
-    <li>
-        <a href="/profile" class="{% if request.path == '/profile' %}active{% endif %}">
-            <i class="ri-user-settings-line"></i> Profile
+          <li>
+            <a
+              href="/user/emergency"
+              class="{% if request.path == '/user/emergency' %}active{% endif %}"
+            >
+              <i class="ri-phone-fill"></i> Emergency
+            </a>
+          </li>
+          <li>
+            <a
+              href="/user/bookings"
+              class="{% if request.path == '/user/bookings' %}active{% endif %}"
+            >
+              <i class="ri-calendar-check-line"></i> Bookings
+            </a>
+          </li>
+          <li>
+            <a
+              href="/profile"
+              class="{% if request.path == '/profile' %}active{% endif %}"
+            >
+              <i class="ri-user-settings-line"></i> Profile
+            </a>
+          </li>
+        </ul>
+
+        <a href="/logout" class="logout-btn">
+          <i class="ri-logout-box-line"></i> Logout
         </a>
-    </li>
-</ul>
-        <a href="/logout" class="logout-btn">Logout</a>
       </aside>
 
       <main class="main-content">
