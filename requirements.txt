@@ -1,5 +1,6 @@
-Flask
+flask
 mysql-connector-python
-reportlab
 python-dotenv
-SQLAlchemy
+reportlab
+werkzeug
+gunicorn
