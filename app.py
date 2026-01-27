@@ -73,7 +73,7 @@ def about():
 def login_page():
     return render_template("page.html")
 
-stripe.api_key = "sk_test_51SuH8K3R9A39fvkq3mImrneeKv9hiinalmyM4P9GPmvSTkwKVbbDGJg3SBaksrP7E93gFS7lT2qKvYqY8vWJHHhs00Ipar5xrZ"
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "")
 # ======================================================
 # ADMIN REGISTER
 # ======================================================
