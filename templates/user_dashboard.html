@@ -172,17 +172,17 @@
           {% if bills %} {% for b in bills %}
           <div
             class="card bill-card"
-            data-amount="{{ b[0] }}"
-            data-status="{{ b[1] }}"
+            data-amount="{{ b[1] }}"
+            data-status="{{ b[2] }}"
           >
             <div class="card-header">
-              <span>INVOICE #00{{ loop.index }}</span>
+              <span>INVOICE #{{ b[0] }}</span>
               <i class="ri-article-line"></i>
             </div>
 
             <h3>Monthly Maintenance</h3>
 
-            <div class="card-amount">₹ {{ b[0] }}</div>
+            <div class="card-amount">₹ {{ b[1] }}</div>
 
             <div
               style="
@@ -193,25 +193,43 @@
               "
             >
               <span
-                class="status {% if b[1] == 'Paid' %}paid{% else %}unpaid{% endif %}"
+                class="status {% if b[2] == 'Paid' %}paid{% else %}unpaid{% endif %}"
               >
-                {{ b[1] }}
+                {{ b[2] }}
               </span>
 
-              {% if b[1] == 'Unpaid' %}
-              <button
-                style="
-                  padding: 6px 12px;
-                  font-size: 12px;
-                  background: white;
-                  color: black;
-                  border: none;
-                  border-radius: 4px;
-                  cursor: pointer;
-                "
+              {% if b[2] == 'Unpaid' %}
+              <form
+                action="/pay_bill/{{ b[0] }}"
+                method="POST"
+                style="margin: 0"
               >
-                Pay Now <i class="ri-arrow-right-line"></i>
-              </button>
+                <input
+                  type="hidden"
+                  name="csrf_token"
+                  value="{{ csrf_token() }}"
+                />
+                <button
+                  type="submit"
+                  style="
+                    padding: 6px 12px;
+                    font-size: 12px;
+                    background: #635bff; /* Stripe Purple */
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                    transition: 0.2s;
+                  "
+                  onmouseover="this.style.background = '#4e45e4'"
+                  onmouseout="this.style.background = '#635bff'"
+                >
+                  Pay Now <i class="ri-secure-payment-line"></i>
+                </button>
+              </form>
               {% else %}
               <span style="font-size: 12px; color: #10b981">
                 <i class="ri-checkbox-circle-line"></i> Cleared

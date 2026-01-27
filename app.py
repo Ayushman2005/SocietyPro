@@ -7,6 +7,7 @@ import os
 import io
 import smtplib
 import random
+import stripe
 from datetime import date
 from dotenv import load_dotenv
 from flask_wtf.csrf import CSRFProtect
@@ -72,6 +73,7 @@ def about():
 def login_page():
     return render_template("page.html")
 
+stripe.api_key = "sk_test_51SuH8K3R9A39fvkq3mImrneeKv9hiinalmyM4P9GPmvSTkwKVbbDGJg3SBaksrP7E93gFS7lT2qKvYqY8vWJHHhs00Ipar5xrZ"
 # ======================================================
 # ADMIN REGISTER
 # ======================================================
@@ -674,7 +676,7 @@ def user_dashboard():
     user_id = session["user"]
     db = get_db_connection()
     cur = db.cursor()
-    cur.execute("SELECT amount, status FROM bills WHERE user_id=%s", (user_id,))
+    cur.execute("SELECT id, amount, status FROM bills WHERE user_id = %s", (session['user'],))
     bills = cur.fetchall()
     cur.close()
     db.close()
@@ -1185,6 +1187,67 @@ def submit_contact():
     # Redirect back to home
     return redirect("/#contact")
 
+@app.route('/pay_bill/<int:bill_id>', methods=['POST'])
+def pay_bill(bill_id):
+    if 'user' not in session:
+        return redirect('/user/login')
+
+    # Fetch bill details to ensure it belongs to the user
+    db = get_db_connection()
+    cur = db.cursor()
+    cur.execute("SELECT amount FROM bills WHERE id = %s", (bill_id,))
+    bill = cur.fetchone()
+    cur.close()
+    db.close()
+
+    if not bill:
+        return "Bill not found", 404
+    
+    amount_in_cents = int(bill[0] * 100)  # Stripe expects amount in cents (e.g., $10.00 = 1000)
+
+    try:
+        # Create a Checkout Session
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'inr',
+                    'product_data': {
+                        'name': f'Society Maintenance Bill #{bill_id}',
+                    },
+                    'unit_amount': amount_in_cents,
+                },
+                'quantity': 1,
+            }],
+            mode='payment',
+            # Stripe will redirect here after success
+            success_url=url_for('payment_success', bill_id=bill_id, _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url=url_for('user_dashboard', _external=True),
+        )
+        # Redirect user to the secure Stripe page
+        return redirect(checkout_session.url, code=303)
+
+    except Exception as e:
+        return str(e)
+
+# ======================================================
+# 2. PAYMENT SUCCESS (Update DB)
+# ======================================================
+@app.route('/payment_success/<int:bill_id>')
+def payment_success(bill_id):
+    if 'user' not in session:
+        return redirect('/user/login')
+
+    # Update database: Mark bill as Paid
+    db = get_db_connection()
+    cur = db.cursor()
+    cur.execute("UPDATE bills SET status = 'Paid' WHERE id = %s", (bill_id,))
+    db.commit()
+    cur.close()
+    db.close()
+
+    # Show a success page or redirect back to dashboard with a message
+    return render_template('payment_success.html', bill_id=bill_id)
 
 if __name__ == "__main__":
     app.run(debug=True)
