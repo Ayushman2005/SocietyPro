@@ -1068,7 +1068,8 @@ def pay_bill(bill_id):
 
     try:
         checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
+            automatic_payment_methods={'enabled': True},
+
             line_items=[{
                 'price_data': {
                     'currency': 'inr',
