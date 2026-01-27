@@ -3,6 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <title>Verify OTP - SocietyPro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://cdn-icons-png.flaticon.com/128/9402/9402264.png"
+    />
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
@@ -12,6 +18,7 @@
       rel="stylesheet"
     />
   </head>
+
   <body class="auth-body">
     <div class="auth-overlay"></div>
 
@@ -23,62 +30,57 @@
           margin-bottom: 10px;
         "
       >
-        <i class="ri-lock-password-line"></i>
+        <i class="ri-shield-keyhole-line"></i>
       </div>
 
       <h1>Verify Identity</h1>
-      <p>Enter the 6-digit code sent to <strong>{{ email }}</strong></p>
+      <p>Enter the 6-digit code sent to your email.</p>
 
-      {% if msg %}
-      <div
-        style="
-          background: #ef4444;
-          color: white;
-          padding: 10px;
-          margin-bottom: 15px;
-          border-radius: 5px;
-          font-size: 13px;
-        "
-      >
-        {{ msg }}
-      </div>
-      {% endif %}
+      <form method="POST" action="/verify_otp">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
-      <form method="post" action="/reset_password">
-        <input type="hidden" name="email" value="{{ email }}" />
+        <label class="modern-label" style="text-align: left; color: #ccc"
+          >One-Time Password</label
+        >
+        <div class="input-wrapper">
+          <i class="ri-lock-password-line input-icon"></i>
+          <input
+            class="modern-input"
+            type="text"
+            name="otp"
+            placeholder="e.g. 123456"
+            maxlength="6"
+            style="letter-spacing: 5px; font-weight: bold; text-align: left"
+            required
+          />
+        </div>
 
-        <input
-          class="auth-input"
-          type="text"
-          name="otp"
-          placeholder="Enter 6-Digit OTP"
-          required
-          maxlength="6"
-          pattern="\d{6}"
-          style="
-            text-align: center;
-            letter-spacing: 5px;
-            font-weight: bold;
-            font-size: 18px;
-          "
-        />
-
-        <input
-          class="auth-input"
-          type="password"
-          name="new_password"
-          placeholder="New Password"
-          required
-        />
-
-        <button class="auth-btn" type="submit">
-          Reset Password <i class="ri-check-double-line"></i>
+        <button class="primary-btn-glow" type="submit">
+          Verify Code
+          <i class="ri-arrow-right-line"></i>
         </button>
       </form>
 
-      <div style="margin-top: 20px">
-        <a class="auth-link" href="/forgot_password">Resend Code</a>
+      <div style="margin-top: 20px; text-align: center">
+        <span style="font-size: 13px; color: #666">Didn't receive code?</span>
+        <a
+          href="/forgot_password"
+          class="auth-link"
+          style="font-weight: 600; margin-left: 5px"
+        >
+          Resend
+        </a>
       </div>
+
+      <footer style="margin-top: 30px; font-size: 11px; color: #666">
+        &copy; 2026 Society Management System
+      </footer>
     </div>
+
+    {% if error %}
+    <script>
+      alert("{{ error }}");
+    </script>
+    {% endif %}
   </body>
 </html>

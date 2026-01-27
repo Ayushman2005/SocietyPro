@@ -161,86 +161,119 @@ def user_login():
     return render_template("user_login.html")
 
 # ======================================================
-# FORGOT PASSWORD
+# FORGOT PASSWORD & OTP LOGIC
 # ======================================================
 
-
+# 1. PAGE: Enter Email
 @app.route("/forgot_password", methods=["GET", "POST"])
 def forgot_password():
-    msg = ""
     if request.method == "POST":
         email = request.form["email"]
         
         db = get_db_connection()
         cur = db.cursor()
-        
-        # Check if email exists in EITHER Admin or User table
-        cur.execute("SELECT id FROM admins WHERE email=%s", (email,))
-        admin = cur.fetchone()
-        
-        cur.execute("SELECT id FROM users WHERE email=%s", (email,))
+        cur.execute("SELECT id FROM users WHERE email = %s", (email,))
         user = cur.fetchone()
-        
-        if admin or user:
-            # Generate 6-Digit OTP
+        cur.close()
+        db.close()
+
+        if user:
             otp = str(random.randint(100000, 999999))
+            session['reset_otp'] = otp
+            session['reset_email'] = email
             
-            # Save OTP to DB (Update if exists, Insert if new)
-            cur.execute("REPLACE INTO password_resets (email, otp) VALUES (%s, %s)", (email, otp))
-            db.commit()
+            send_email(email, otp)
             
-            # --- SECURITY LOG (Simulating Email Sending) ---
-            print(f"\n[EMAIL SIMULATION] 📧 To: {email} | Subject: Password Reset | Body: Your OTP is {otp}\n")
-            
-            cur.close()
-            db.close()
-            
-            # Send user to Step 2
-            return render_template("verify_otp.html", email=email, msg="✅ OTP sent! Check your email (or terminal).")
-        
+            return redirect("/verify_otp")
         else:
-            msg = "❌ Email not found in our records."
-            cur.close()
-            db.close()
+            return "Email not found ❌"
 
-    return render_template("forgot_password.html", msg=msg)
+    return render_template("forgot_password.html")
+# 2. PAGE: Verify OTP (You already have the HTML for this)
+@app.route("/verify_otp", methods=["GET", "POST"])
+def verify_otp_route():
+    if request.method == "POST":
+        user_otp = request.form["otp"]
+        
+        # Check OTP
+        if "reset_otp" in session and session["reset_otp"] == user_otp:
+            return redirect("/reset_password")
+        else:
+            # 🚨 INSTEAD OF TEXT, WE RENDER THE PAGE AGAIN WITH AN ERROR
+            return render_template("verify_otp.html", error="Invalid OTP! Try again later")
 
-# ======================================================
-# 2. VERIFY & RESET ROUTE (Step 2)
-# ======================================================
-@app.route("/reset_password", methods=["POST"])
+    return render_template("verify_otp.html")
+# 3. PAGE: Set New Password
+@app.route("/reset_password", methods=["GET", "POST"])
 def reset_password():
-    email = request.form["email"]
-    otp_input = request.form["otp"]
-    new_password = request.form["new_password"]
-    
-    db = get_db_connection()
-    cur = db.cursor()
-    
-    # Verify OTP
-    cur.execute("SELECT otp FROM password_resets WHERE email=%s", (email,))
-    record = cur.fetchone()
-    
-    if record and record[0] == otp_input:
-        # OTP Valid: Hash new password
+    if "reset_email" not in session:
+        return redirect("/login")
+
+    if request.method == "POST":
+        new_password = request.form["password"]
+        email = session["reset_email"]
+        
+        # Hash new password
         hashed_pw = generate_password_hash(new_password)
         
-        # Update Password (Try updating both tables)
-        cur.execute("UPDATE admins SET password=%s WHERE email=%s", (hashed_pw, email))
-        cur.execute("UPDATE users SET password=%s WHERE email=%s", (hashed_pw, email))
-        
-        # Cleanup: Delete used OTP
-        cur.execute("DELETE FROM password_resets WHERE email=%s", (email,))
+        # Update DB
+        db = get_db_connection()
+        cur = db.cursor()
+        cur.execute("UPDATE users SET password = %s WHERE email = %s", (hashed_pw, email))
         db.commit()
+        cur.close()
+        db.close()
         
-        cur.close()
-        db.close()
-        return render_template("page.html") # Redirect to Role Selection
-    
-    else:
-        cur.close()
-        db.close()
-        return render_template("verify_otp.html", email=email, msg="❌ Invalid or Expired OTP")
+        # Clear session
+        session.pop("reset_otp", None)
+        session.pop("reset_email", None)
+        
+        return redirect("/user/login")
+
+    return render_template("reset_password.html")
+
+# --- HELPER: Send Email Function ---
+def send_email(to_email, otp):
+    # ---------------- CONFIGURATION ----------------
+    sender_email = os.getenv("MAIL_USERNAME", "")
+    sender_password = os.getenv("MAIL_PASSWORD", "")
+    # -----------------------------------------------
+
+    subject = "SocietyPro: Password Reset Code"
+    body = f"""
+    <html>
+      <body style="font-family: Arial, sans-serif; color: #333;">
+        <div style="max-width: 400px; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+          <h2 style="color: #ff8c00; text-align: center;">SocietyPro</h2>
+          <p>Hello Resident,</p>
+          <p>You requested to reset your password. Here is your verification code:</p>
+          <div style="background: #f4f4f4; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; border-radius: 5px; margin: 20px 0;">
+            {otp}
+          </div>
+          <p style="font-size: 12px; color: #888;">If you did not request this, please ignore this email.</p>
+        </div>
+      </body>
+    </html>
+    """
+
+    # Create the email object
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = to_email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'html')) # Sending as HTML for better styling
+
+    try:
+        # Connect to Gmail Server
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls() # Secure the connection
+        server.login(sender_email, sender_password)
+        text = msg.as_string()
+        server.sendmail(sender_email, to_email, text)
+        server.quit()
+        print(f"✅ Email sent successfully to {to_email}")
+    except Exception as e:
+        print(f"❌ Failed to send email: {e}")
 # ======================================================
 # PROFILE UPDATE
 # ======================================================
