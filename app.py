@@ -22,7 +22,6 @@ from reportlab.platypus import Table, TableStyle
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-
 load_dotenv()
 
 app = Flask(__name__)
@@ -37,11 +36,6 @@ db_config = {
     "database": os.getenv("DB_NAME", "")
 }
 
-# ======================================================
-# DATABASE CONNECTION
-# ======================================================
-
-
 def get_db_connection():
     try:
         return mysql.connector.connect(**db_config)
@@ -49,42 +43,30 @@ def get_db_connection():
         print(f"❌ Database Connection Error: {err}")
         return None
 
-# ======================================================
-# HOME PAGES
-# ======================================================
-
-
 @app.route("/")
 def index():
     return render_template("index.html")
-
 
 @app.route("/features")
 def features():
     return render_template("features.html")
 
-
 @app.route("/about")
 def about():
     return render_template("about.html")
-
 
 @app.route("/login")
 def login_page():
     return render_template("page.html")
 
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "")
-# ======================================================
-# ADMIN REGISTER
-# ======================================================
-
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 @app.route("/admin/register", methods=["GET", "POST"])
 def admin_register():
     if request.method == "POST":
         name = request.form["name"]
         email = request.form["email"]
-        society_name = request.form["society_name"]  # <--- Get the Society Name
+        society_name = request.form["society_name"]
         password = generate_password_hash(request.form["password"])
 
         db = get_db_connection()
@@ -96,7 +78,6 @@ def admin_register():
             db.close()
             return "Admin already exists ❌"
 
-        # <--- Update INSERT query to include society_name
         cur.execute(
             "INSERT INTO admins (name, email, password, society_name) VALUES (%s, %s, %s, %s)",
             (name, email, password, society_name)
@@ -108,11 +89,6 @@ def admin_register():
         return redirect("/admin/login")
 
     return render_template("admin_register.html")
-
-# ======================================================
-# ADMIN LOGIN
-# ======================================================
-
 
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
@@ -135,10 +111,6 @@ def admin_login():
         return "Invalid Admin Credentials ❌"
 
     return render_template("admin_login.html")
-# ======================================================
-# USER LOGIN
-# ======================================================
-
 
 @app.route("/user/login", methods=["GET", "POST"])
 def user_login():
@@ -162,11 +134,6 @@ def user_login():
 
     return render_template("user_login.html")
 
-# ======================================================
-# FORGOT PASSWORD & OTP LOGIC
-# ======================================================
-
-# 1. PAGE: Enter Email
 @app.route("/forgot_password", methods=["GET", "POST"])
 def forgot_password():
     if request.method == "POST":
@@ -191,21 +158,19 @@ def forgot_password():
             return "Email not found ❌"
 
     return render_template("forgot_password.html")
-# 2. PAGE: Verify OTP (You already have the HTML for this)
+
 @app.route("/verify_otp", methods=["GET", "POST"])
 def verify_otp_route():
     if request.method == "POST":
         user_otp = request.form["otp"]
         
-        # Check OTP
         if "reset_otp" in session and session["reset_otp"] == user_otp:
             return redirect("/reset_password")
         else:
-            # 🚨 INSTEAD OF TEXT, WE RENDER THE PAGE AGAIN WITH AN ERROR
             return render_template("verify_otp.html", error="Invalid OTP! Try again later")
 
     return render_template("verify_otp.html")
-# 3. PAGE: Set New Password
+
 @app.route("/reset_password", methods=["GET", "POST"])
 def reset_password():
     if "reset_email" not in session:
@@ -215,10 +180,8 @@ def reset_password():
         new_password = request.form["password"]
         email = session["reset_email"]
         
-        # Hash new password
         hashed_pw = generate_password_hash(new_password)
         
-        # Update DB
         db = get_db_connection()
         cur = db.cursor()
         cur.execute("UPDATE users SET password = %s WHERE email = %s", (hashed_pw, email))
@@ -226,7 +189,6 @@ def reset_password():
         cur.close()
         db.close()
         
-        # Clear session
         session.pop("reset_otp", None)
         session.pop("reset_email", None)
         
@@ -234,12 +196,9 @@ def reset_password():
 
     return render_template("reset_password.html")
 
-# --- HELPER: Send Email Function ---
 def send_email(to_email, otp):
-    # ---------------- CONFIGURATION ----------------
     sender_email = os.getenv("MAIL_USERNAME", "")
     sender_password = os.getenv("MAIL_PASSWORD", "")
-    # -----------------------------------------------
 
     subject = "SocietyPro: Password Reset Code"
     body = f"""
@@ -258,17 +217,15 @@ def send_email(to_email, otp):
     </html>
     """
 
-    # Create the email object
     msg = MIMEMultipart()
     msg['From'] = sender_email
     msg['To'] = to_email
     msg['Subject'] = subject
-    msg.attach(MIMEText(body, 'html')) # Sending as HTML for better styling
+    msg.attach(MIMEText(body, 'html'))
 
     try:
-        # Connect to Gmail Server
         server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls() # Secure the connection
+        server.starttls()
         server.login(sender_email, sender_password)
         text = msg.as_string()
         server.sendmail(sender_email, to_email, text)
@@ -276,10 +233,6 @@ def send_email(to_email, otp):
         print(f"✅ Email sent successfully to {to_email}")
     except Exception as e:
         print(f"❌ Failed to send email: {e}")
-# ======================================================
-# PROFILE UPDATE
-# ======================================================
-
 
 @app.route("/profile", methods=["GET", "POST"])
 def profile():
@@ -313,14 +266,11 @@ def profile():
 
     return render_template("profile.html", user=data, role=role, msg=msg)
 
-
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
-
-# ---------- ADMIN DASHBOARD (Modified) ----------
 @app.route("/admin/dashboard")
 def admin_dashboard():
     if "admin" not in session:
@@ -330,20 +280,16 @@ def admin_dashboard():
     db = get_db_connection()
     cur = db.cursor()
 
-    # 1. Fetch Fund SPECIFIC to this Admin
     cur.execute("SELECT amount FROM society_fund WHERE admin_id = %s", (admin_id,))
     fund_row = cur.fetchone()
     
     if fund_row:
         total_fund = fund_row[0]
     else:
-        # Create a wallet for this admin if it doesn't exist
         cur.execute("INSERT INTO society_fund (admin_id, amount) VALUES (%s, 0)", (admin_id,))
         db.commit()
         total_fund = 0
 
-    # 2. Fetch Bills (Only for users belonging to this Admin)
-    # We join tables and filter by u.admin_id
     query_bills = """
         SELECT b.id, u.email, b.amount, b.status 
         FROM bills b 
@@ -353,7 +299,6 @@ def admin_dashboard():
     cur.execute(query_bills, (admin_id,))
     bills = cur.fetchall()
 
-    # 3. Fetch Users (Only this Admin's tenants) for the "Create Bill" dropdown
     cur.execute("SELECT id, name, email FROM users WHERE admin_id = %s", (admin_id,))
     users = cur.fetchall()
 
@@ -361,7 +306,6 @@ def admin_dashboard():
     db.close()
 
     return render_template("admin_dashboard.html", bills=bills, users=users, total_fund=total_fund)
-# ---------- ADMIN: VISITOR LOGS ----------
 
 @app.route("/admin/visitors")
 def admin_visitors():
@@ -372,12 +316,11 @@ def admin_visitors():
     db = get_db_connection()
     cur = db.cursor()
 
-    # SECURE QUERY: Join users to filter by admin_id
     query = """
         SELECT v.id, v.name, v.phone, v.visit_date, v.visit_time, v.status, u.email 
         FROM visitors v 
         JOIN users u ON v.user_id = u.id 
-        WHERE u.admin_id = %s  -- <--- THE FIX
+        WHERE u.admin_id = %s
         ORDER BY v.visit_date DESC
     """
     cur.execute(query, (admin_id,))
@@ -386,7 +329,7 @@ def admin_visitors():
     cur.close()
     db.close()
     return render_template("admin_visitors.html", visitors=visitors)
-# ---------- ADMIN: MANAGE POLLS ----------
+
 @app.route("/admin/polls", methods=["GET", "POST"])
 def admin_polls():
     if "admin" not in session:
@@ -396,7 +339,6 @@ def admin_polls():
     db = get_db_connection()
     cur = db.cursor()
 
-    # Create Poll (Save with admin_id)
     if request.method == "POST":
         question = request.form["question"]
         opt1 = request.form["option1"]
@@ -408,13 +350,12 @@ def admin_polls():
         )
         db.commit()
 
-    # Fetch Polls (Only for this Admin)
     query = """
         SELECT p.id, p.question, p.option1, p.option2, p.status,
         (SELECT COUNT(*) FROM poll_votes v WHERE v.poll_id = p.id AND v.choice = 'option1') as vote1,
         (SELECT COUNT(*) FROM poll_votes v WHERE v.poll_id = p.id AND v.choice = 'option2') as vote2
         FROM polls p 
-        WHERE p.admin_id = %s -- <--- THE FIX
+        WHERE p.admin_id = %s
         ORDER BY p.id DESC
     """
     cur.execute(query, (admin_id,))
@@ -423,9 +364,6 @@ def admin_polls():
     cur.close()
     db.close()
     return render_template("admin_polls.html", polls=polls)
-
-# ---------- ADMIN: BOOKING REQUESTS ----------
-
 
 @app.route("/admin/bookings")
 def admin_bookings():
@@ -436,12 +374,11 @@ def admin_bookings():
     db = get_db_connection()
     cur = db.cursor()
 
-    # SECURE QUERY: Filter bookings by the admin's residents
     query = """
         SELECT b.id, b.facility_name, b.booking_date, b.time_slot, b.status, u.email 
         FROM bookings b 
         JOIN users u ON b.user_id = u.id 
-        WHERE u.admin_id = %s -- <--- THE FIX
+        WHERE u.admin_id = %s
         ORDER BY b.booking_date DESC
     """
     cur.execute(query, (admin_id,))
@@ -450,7 +387,7 @@ def admin_bookings():
     cur.close()
     db.close()
     return render_template("admin_bookings.html", bookings=bookings)
-# ---------- UPDATE FUND ROUTE (New) ----------
+
 @app.route("/admin/update_fund", methods=["POST"])
 def update_fund():
     if "admin" not in session:
@@ -462,7 +399,6 @@ def update_fund():
     db = get_db_connection()
     cur = db.cursor()
     
-    # Update only THIS admin's fund
     cur.execute("UPDATE society_fund SET amount = %s WHERE admin_id = %s", (new_amount, admin_id))
     db.commit()
 
@@ -470,6 +406,7 @@ def update_fund():
     db.close()
 
     return redirect("/admin/dashboard")
+
 @app.route("/admin/delete_bill/<int:bill_id>", methods=["POST"]) 
 def delete_bill(bill_id):
     if "admin" not in session:
@@ -479,7 +416,6 @@ def delete_bill(bill_id):
         db = get_db_connection()
         cur = db.cursor()
 
-        # SQL Command to delete the specific bill
         cur.execute("DELETE FROM bills WHERE id = %s", (bill_id,))
 
         db.commit()
@@ -489,13 +425,13 @@ def delete_bill(bill_id):
         print(f"Error deleting bill: {e}")
 
     return redirect("/admin/dashboard")
-# ---------- ADMIN: TENANTS ----------
+
 @app.route("/admin/tenants", methods=["GET", "POST"])
 def admin_tenants():
     if "admin" not in session:
         return redirect("/admin/login")
     
-    admin_id = session["admin"] # <--- Get Current Admin ID
+    admin_id = session["admin"]
     db = get_db_connection()
     
     if request.method == "POST":
@@ -505,13 +441,11 @@ def admin_tenants():
         
         try:
             cur = db.cursor()
-            # SAVE WITH ADMIN ID
             cur.execute(
                 "INSERT INTO users (name, email, password, admin_id) VALUES (%s, %s, %s, %s)", 
                 (name, email, password, admin_id)
             )
             
-            # Create default bill
             user_id = cur.lastrowid
             cur.execute("INSERT INTO bills (user_id, amount, status) VALUES (%s, 0, 'Paid')", (user_id,))
             
@@ -520,7 +454,6 @@ def admin_tenants():
         except mysql.connector.Error as err:
             print(f"Error: {err}")
 
-    # FILTER TENANTS BY ADMIN ID
     cur = db.cursor()
     cur.execute("SELECT id, name, email FROM users WHERE admin_id = %s ORDER BY id DESC", (admin_id,))
     tenants = cur.fetchall()
@@ -528,8 +461,6 @@ def admin_tenants():
     db.close()
 
     return render_template("admin_tenants.html", tenants=tenants)
-# ---------- ADMIN: DELETE TENANT ----------
-
 
 @app.route("/admin/delete_tenant/<int:user_id>", methods=["POST"])
 def delete_tenant(user_id):
@@ -540,10 +471,8 @@ def delete_tenant(user_id):
         db = get_db_connection()
         cur = db.cursor()
 
-        # 1. First delete all bills associated with this user (to prevent errors)
         cur.execute("DELETE FROM bills WHERE user_id = %s", (user_id,))
 
-        # 2. Then delete the user
         cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
 
         db.commit()
@@ -554,7 +483,6 @@ def delete_tenant(user_id):
 
     return redirect("/admin/tenants")
 
-# ---------- ADMIN: EDIT TENANT ----------
 @app.route("/admin/edit_tenant", methods=["POST"])
 def edit_tenant():
     if "admin" not in session:
@@ -569,14 +497,12 @@ def edit_tenant():
     cur = db.cursor()
 
     if password_input.strip():
-        # If admin entered a new password, hash it and update everything
         hashed_pw = generate_password_hash(password_input)
         cur.execute(
             "UPDATE users SET name=%s, email=%s, password=%s WHERE id=%s",
             (name, email, hashed_pw, user_id)
         )
     else:
-        # If password field left blank, only update details
         cur.execute(
             "UPDATE users SET name=%s, email=%s WHERE id=%s",
             (name, email, user_id)
@@ -587,7 +513,7 @@ def edit_tenant():
     db.close()
 
     return redirect("/admin/tenants")
-# ---------- ADMIN: INVOICES ----------
+
 @app.route("/admin/invoices")
 def admin_invoices():
     if "admin" not in session:
@@ -597,7 +523,6 @@ def admin_invoices():
     db = get_db_connection()
     cur = db.cursor()
     
-    # Filter bills by joining users and checking admin_id
     query = """
         SELECT bills.id, users.email, bills.amount, bills.status 
         FROM bills 
@@ -611,9 +536,6 @@ def admin_invoices():
     cur.close()
     db.close()
     return render_template("admin_invoices.html", invoices=invoices)
-
-# ---------- ADMIN: SETTINGS ----------
-
 
 @app.route("/admin/settings", methods=["GET", "POST"])
 def admin_settings():
@@ -636,7 +558,6 @@ def admin_settings():
 
     return render_template("admin_settings.html", msg=msg)
 
-# ---------- ADD BILL ----------
 @app.route("/admin/add_bill", methods=["POST"])
 def add_bill():
     if "admin" not in session:
@@ -665,9 +586,6 @@ def add_bill():
         print(f"Error generating bill: {e}")
         return f"An error occurred: {e}", 500
 
-# ---------- USER DASHBOARD ----------
-
-
 @app.route("/user/dashboard")
 def user_dashboard():
     if "user" not in session:
@@ -682,8 +600,6 @@ def user_dashboard():
     db.close()
 
     return render_template("user_dashboard.html", bills=bills)
-# ---------- ADMIN: MANAGE NOTICES ----------
-
 
 @app.route("/admin/notices", methods=["GET", "POST"])
 def admin_notices():
@@ -697,12 +613,10 @@ def admin_notices():
     if request.method == "POST":
         title = request.form["title"]
         content = request.form["content"]
-        # Save with Admin ID
         cur.execute("INSERT INTO notices (title, content, admin_id) VALUES (%s, %s, %s)", 
                     (title, content, admin_id))
         db.commit()
 
-    # Fetch only this Admin's notices
     cur.execute("SELECT id, title, content, DATE_FORMAT(created_at, '%d %b %Y') FROM notices WHERE admin_id = %s ORDER BY id DESC", (admin_id,))
     notices = cur.fetchall()
 
@@ -730,7 +644,6 @@ def edit_notice():
 
     return redirect("/admin/notices")
 
-
 @app.route("/admin/delete_notice/<int:id>")
 def delete_notice(id):
     if "admin" not in session:
@@ -744,9 +657,6 @@ def delete_notice(id):
     db.close()
 
     return redirect("/admin/notices")
-
-# ---------- USER: VIEW NOTICES ----------
-
 
 @app.route("/user/notices")
 def user_notices():
@@ -762,8 +672,6 @@ def user_notices():
     db.close()
 
     return render_template("user_notices.html", notices=notices)
-# ---------- DOWNLOAD INVOICE PDF ----------
-
 
 @app.route("/admin/download_invoice/<int:bill_id>")
 def download_invoice(bill_id):
@@ -826,14 +734,14 @@ def download_invoice(bill_id):
     table = Table(data, colWidths=[400, 100])
     style = TableStyle([
         ('BACKGROUND', (0, 0), (1, 0), colors.HexColor(
-            "#333333")),  # Header Dark Gray
+            "#333333")),
         ('TEXTCOLOR', (0, 0), (1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('ALIGN', (0, 0), (0, -1), 'LEFT'),  # Description Align Left
+        ('ALIGN', (0, 0), (0, -1), 'LEFT'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
         ('BACKGROUND', (0, -1), (-1, -1),
-         colors.HexColor("#ff8c00")),  # Total Row Orange
+         colors.HexColor("#ff8c00")),
         ('GRID', (0, 0), (-1, -2), 1, colors.black)
     ])
     table.setStyle(style)
@@ -864,8 +772,6 @@ def download_invoice(bill_id):
     from flask import send_file
     return send_file(buffer, as_attachment=True, download_name=f"Invoice_{invoice_id}.pdf", mimetype='application/pdf')
 
-
-# 2. USER: COMPLAINTS
 @app.route("/user/complaints", methods=["GET", "POST"])
 def user_complaints():
     if "user" not in session:
@@ -875,7 +781,6 @@ def user_complaints():
     db = get_db_connection()
     cur = db.cursor()
 
-    # Handle New Complaint Submission
     if request.method == "POST":
         subject = request.form["subject"]
         description = request.form["description"]
@@ -883,7 +788,6 @@ def user_complaints():
                     (user_id, subject, description))
         db.commit()
 
-    # Fetch User's Complaints
     cur.execute(
         "SELECT subject, description, status, created_at FROM complaints WHERE user_id = %s ORDER BY id DESC", (user_id,))
     my_complaints = cur.fetchall()
@@ -892,8 +796,6 @@ def user_complaints():
     db.close()
     return render_template("user_complaints.html", complaints=my_complaints)
 
-
-# ---------- ADMIN: COMPLAINTS ----------
 @app.route("/admin/complaints", methods=["GET", "POST"])
 def admin_complaints():
     if "admin" not in session:
@@ -903,7 +805,6 @@ def admin_complaints():
     db = get_db_connection()
     cur = db.cursor()
 
-    # Handle "Mark Resolved"
     if request.method == "POST":
         complaint_id = request.form["complaint_id"]
         status = request.form["status"]
@@ -911,13 +812,12 @@ def admin_complaints():
         db.commit()
         return redirect("/admin/complaints")
 
-    # Fetch Complaints (Filtered)
     query = """
         SELECT c.id, u.email, c.subject, c.description, c.status, 
                DATE_FORMAT(c.created_at, '%d %b %Y') as date
         FROM complaints c
         JOIN users u ON c.user_id = u.id
-        WHERE u.admin_id = %s -- <--- THE FIX
+        WHERE u.admin_id = %s
         ORDER BY c.status ASC, c.created_at DESC
     """
     cur.execute(query, (admin_id,))
@@ -926,28 +826,24 @@ def admin_complaints():
     cur.close()
     db.close()
     return render_template("admin_complaints.html", complaints=complaints)
+
 @app.route('/dashboard')
 def dashboard():
-    # 1. Connect to database using your existing function
     db = get_db_connection()
     if not db:
         return "Database Error"
 
     cur = db.cursor()
 
-    # 2. Use Raw SQL to sum the 'amount' column from the 'bills' table
     cur.execute("SELECT SUM(amount) FROM bills")
     result = cur.fetchone()
 
     cur.close()
     db.close()
 
-    # 3. Handle the result (result[0] will be None if table is empty)
     total_fund = result[0] if result[0] else 0
 
     return render_template('dashboard.html', total_fund=total_fund)
-# ---------- VISITOR GATE PASS ----------
-
 
 @app.route("/user/visitors", methods=["GET", "POST"])
 def user_visitors():
@@ -957,7 +853,6 @@ def user_visitors():
     db = get_db_connection()
     cur = db.cursor()
 
-    # Handle New Visitor Submission
     if request.method == "POST":
         name = request.form["name"]
         phone = request.form["phone"]
@@ -967,7 +862,6 @@ def user_visitors():
                     (user_id, name, phone, date, time))
         db.commit()
 
-    # Fetch My Visitors
     cur.execute(
         "SELECT name, phone, visit_date, visit_time, status FROM visitors WHERE user_id=%s ORDER BY id DESC", (user_id,))
     visitors = cur.fetchall()
@@ -975,8 +869,6 @@ def user_visitors():
     cur.close()
     db.close()
     return render_template("user_visitors.html", visitors=visitors)
-# ---------- POLLS & VOTING ----------
-
 
 @app.route("/user/polls", methods=["GET", "POST"])
 def user_polls():
@@ -986,12 +878,10 @@ def user_polls():
     db = get_db_connection()
     cur = db.cursor()
 
-    # Handle Voting
     if request.method == "POST":
         poll_id = request.form["poll_id"]
-        choice = request.form["choice"]  # 'option1' or 'option2'
+        choice = request.form["choice"]
 
-        # Check if already voted
         cur.execute(
             "SELECT id FROM poll_votes WHERE user_id=%s AND poll_id=%s", (user_id, poll_id))
         if not cur.fetchone():
@@ -999,8 +889,6 @@ def user_polls():
                 "INSERT INTO poll_votes (user_id, poll_id, choice) VALUES (%s, %s, %s)", (user_id, poll_id, choice))
             db.commit()
 
-    # Fetch Polls and Calculate Results
-    # This complex query counts votes for option1 and option2 for each poll
     query = """
         SELECT p.id, p.question, p.option1, p.option2, p.status,
         (SELECT COUNT(*) FROM poll_votes v WHERE v.poll_id = p.id AND v.choice = 'option1') as vote1,
@@ -1014,8 +902,6 @@ def user_polls():
     cur.close()
     db.close()
     return render_template("user_polls.html", polls=polls)
-# ---------- AMENITY BOOKING ----------
-
 
 @app.route("/user/bookings", methods=["GET", "POST"])
 def user_bookings():
@@ -1023,7 +909,6 @@ def user_bookings():
         return redirect("/user/login")
     user_id = session["user"]
 
-    # Define available facilities and slots
     facilities = ["Community Hall", "Clubhouse",
                   "Tennis Court", "Swimming Pool Area"]
     slots = ["Morning (9 AM - 1 PM)", "Afternoon (2 PM - 6 PM)",
@@ -1035,13 +920,11 @@ def user_bookings():
     db = get_db_connection()
     cur = db.cursor()
 
-    # Handle New Booking Submission
     if request.method == "POST":
         facility = request.form["facility"]
         date = request.form["date"]
         slot = request.form["slot"]
 
-        # 1. Check if slot is already taken
         check_query = "SELECT id FROM bookings WHERE facility_name=%s AND booking_date=%s AND time_slot=%s AND status='Confirmed'"
         cur.execute(check_query, (facility, date, slot))
         existing_booking = cur.fetchone()
@@ -1049,13 +932,11 @@ def user_bookings():
         if existing_booking:
             error = f"Sorry! The {facility} is already booked for that slot."
         else:
-            # 2. Book it if free
             insert_query = "INSERT INTO bookings (user_id, facility_name, booking_date, time_slot, status) VALUES (%s, %s, %s, %s, 'Pending')"
             cur.execute(insert_query, (user_id, facility, date, slot))
             db.commit()
             success = "Booking Request Sent! Awaiting Admin Approval."
 
-    # Fetch My Bookings (To show history)
     cur.execute("SELECT facility_name, booking_date, time_slot, status FROM bookings WHERE user_id=%s ORDER BY booking_date DESC", (user_id,))
     my_bookings = cur.fetchall()
 
@@ -1069,15 +950,11 @@ def user_bookings():
                            error=error,
                            success=success)
 
-# ---------- ADMIN: HANDLE BOOKING ACTIONS ----------
-
-
 @app.route("/admin/booking_action", methods=["POST"])
 def booking_action():
     if "admin" not in session:
         return redirect("/admin/login")
 
-    # Get data from the form body, not the URL
     booking_id = request.form.get("id")
     action = request.form.get("action")
 
@@ -1091,8 +968,6 @@ def booking_action():
     db.close()
 
     return redirect("/admin/bookings")
-# ---------- USER: EMERGENCY CONTACTS ----------
-
 
 @app.route("/user/emergency")
 def user_emergency():
@@ -1100,7 +975,6 @@ def user_emergency():
         return redirect("/user/login")
 
     contacts = [
-        # Red = Critical Emergency
         {"name": "Police Station", "role": "Emergency", "phone": "100",
             "icon": "ri-alarm-warning-fill", "theme": "red"},
         {"name": "Fire Brigade", "role": "Emergency",
@@ -1108,15 +982,12 @@ def user_emergency():
         {"name": "Ambulance", "role": "Medical", "phone": "102",
             "icon": "ri-first-aid-kit-fill", "theme": "red"},
 
-        # Green = Security
         {"name": "Main Gate Security", "role": "Security", "phone": "+91 98765 43210",
             "icon": "ri-shield-star-fill", "theme": "green"},
 
-        # Blue = Admin/Office
         {"name": "Society Office", "role": "Admin", "phone": "0120-456-7890",
             "icon": "ri-building-2-fill", "theme": "blue"},
 
-        # Orange = Maintenance
         {"name": "Electrician", "role": "Maintenance", "phone": "+91 91234 56789",
             "icon": "ri-lightbulb-flash-fill", "theme": "orange"},
         {"name": "Plumber", "role": "Maintenance", "phone": "+91 99887 76655",
@@ -1124,9 +995,6 @@ def user_emergency():
     ]
 
     return render_template("user_emergency.html", contacts=contacts)
-# ---------- LOGOUT ----------
-
-
 
 @app.route("/submit_contact", methods=["POST"])
 def submit_contact():
@@ -1146,16 +1014,13 @@ def submit_contact():
     except Exception as e:
         print(f"Database Error: {e}")
 
-    # 2. Send Email Notification
     try:
-        # Email Credentials
         smtp_server = os.getenv("MAIL_SERVER", "smtp.gmail.com")
         smtp_port = int(os.getenv("MAIL_PORT", 587))
         sender_email = os.getenv("MAIL_USERNAME")
         password = os.getenv("MAIL_PASSWORD")
-        receiver_email = sender_email  # Sending to yourself
+        receiver_email = sender_email
 
-        # Create Message
         msg = MIMEMultipart()
         msg["From"] = sender_email
         msg["To"] = receiver_email
@@ -1172,9 +1037,8 @@ def submit_contact():
         """
         msg.attach(MIMEText(body, "plain"))
 
-        # Connect to Server and Send
         server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()  # Secure the connection
+        server.starttls()
         server.login(sender_email, password)
         server.send_message(msg)
         server.quit()
@@ -1184,15 +1048,12 @@ def submit_contact():
     except Exception as e:
         print(f"❌ Email Error: {e}")
 
-    # Redirect back to home
     return redirect("/#contact")
 
 @app.route('/pay_bill/<int:bill_id>', methods=['POST'])
 def pay_bill(bill_id):
     if 'user' not in session:
         return redirect('/user/login')
-
-    # Fetch bill details to ensure it belongs to the user
     db = get_db_connection()
     cur = db.cursor()
     cur.execute("SELECT amount FROM bills WHERE id = %s", (bill_id,))
@@ -1203,10 +1064,9 @@ def pay_bill(bill_id):
     if not bill:
         return "Bill not found", 404
     
-    amount_in_cents = int(bill[0] * 100)  # Stripe expects amount in cents (e.g., $10.00 = 1000)
+    amount_in_cents = int(bill[0] * 100)
 
     try:
-        # Create a Checkout Session
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=[{
@@ -1220,25 +1080,19 @@ def pay_bill(bill_id):
                 'quantity': 1,
             }],
             mode='payment',
-            # Stripe will redirect here after success
             success_url=url_for('payment_success', bill_id=bill_id, _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
             cancel_url=url_for('user_dashboard', _external=True),
         )
-        # Redirect user to the secure Stripe page
         return redirect(checkout_session.url, code=303)
 
     except Exception as e:
         return str(e)
 
-# ======================================================
-# 2. PAYMENT SUCCESS (Update DB)
-# ======================================================
 @app.route('/payment_success/<int:bill_id>')
 def payment_success(bill_id):
     if 'user' not in session:
         return redirect('/user/login')
 
-    # Update database: Mark bill as Paid
     db = get_db_connection()
     cur = db.cursor()
     cur.execute("UPDATE bills SET status = 'Paid' WHERE id = %s", (bill_id,))
@@ -1246,7 +1100,6 @@ def payment_success(bill_id):
     cur.close()
     db.close()
 
-    # Show a success page or redirect back to dashboard with a message
     return render_template('payment_success.html', bill_id=bill_id)
 
 if __name__ == "__main__":
