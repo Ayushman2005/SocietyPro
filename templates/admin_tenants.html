@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Tenants - SocietyPro</title>
+    <title>Tenants</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
@@ -158,8 +158,22 @@
           </div>
 
           <div class="grid-right">
-            <div class="form-box">
-              <h3 class="section-title" id="formTitle">Add New Tenant</h3>
+            <div
+              class="form-box"
+              style="
+                height: fit-content;
+                border: 1px solid #333;
+                background: #151515;
+              "
+            >
+              <h3
+                class="section-title"
+                id="formTitle"
+                style="display: flex; align-items: center; gap: 10px"
+              >
+                <i class="ri-user-add-fill"></i> Add New Tenant
+              </h3>
+
               <form id="tenantForm" action="/admin/tenants" method="POST">
                 <input
                   type="hidden"
@@ -168,45 +182,57 @@
                 />
                 <input type="hidden" name="user_id" id="editUserId" />
 
-                <label style="color: #ccc; font-size: 13px">Full Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  id="editName"
-                  placeholder="e.g. Rahul Sharma"
-                  required
-                />
+                <label class="modern-label">Full Name</label>
+                <div class="input-wrapper">
+                  <i class="ri-user-smile-line input-icon"></i>
+                  <input
+                    type="text"
+                    name="name"
+                    id="editName"
+                    class="modern-input"
+                    placeholder="e.g. Rahul Sharma"
+                    required
+                  />
+                </div>
 
-                <label style="color: #ccc; font-size: 13px"
-                  >Email Address</label
-                >
-                <input
-                  type="email"
-                  name="email"
-                  id="editEmail"
-                  placeholder="user@example.com"
-                  required
-                />
+                <label class="modern-label">Email Address</label>
+                <div class="input-wrapper">
+                  <i class="ri-mail-send-line input-icon"></i>
+                  <input
+                    type="email"
+                    name="email"
+                    id="editEmail"
+                    class="modern-input"
+                    placeholder="user@example.com"
+                    required
+                  />
+                </div>
 
-                <label style="color: #ccc; font-size: 13px">Password</label>
-                <input
-                  type="text"
-                  name="password"
-                  id="editPassword"
-                  placeholder="Assign password"
-                  required
-                />
+                <label class="modern-label">Password</label>
+                <div class="input-wrapper">
+                  <i class="ri-lock-password-line input-icon"></i>
+                  <input
+                    type="text"
+                    name="password"
+                    id="editPassword"
+                    class="modern-input"
+                    placeholder="Assign password"
+                    required
+                  />
+                </div>
 
-                <button type="submit" id="submitBtn">
+                <button type="submit" id="submitBtn" class="primary-btn-glow">
                   <i class="ri-user-add-line"></i> Add Tenant
                 </button>
+
                 <button
                   type="button"
                   id="cancelBtn"
                   onclick="resetForm()"
-                  style="display: none; background: #333; margin-top: 10px"
+                  class="cancel-btn"
+                  style="display: none"
                 >
-                  Cancel Edit
+                  <i class="ri-close-circle-line"></i> Cancel Edit
                 </button>
               </form>
             </div>

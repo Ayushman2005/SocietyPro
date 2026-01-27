@@ -1070,7 +1070,7 @@ td {
   cursor: pointer;
   transition: all 0.3s ease;
   outline: none;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 .custom-select:hover {
   border-color: #555;
@@ -1083,8 +1083,8 @@ td {
   background-color: #000;
 }
 .select-wrapper::after {
-  content: '\ea4c';
-  font-family: 'remixicon';
+  content: "\ea4c";
+  font-family: "remixicon";
   position: absolute;
   right: 15px;
   top: 50%;
@@ -1152,6 +1152,119 @@ td {
 .generate-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(255, 140, 0, 0.5);
+}
+.modern-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #94a3b8; /* Cool Gray */
+  margin-bottom: 8px;
+  display: block;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Input Wrapper (For Icon Positioning) */
+.input-wrapper {
+  position: relative;
+  margin-bottom: 25px;
+  width: 100%;
+}
+
+/* The Icons inside inputs */
+.input-wrapper .input-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary-orange);
+  font-size: 18px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Modern Input Fields */
+.modern-input,
+.modern-textarea {
+  width: 100%;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 10px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.modern-input {
+  padding: 14px 14px 14px 45px !important;
+}
+
+/* Textarea specific padding */
+.modern-textarea {
+  padding: 15px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+/* Focus Glow Effect */
+.modern-input:focus,
+.modern-textarea:focus {
+  border-color: var(--primary-orange);
+  background: #111;
+  box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.15); /* Soft Orange Ring */
+  outline: none;
+}
+
+/* Glowing Submit Button */
+.primary-btn-glow {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #ff8c00, #ff6a00);
+  color: black;
+  border: none;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(255, 140, 0, 0.2);
+}
+
+.primary-btn-glow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 140, 0, 0.4); /* Stronger Glow on Hover */
+}
+
+/* Cancel Button */
+.cancel-btn {
+  width: 100%;
+  padding: 12px;
+  background: #222;
+  color: #ccc;
+  border: 1px solid #444;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-top: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: 0.3s;
+}
+
+.cancel-btn:hover {
+  background: #333;
+  color: white;
+  border-color: #666;
 }
 /* Dashboard Responsive */
 @media (max-width: 900px) {

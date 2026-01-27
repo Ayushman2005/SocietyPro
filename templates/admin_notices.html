@@ -72,7 +72,6 @@
 
         <div class="content-grid">
           <div>
-            <h3 class="section-title">Posted Notices</h3>
             <div class="cards" style="grid-template-columns: 1fr">
               {% for n in notices %}
               <div
@@ -113,33 +112,67 @@
             </div>
           </div>
 
-          <div class="form-box">
-            <h3 class="section-title" id="formTitle">Post New Notice</h3>
+          <div
+            class="form-box"
+            style="
+              height: fit-content;
+              border: 1px solid #333;
+              background: #151515;
+            "
+          >
+            <h3
+              class="section-title"
+              id="formTitle"
+              style="display: flex; align-items: center; gap: 10px"
+            >
+              <i class="ri-edit-2-fill"></i> Post New Notice
+            </h3>
+
             <form id="noticeForm" action="/admin/notices" method="POST">
               <input
                 type="hidden"
                 name="csrf_token"
                 value="{{ csrf_token() }}"
               />
-
               <input type="hidden" name="notice_id" id="noticeId" />
-              <label>Title</label>
-              <input type="text" placeholder="Enter notice title" name="title" id="noticeTitle" required />
-              <label>Content</label>
-              <textarea
-                name="content"
-                id="noticeContent"
-                rows="5"
-                required
-              ></textarea>
-              <button type="submit" id="submitBtn">Post Notice</button>
+
+              <label class="modern-label">Notice Title</label>
+              <div class="input-wrapper">
+                <i class="ri-t-box-line input-icon"></i>
+                <input
+                  type="text"
+                  name="title"
+                  id="noticeTitle"
+                  class="modern-input"
+                  placeholder="e.g. Annual General Meeting"
+                  required
+                />
+              </div>
+
+              <label class="modern-label">Announcement Details</label>
+              <div class="textarea-wrapper">
+                <textarea
+                  name="content"
+                  id="noticeContent"
+                  rows="6"
+                  class="modern-textarea"
+                  placeholder="Write the full details of the announcement here..."
+                  required
+                ></textarea>
+              </div>
+
+              <button type="submit" id="submitBtn" class="primary-btn-glow">
+                <i class="ri-send-plane-fill"></i> Publish Notice
+              </button>
+
               <button
                 type="button"
                 id="cancelBtn"
                 onclick="resetForm()"
+                class="cancel-btn"
                 style="display: none"
               >
-                Cancel Edit
+                <i class="ri-close-circle-line"></i> Cancel Edit
               </button>
             </form>
           </div>

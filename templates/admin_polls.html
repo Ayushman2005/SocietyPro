@@ -79,31 +79,67 @@
         <h1 class="section-title">📊 Community Polls</h1>
 
         <div class="content-grid">
-          <div class="form-box" style="height: fit-content">
-            <h3><i class="ri-add-line"></i> Create New Poll</h3>
+          <div
+            class="form-box"
+            style="
+              height: fit-content;
+              border: 1px solid #333;
+              background: #151515;
+            "
+          >
+            <h3
+              class="section-title"
+              style="display: flex; align-items: center; gap: 10px"
+            >
+              <i class="ri-pie-chart-2-fill"></i> Create New Poll
+            </h3>
+
             <form method="POST">
-              <label>Question</label>
               <input
-                type="text"
-                name="question"
-                placeholder="e.g. Paint Color?"
-                required
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
               />
-              <label>Option 1</label>
-              <input
-                type="text"
-                name="option1"
-                placeholder="e.g. Blue"
-                required
-              />
-              <label>Option 2</label>
-              <input
-                type="text"
-                name="option2"
-                placeholder="e.g. White"
-                required
-              />
-              <button type="submit">Publish Poll</button>
+
+              <label class="modern-label">Poll Question</label>
+              <div class="input-wrapper">
+                <i class="ri-question-line input-icon"></i>
+                <input
+                  type="text"
+                  name="question"
+                  class="modern-input"
+                  placeholder="e.g. What color should we paint the lobby?"
+                  required
+                />
+              </div>
+
+              <label class="modern-label">Option 1</label>
+              <div class="input-wrapper">
+                <i class="ri-number-1 input-icon"></i>
+                <input
+                  type="text"
+                  name="option1"
+                  class="modern-input"
+                  placeholder="e.g. Royal Blue"
+                  required
+                />
+              </div>
+
+              <label class="modern-label">Option 2</label>
+              <div class="input-wrapper">
+                <i class="ri-number-2 input-icon"></i>
+                <input
+                  type="text"
+                  name="option2"
+                  class="modern-input"
+                  placeholder="e.g. Classic White"
+                  required
+                />
+              </div>
+
+              <button type="submit" class="primary-btn-glow">
+                <i class="ri-bar-chart-box-line"></i> Publish Poll
+              </button>
             </form>
           </div>
 
