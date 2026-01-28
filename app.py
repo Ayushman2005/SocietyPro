@@ -141,12 +141,14 @@ def forgot_password():
         
         db = get_db_connection()
         cur = db.cursor()
-        cur.execute("SELECT id FROM users WHERE email = %s", (email,))
-        user = cur.fetchone()
+        
+        cur.execute("SELECT id FROM admins WHERE email = %s", (email,))
+        admin = cur.fetchone()
+        
         cur.close()
         db.close()
 
-        if user:
+        if admin:
             otp = str(random.randint(100000, 999999))
             session['reset_otp'] = otp
             session['reset_email'] = email
@@ -155,7 +157,7 @@ def forgot_password():
             
             return redirect("/verify_otp")
         else:
-            return "Email not found ❌"
+            return "Admin email not found ❌"
 
     return render_template("forgot_password.html")
 
@@ -174,7 +176,7 @@ def verify_otp_route():
 @app.route("/reset_password", methods=["GET", "POST"])
 def reset_password():
     if "reset_email" not in session:
-        return redirect("/login")
+        return redirect("/admin/login")
 
     if request.method == "POST":
         new_password = request.form["password"]
@@ -184,7 +186,8 @@ def reset_password():
         
         db = get_db_connection()
         cur = db.cursor()
-        cur.execute("UPDATE users SET password = %s WHERE email = %s", (hashed_pw, email))
+        
+        cur.execute("UPDATE admins SET password = %s WHERE email = %s", (hashed_pw, email))
         db.commit()
         cur.close()
         db.close()
@@ -192,7 +195,7 @@ def reset_password():
         session.pop("reset_otp", None)
         session.pop("reset_email", None)
         
-        return redirect("/user/login")
+        return redirect("/admin/login")
 
     return render_template("reset_password.html")
 
