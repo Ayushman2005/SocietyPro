@@ -1068,7 +1068,7 @@ def pay_bill(bill_id):
 
     try:
         checkout_session = stripe.checkout.Session.create(
-            automatic_payment_methods={'enabled': True},
+            payment_method_types=['card'],
 
             line_items=[{
                 'price_data': {
