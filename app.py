@@ -25,7 +25,7 @@ from email.mime.multipart import MIMEMultipart
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", "society_secret_key")
+app.secret_key = "super_secret_key_society_pro_2026"
 
 csrf = CSRFProtect(app)
 
@@ -80,19 +80,25 @@ def admin_register():
             return "Email already registered! Please login."
 
         otp = str(random.randint(100000, 999999))
+
+        session['temp_admin'] = {
+            'name': name,
+            'email': email,
+            'password': generate_password_hash(password), 
+            'society_name': society_name
+        }
+        session['temp_otp'] = otp
+
         send_email(
             to_email=email, 
             otp=otp, 
             subject="SocietyPro: Verify Your Account",
             heading="Welcome Aboard!",
             message_text="Thank you for registering. Please use the code below to verify your admin account:"
-        )
-
+        ) 
         return redirect("/admin/verify_registration")
 
     return render_template("admin_register.html")
-
-
 @app.route("/admin/verify_registration", methods=["GET", "POST"])
 def admin_verify_registration():
     if 'temp_admin' not in session or 'temp_otp' not in session:
@@ -278,7 +284,6 @@ def send_email(to_email, otp, subject, heading, message_text):
         text = msg.as_string()
         server.sendmail(sender_email, to_email, text)
         server.quit()
-        print(f"✅ Email sent successfully to {to_email}")
     except Exception as e:
         print(f"❌ Failed to send email: {e}")
 
