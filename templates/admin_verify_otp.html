@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Verify Registration - SocietyPro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="auth-body">
+    <div class="auth-overlay"></div>
+    <div class="auth-container">
+      <div
+        style="
+          font-size: 40px;
+          color: var(--primary-orange);
+          margin-bottom: 10px;
+        "
+      >
+        <i class="ri-mail-check-line"></i>
+      </div>
+
+      <h1>Verify Email</h1>
+      <p>
+        We sent a code to <strong>your email</strong>.<br />Enter it below to
+        complete registration.
+      </p>
+
+      <form method="POST" action="/admin/verify_registration">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+        <label class="modern-label" style="text-align: left; color: #ccc"
+          >Verification Code</label
+        >
+        <div class="input-wrapper">
+          <i class="ri-key-2-line input-icon"></i>
+          <input
+            class="modern-input"
+            type="text"
+            name="otp"
+            placeholder="e.g. 123456"
+            maxlength="6"
+            style="letter-spacing: 5px; font-weight: bold"
+            required
+          />
+        </div>
+
+        <button class="primary-btn-glow" type="submit">
+          Complete Registration <i class="ri-check-double-line"></i>
+        </button>
+      </form>
+    </div>
+
+    {% if error %}
+    <script>
+      alert("{{ error }}");
+    </script>
+    {% endif %}
+  </body>
+</html>

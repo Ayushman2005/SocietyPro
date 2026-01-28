@@ -66,30 +66,66 @@ def admin_register():
     if request.method == "POST":
         name = request.form["name"]
         email = request.form["email"]
+        password = request.form["password"]
         society_name = request.form["society_name"]
-        password = generate_password_hash(request.form["password"])
 
         db = get_db_connection()
         cur = db.cursor()
-
-        cur.execute("SELECT id FROM admins WHERE email=%s", (email,))
-        if cur.fetchone():
-            cur.close()
-            db.close()
-            return "Admin already exists ❌"
-
-        cur.execute(
-            "INSERT INTO admins (name, email, password, society_name) VALUES (%s, %s, %s, %s)",
-            (name, email, password, society_name)
-        )
-        db.commit()
+        cur.execute("SELECT id FROM admins WHERE email = %s", (email,))
+        existing_admin = cur.fetchone()
         cur.close()
         db.close()
 
-        return redirect("/admin/login")
+        if existing_admin:
+            return "Email already registered! Please login."
+
+        otp = str(random.randint(100000, 999999))
+        send_email(
+            to_email=email, 
+            otp=otp, 
+            subject="SocietyPro: Verify Your Account",
+            heading="Welcome Aboard!",
+            message_text="Thank you for registering. Please use the code below to verify your admin account:"
+        )
+
+        return redirect("/admin/verify_registration")
 
     return render_template("admin_register.html")
 
+
+@app.route("/admin/verify_registration", methods=["GET", "POST"])
+def admin_verify_registration():
+    if 'temp_admin' not in session or 'temp_otp' not in session:
+        return redirect("/admin/register")
+
+    if request.method == "POST":
+        user_otp = request.form["otp"]
+        
+        if user_otp == session['temp_otp']:
+            data = session['temp_admin']
+            
+            try:
+                db = get_db_connection()
+                cur = db.cursor()
+                cur.execute(
+                    "INSERT INTO admins (name, email, password, society_name) VALUES (%s, %s, %s, %s)",
+                    (data['name'], data['email'], data['password'], data['society_name'])
+                )
+                db.commit()
+                cur.close()
+                db.close()
+                
+                session.pop('temp_admin', None)
+                session.pop('temp_otp', None)
+                
+                return redirect("/admin/login")
+                
+            except Exception as e:
+                return f"Database Error: {e}"
+        else:
+            return render_template("admin_verify_otp.html", error="Invalid OTP! Please try again.")
+
+    return render_template("admin_verify_otp.html")
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
     if request.method == "POST":
@@ -153,7 +189,13 @@ def forgot_password():
             session['reset_otp'] = otp
             session['reset_email'] = email
             
-            send_email(email, otp)
+            send_email(
+            to_email=email, 
+            otp=otp, 
+            subject="SocietyPro: Password Reset Request",
+            heading="Reset Password",
+            message_text="We received a request to reset your password. Use this code to proceed:"
+            )
             
             return redirect("/verify_otp")
         else:
@@ -199,21 +241,24 @@ def reset_password():
 
     return render_template("reset_password.html")
 
-def send_email(to_email, otp):
-    sender_email = os.getenv("MAIL_USERNAME", "")
-    sender_password = os.getenv("MAIL_PASSWORD", "")
-
-    subject = "SocietyPro: Password Reset Code"
+def send_email(to_email, otp, subject, heading, message_text):
+    # ---------------- CONFIGURATION ----------------
+    sender_email = os.getenv("MAIL_USERNAME")
+    sender_password = os.getenv("MAIL_PASSWORD")
     body = f"""
     <html>
       <body style="font-family: Arial, sans-serif; color: #333;">
         <div style="max-width: 400px; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
           <h2 style="color: #ff8c00; text-align: center;">SocietyPro</h2>
-          <p>Hello Resident,</p>
-          <p>You requested to reset your password. Here is your verification code:</p>
+          
+          <h3 style="text-align: center; color: #444;">{heading}</h3>
+          <p>Hello,</p>
+          <p>{message_text}</p>
+          
           <div style="background: #f4f4f4; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; border-radius: 5px; margin: 20px 0;">
             {otp}
           </div>
+          
           <p style="font-size: 12px; color: #888;">If you did not request this, please ignore this email.</p>
         </div>
       </body>
