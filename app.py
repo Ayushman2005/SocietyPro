@@ -25,7 +25,7 @@ from email.mime.multipart import MIMEMultipart
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = "super_secret_key_society_pro_2026"
+app.secret_key = os.getenv("SECRET_KEY", "")
 
 csrf = CSRFProtect(app)
 
