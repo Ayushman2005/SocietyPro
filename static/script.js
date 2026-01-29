@@ -294,3 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
+
+   function refreshCaptcha() {
+  document.getElementById("captcha-img").src = "/captcha?" + new Date().getTime();
+}
