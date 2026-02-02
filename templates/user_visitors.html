@@ -95,13 +95,14 @@
         </a>
       </aside>
 
-
       <main class="main-content">
         <h1 class="section-title">🛑 Visitor Gate Pass</h1>
 
         <div class="form-box" style="margin-bottom: 30px">
           <h3><i class="ri-user-add-line"></i> Pre-Approve Guest</h3>
           <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
             <div
               style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px"
             >

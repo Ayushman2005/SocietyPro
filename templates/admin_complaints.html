@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -98,14 +98,16 @@
 
               {% if c[4] != 'Resolved' %}
               <form method="post" style="display: inline">
+                <input
+                  type="hidden"
+                  name="csrf_token"
+                  value="{{ csrf_token() }}"
+                />
+
                 <input type="hidden" name="complaint_id" value="{{ c[0] }}" />
                 <input type="hidden" name="status" value="Resolved" />
-                <button
-                  type="submit"
-                  style="padding: 5px 10px; font-size: 12px; width: auto"
-                >
-                  Mark Resolved
-                </button>
+
+                <button type="submit">Mark Resolved</button>
               </form>
               {% endif %}
             </div>
