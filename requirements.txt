@@ -1,7 +1,10 @@
-flask
+Flask
 mysql-connector-python
-python-dotenv
+stripe
 reportlab
-werkzeug
-gunicorn
 captcha
+gunicorn
+Flask-WTF
+python-dotenv
+requests
+email-validator
