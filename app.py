@@ -1,5 +1,5 @@
 from flask import (
-    Flask, render_template, request, redirect,
+    Flask, flash, render_template, request, redirect,
     session, url_for, send_file, Response
 )
 import mysql.connector
@@ -10,6 +10,7 @@ from captcha.image import ImageCaptcha
 import string
 import random
 import stripe
+import threading
 from datetime import date
 from dotenv import load_dotenv
 from flask_wtf.csrf import CSRFProtect
@@ -69,6 +70,103 @@ def login_page():
     return render_template("page.html")
 
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+
+def send_welcome_email_thread(user_email, user_name, society_name = "Society"):
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = os.getenv("MAIL_USERNAME")
+        msg['To'] = user_email
+        msg['Subject'] = f"Welcome to {society_name} - Your Digital Home Awaits!"
+
+        body = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                .button {{
+                    background-color: #4F46E5; /* Indigo color */
+                    color: white;
+                    padding: 12px 24px;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    font-weight: bold;
+                    display: inline-block;
+                }}
+                .container {{
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    max-width: 600px;
+                    margin: 0 auto;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 8px;
+                    overflow: hidden;
+                }}
+                .header {{
+                    background-color: #1f2937;
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                }}
+                .content {{
+                    padding: 30px;
+                    background-color: #ffffff;
+                    color: #333333;
+                    line-height: 1.6;
+                }}
+                .features {{
+                    background-color: #f9fafb;
+                    padding: 15px;
+                    border-radius: 5px;
+                    margin: 20px 0;
+                    border-left: 4px solid #4F46E5;
+                }}
+                .footer {{
+                    background-color: #f3f4f6;
+                    padding: 15px;
+                    text-align: center;
+                    font-size: 12px;
+                    color: #6b7280;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1 style="margin:0;">🏠 {society_name}</h1>
+                </div>
+                <div class="content">
+                    <h2>Hello, {user_name}! 👋</h2>
+                    <p>Welcome to the family! The admin has successfully added you to the <strong>{society_name}</strong> digital management system.</p>
+                    
+                    <p>You can now say goodbye to manual registers and paperwork. Your new resident dashboard allows you to:</p>
+                    
+                    <div class="features">
+                        ✅ <strong>Pay Maintenance Bills</strong> instantly online.<br>
+                        ✅ <strong>Pre-approve Visitors</strong> for gate security.<br>
+                        ✅ <strong>Lodge Complaints</strong> and track resolution.<br>
+                        ✅ <strong>Vote</strong> in community polls.
+                    </div>
+                </div>
+                <div class="footer">
+                    <p>Sent automatically by the <strong>SocietyPro System</strong>.</p>
+                    <p>&copy; 2026 {society_name}. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        msg.attach(MIMEText(body, 'html'))
+
+        server = smtplib.SMTP(os.getenv("MAIL_SERVER", ''), int(os.getenv("MAIL_PORT")))
+        server.starttls()
+        server.login(os.getenv("MAIL_USERNAME"), os.getenv("MAIL_PASSWORD"))
+        server.sendmail(os.getenv("MAIL_USERNAME"), user_email, msg.as_string())
+        server.quit()
+        print(f"✅ Impressive Welcome email sent to {user_email}")
+    except Exception as e:
+        print(f"❌ Failed to send email: {e}")
+def send_welcome_email(user_email, user_name):
+    threading.Thread(target=send_welcome_email_thread, args=(user_email, user_name)).start()
 
 @app.route("/admin/register", methods=["GET", "POST"])
 def admin_register():
@@ -524,6 +622,10 @@ def admin_tenants():
 
             db.commit()
             cur.close()
+            send_welcome_email(email, name) 
+        
+            flash("Tenant added successfully and email sent!", "success")
+            return redirect(url_for('admin_tenants'))
         except mysql.connector.Error as err:
             print(f"Error: {err}")
 
