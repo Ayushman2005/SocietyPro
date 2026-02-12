@@ -1,5 +1,5 @@
 .env
 ca.pem
-setup_mysql.py
 society_db.sql
 .git
+test_db.py

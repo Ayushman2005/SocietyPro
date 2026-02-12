@@ -38,8 +38,27 @@ db_config = {
 
 def get_db_connection():
     try:
-        return mysql.connector.connect(**db_config)
-    except mysql.connector.Error:
+        cloud_conn = mysql.connector.connect(
+            host=os.getenv("CLOUD_DB_HOST"),
+            port=os.getenv("CLOUD_DB_PORT"),
+            user=os.getenv("CLOUD_DB_USER"),
+            password=os.getenv("CLOUD_DB_PASSWORD"),
+            database=os.getenv("CLOUD_DB_NAME"),
+            ssl_ca=os.getenv("SSL_CA_PATH"),
+            connection_timeout=5
+        )
+        if cloud_conn.is_connected():
+            print("Connected to Cloud Database (Aiven)")
+            return cloud_conn
+    except mysql.connector.Error as err:
+        print(f"Cloud connection failed: {err}. Switching to Local...")
+
+    try:
+        local_conn = mysql.connector.connect(**db_config)
+        print("Connected to Local MySQL Database")
+        return local_conn
+    except mysql.connector.Error as err:
+        print(f"Local connection also failed: {err}")
         return None
 
 def generate_captcha_text():
