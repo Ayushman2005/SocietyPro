@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Profile | SocietyPro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        {% if role == 'admin' %}
+        <div class="logo"><i class="ri-building-2-line"></i> AdminPanel</div>
+        <ul class="menu">
+          <li>
+            <a href="/admin/dashboard"
+              ><i class="ri-dashboard-3-line"></i> Overview</a
+            >
+          </li>
+          <li>
+            <a href="/admin/tenants"><i class="ri-group-line"></i> Residents</a>
+          </li>
+          <li>
+            <a href="/admin/invoices"
+              ><i class="ri-file-list-3-line"></i> Finances</a
+            >
+          </li>
+          <li>
+            <a href="/admin/notices"
+              ><i class="ri-notification-badge-line"></i> Notices</a
+            >
+          </li>
+          <li>
+            <a href="/admin/visitors"
+              ><i class="ri-shield-check-line"></i> Security</a
+            >
+          </li>
+          <li>
+            <a href="/admin/bookings"
+              ><i class="ri-calendar-check-line"></i> Bookings</a
+            >
+          </li>
+          <li>
+            <a href="/admin/polls"
+              ><i class="ri-bar-chart-box-line"></i> Polls</a
+            >
+          </li>
+          <li>
+            <a href="/admin/complaints"
+              ><i class="ri-customer-service-2-line"></i> Helpdesk</a
+            >
+          </li>
+          <li>
+            <a href="/admin/settings" class="active"
+              ><i class="ri-settings-4-line"></i> Settings</a
+            >
+          </li>
+        </ul>
+        {% else %}
+        <div class="logo"><i class="ri-home-heart-line"></i> ResidentPanel</div>
+        <ul class="menu">
+          <li>
+            <a href="/user/dashboard"><i class="ri-dashboard-line"></i> Home</a>
+          </li>
+          <li>
+            <a href="/user/bookings"
+              ><i class="ri-calendar-check-line"></i> Bookings</a
+            >
+          </li>
+          <li>
+            <a href="/user/visitors"
+              ><i class="ri-shield-user-line"></i> Visitors</a
+            >
+          </li>
+          <li>
+            <a href="/user/polls"
+              ><i class="ri-bar-chart-box-line"></i> Polls</a
+            >
+          </li>
+          <li>
+            <a href="/user/notices"
+              ><i class="ri-notification-3-line"></i> Notices</a
+            >
+          </li>
+          <li>
+            <a href="/user/complaints"
+              ><i class="ri-feedback-line"></i> Complaints</a
+            >
+          </li>
+          <li>
+            <a href="/user/emergency"
+              ><i class="ri-phone-fill"></i> Emergency</a
+            >
+          </li>
+          <li>
+            <a href="/profile" class="active"
+              ><i class="ri-user-settings-line"></i> Profile</a
+            >
+          </li>
+        </ul>
+        {% endif %}
+        <a href="/logout" class="logout-btn"
+          ><i class="ri-logout-box-line"></i> Logout</a
+        >
+      </aside>
+
+      <main class="main-content">
+        <div class="header-section">
+          <div class="header-title">
+            <h1>Account Settings</h1>
+            <p>Manage your login credentials.</p>
+          </div>
+        </div>
+
+        <div class="form-box" style="max-width: 500px">
+          <h3 style="margin-bottom: 20px">
+            <i class="ri-user-edit-line"></i> Update Profile
+          </h3>
+
+          {% if msg %}
+          <div
+            style="
+              color: #10b981;
+              margin-bottom: 20px;
+              padding: 10px;
+              background: rgba(16, 185, 129, 0.1);
+              border-radius: 8px;
+            "
+          >
+            <i class="ri-checkbox-circle-fill"></i> {{ msg }}
+          </div>
+          {% endif %}
+
+          <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+            <label class="modern-label">Email Address</label>
+            <input type="email" name="email" value="{{ user[0] }}" required />
+
+            <label class="modern-label">New Password</label>
+            <input
+              type="password"
+              name="password"
+              required
+              placeholder="Enter new password"
+            />
+
+            <button type="submit" class="btn-primary" style="width: 100%">
+              Save Changes
+            </button>
+          </form>
+        </div>
+      </main>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

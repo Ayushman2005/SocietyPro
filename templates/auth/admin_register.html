@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Register Society</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/2921/2921222.png" />
+  </head>
+  <body class="auth-body">
+    <div class="auth-container" style="max-width: 550px">
+      <div style="margin-bottom: 20px">
+        <i
+          class="ri-building-4-line"
+          style="font-size: 48px; color: var(--primary)"
+        ></i>
+      </div>
+      <h1>Register Society</h1>
+      <p style="color: var(--text-muted); margin-bottom: 30px">
+        Create a new digital space for your community.
+      </p>
+
+      <form action="/admin/register" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            text-align: left;
+          "
+        >
+          <div>
+            <label class="modern-label">Admin Name</label>
+            <input type="text" name="name" required placeholder="Your Name" />
+          </div>
+          <div>
+            <label class="modern-label">Society Name</label>
+            <input
+              type="text"
+              name="society_name"
+              required
+              placeholder="e.g. Galaxy Heights"
+            />
+          </div>
+        </div>
+
+        <div style="text-align: left">
+          <label class="modern-label">Email Address</label>
+          <input
+            type="email"
+            name="email"
+            required
+            placeholder="admin@example.com"
+          />
+        </div>
+
+        <div style="text-align: left">
+          <label class="modern-label">Password</label>
+          <input
+            type="password"
+            name="password"
+            required
+            placeholder="Create a strong password"
+          />
+        </div>
+
+        <button class="btn-auth" style="margin-top: 15px">
+          Create Account <i class="ri-rocket-line"></i>
+        </button>
+      </form>
+
+      <div style="margin-top: 25px; font-size: 14px; color: var(--text-muted)">
+        Already registered?
+        <a href="/admin/login" class="auth-link">Login Here</a>
+      </div>
+    </div>
+  </body>
+</html>

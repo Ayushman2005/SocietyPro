@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <title>Complaints</title>
+    <title>Helpdesk | Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
@@ -15,25 +15,31 @@
   <body class="dashboard-body">
     <div class="dashboard-container">
       <aside class="sidebar">
-        <div class="logo"><i class="ri-building-2-line"></i> AdminPanel</div>
+        <div class="logo">
+          <i class="ri-customer-service-2-line"></i> AdminPanel
+        </div>
         <ul class="menu">
           <li>
             <a href="/admin/dashboard"
-              ><i class="ri-dashboard-line"></i> Dashboard</a
+              ><i class="ri-dashboard-3-line"></i> Overview</a
             >
           </li>
           <li>
-            <a href="/admin/tenants"><i class="ri-user-line"></i> Tenants</a>
+            <a href="/admin/tenants"><i class="ri-group-line"></i> Residents</a>
           </li>
           <li>
             <a href="/admin/invoices"
-              ><i class="ri-file-list-3-line"></i> Invoices</a
+              ><i class="ri-file-list-3-line"></i> Finances</a
             >
           </li>
-
+          <li>
+            <a href="/admin/notices"
+              ><i class="ri-notification-badge-line"></i> Notices</a
+            >
+          </li>
           <li>
             <a href="/admin/visitors"
-              ><i class="ri-shield-user-line"></i> Visitors</a
+              ><i class="ri-shield-check-line"></i> Security</a
             >
           </li>
           <li>
@@ -47,14 +53,8 @@
             >
           </li>
           <li>
-            <a href="/admin/notices"
-              ><i class="ri-notification-3-line"></i> Notices</a
-            >
-          </li>
-
-          <li>
             <a href="/admin/complaints" class="active"
-              ><i class="ri-feedback-line"></i> Complaints</a
+              ><i class="ri-customer-service-2-line"></i> Helpdesk</a
             >
           </li>
           <li>
@@ -63,22 +63,29 @@
             >
           </li>
         </ul>
-        <a href="/logout" class="logout-btn">
-          <i class="ri-logout-box-line"></i> Logout
-        </a>
+        <a href="/logout" class="logout-btn"
+          ><i class="ri-logout-box-line"></i> Logout</a
+        >
       </aside>
 
       <main class="main-content">
-        <h1 class="section-title">Resident Complaints</h1>
+        <div class="header-section">
+          <div class="header-title">
+            <h1>Resident Complaints</h1>
+            <p>Track and resolve community issues.</p>
+          </div>
+        </div>
 
         <div class="cards">
           {% for c in complaints %}
           <div class="card">
             <div class="card-header">
-              <span>From: {{ c[1] }}</span> <span>{{ c[5] }}</span>
+              <span>From: {{ c[1] }}</span>
+              <span>{{ c[5] }}</span>
             </div>
-            <h3>{{ c[2] }}</h3>
-            <p style="color: #aaa; font-size: 14px; margin-bottom: 15px">
+
+            <h3 style="margin-bottom: 10px; font-size: 20px">{{ c[2] }}</h3>
+            <p style="color: var(--text-muted); margin-bottom: 20px">
               {{ c[3] }}
             </p>
 
@@ -90,24 +97,32 @@
               "
             >
               <span
-                class="status"
-                style="background: {% if c[4]=='Resolved' %}#10b981{% else %}#f97316{% endif %}; color:black;"
+                class="status {% if c[4]=='Resolved' %}paid{% else %}unpaid{% endif %}"
               >
                 {{ c[4] }}
               </span>
 
               {% if c[4] != 'Resolved' %}
-              <form method="post" style="display: inline">
+              <form method="POST" style="margin: 0">
                 <input
                   type="hidden"
                   name="csrf_token"
                   value="{{ csrf_token() }}"
                 />
-
                 <input type="hidden" name="complaint_id" value="{{ c[0] }}" />
                 <input type="hidden" name="status" value="Resolved" />
-
-                <button type="submit">Mark Resolved</button>
+                <button
+                  type="submit"
+                  class="btn-primary"
+                  style="
+                    padding: 8px 16px;
+                    font-size: 13px;
+                    width: auto;
+                    margin: 0;
+                  "
+                >
+                  <i class="ri-check-double-line"></i> Resolve
+                </button>
               </form>
               {% endif %}
             </div>

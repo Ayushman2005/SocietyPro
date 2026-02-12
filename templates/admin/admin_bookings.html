@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Bookings</title>
+    <title>Manage Bookings</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
@@ -19,20 +19,25 @@
         <ul class="menu">
           <li>
             <a href="/admin/dashboard"
-              ><i class="ri-dashboard-line"></i> Dashboard</a
+              ><i class="ri-dashboard-3-line"></i> Overview</a
             >
           </li>
           <li>
-            <a href="/admin/tenants"><i class="ri-user-line"></i> Tenants</a>
+            <a href="/admin/tenants"><i class="ri-group-line"></i> Residents</a>
           </li>
           <li>
             <a href="/admin/invoices"
-              ><i class="ri-file-list-3-line"></i> Invoices</a
+              ><i class="ri-file-list-3-line"></i> Finances</a
+            >
+          </li>
+          <li>
+            <a href="/admin/notices"
+              ><i class="ri-notification-badge-line"></i> Notices</a
             >
           </li>
           <li>
             <a href="/admin/visitors"
-              ><i class="ri-shield-user-line"></i> Visitors</a
+              ><i class="ri-shield-check-line"></i> Security</a
             >
           </li>
           <li>
@@ -46,13 +51,8 @@
             >
           </li>
           <li>
-            <a href="/admin/notices"
-              ><i class="ri-notification-3-line"></i> Notices</a
-            >
-          </li>
-          <li>
             <a href="/admin/complaints"
-              ><i class="ri-feedback-line"></i> Complaints</a
+              ><i class="ri-customer-service-2-line"></i> Helpdesk</a
             >
           </li>
           <li>
@@ -67,8 +67,14 @@
       </aside>
 
       <main class="main-content">
-        <h1 class="section-title">📅 Facility Reservations</h1>
-        <div class="table-container">
+        <div class="header-section">
+          <div class="header-title">
+            <h1>Facility Reservations</h1>
+            <p>Approve or reject amenities bookings.</p>
+          </div>
+        </div>
+
+        <div class="table-box">
           <table>
             <thead>
               <tr>
@@ -83,20 +89,21 @@
             <tbody>
               {% for b in bookings %}
               <tr>
-                <td style="font-weight: bold; color: var(--primary-orange)">
+                <td style="font-weight: bold; color: var(--primary)">
                   {{ b[1] }}
                 </td>
                 <td>{{ b[2] }}</td>
-                <td style="font-size: 13px; color: #aaa">{{ b[3] }}</td>
+                <td style="color: var(--text-muted); font-size: 13px">
+                  {{ b[3] }}
+                </td>
                 <td>{{ b[5] }}</td>
                 <td>
                   {% if b[4] == 'Pending' %}
-                  <span class="status unpaid">Pending</span> {% elif b[4] ==
-                  'Confirmed' %} <span class="status paid">Confirmed</span> {%
-                  else %}
-                  <span class="status" style="background: #333; color: #ccc"
-                    >Rejected</span
-                  >
+                  <span class="status unpaid">Pending</span>
+                  {% elif b[4] == 'Confirmed' %}
+                  <span class="status paid">Confirmed</span>
+                  {% else %}
+                  <span class="status rejected">Rejected</span>
                   {% endif %}
                 </td>
                 <td>
@@ -157,10 +164,7 @@
                     </form>
                   </div>
                   {% else %}
-                  <span style="font-size: 12px; color: #666">
-                    {% if b[4] == 'Confirmed' %} Approved {% else %} Declined {%
-                    endif %}
-                  </span>
+                  <span style="font-size: 12px; color: #666">Processed</span>
                   {% endif %}
                 </td>
               </tr>
@@ -170,5 +174,6 @@
         </div>
       </main>
     </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
 </html>

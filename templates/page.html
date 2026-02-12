@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Role - SocietyPro</title>
+    <title>Select Portal | SocietyPro</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/9402/9402405.png">
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
@@ -13,53 +12,66 @@
       href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
       rel="stylesheet"
     />
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/10307/10307344.png" />
   </head>
   <body class="auth-body">
-    <div class="auth-overlay"></div>
-
-    <div class="auth-container">
-      <div
-        style="
-          font-size: 42px;
-          color: var(--primary-orange);
-          margin-bottom: 15px;
-        "
-      >
-        <i class="ri-building-4-line"></i>
+    <div class="auth-container" style="max-width: 500px">
+      <div style="margin-bottom: 30px">
+        <i
+          class="ri-building-2-line"
+          style="font-size: 48px; color: var(--primary)"
+        ></i>
       </div>
 
-      <h1>Welcome Back</h1>
-      <p>Please select your login type to continue.</p>
+      <h1 style="font-size: 32px; margin-bottom: 10px">Welcome Back</h1>
+      <p style="color: var(--text-muted); margin-bottom: 40px">
+        Select your access level to continue.
+      </p>
 
-      <button class="auth-btn" onclick="location.href='/user/login'">
-        <i class="ri-user-smile-line"></i> Resident Login
-      </button>
+      <div class="role-grid">
+        <a href="/user/login" class="role-card">
+          <div class="role-icon">
+            <i class="ri-user-smile-line"></i>
+          </div>
+          <span class="role-title">Resident</span>
+          <span class="role-desc"
+            >Pay bills, book amenities, & view notices.</span
+          >
+        </a>
 
-      <button
-        class="auth-btn"
-        onclick="location.href='/admin/login'"
-        style="
-          background: transparent;
-          border: 1px solid var(--primary-orange);
-          color: var(--primary-orange);
-          margin-top: 15px;
-        "
-      >
-        <i class="ri-shield-user-line"></i> Administration Login
-      </button>
-
-      <div
-        style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #333"
-      >
-        <a class="auth-link" href="/" style="margin-top: 0">
-          <i class="ri-home-4-line"></i> Return to Homepage
+        <a href="/admin/login" class="role-card">
+          <div class="role-icon">
+            <i class="ri-shield-user-line"></i>
+          </div>
+          <span class="role-title">Admin</span>
+          <span class="role-desc"
+            >Manage finances, users, & security logs.</span
+          >
         </a>
       </div>
-      <footer style="margin-top: 20px; font-size: 11px; color: #666">
-        &copy; 2026 Society Management System
-      </footer>
-    </div>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+      <div
+        style="
+          margin-top: 40px;
+          border-top: 1px solid var(--border-subtle);
+          padding-top: 20px;
+        "
+      >
+        <a
+          href="/"
+          style="
+            color: var(--text-muted);
+            font-size: 14px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+          "
+        >
+          <i class="ri-arrow-left-line"></i> Back to Homepage
+        </a>
+      </div>
+    </div>
   </body>
 </html>

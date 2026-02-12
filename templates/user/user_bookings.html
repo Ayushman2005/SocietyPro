@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Bookings | SocietyPro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo"><i class="ri-home-heart-line"></i> ResidentPanel</div>
+        <ul class="menu">
+          <li>
+            <a href="/user/dashboard"><i class="ri-dashboard-line"></i> Home</a>
+          </li>
+          <li>
+            <a href="/user/bookings" class="active"
+              ><i class="ri-calendar-check-line"></i> Bookings</a
+            >
+          </li>
+          <li>
+            <a href="/user/visitors"
+              ><i class="ri-shield-user-line"></i> Visitors</a
+            >
+          </li>
+          <li>
+            <a href="/user/polls"
+              ><i class="ri-bar-chart-box-line"></i> Polls</a
+            >
+          </li>
+          <li>
+            <a href="/user/notices"
+              ><i class="ri-notification-3-line"></i> Notices</a
+            >
+          </li>
+          <li>
+            <a href="/user/complaints"
+              ><i class="ri-feedback-line"></i> Complaints</a
+            >
+          </li>
+          <li>
+            <a href="/user/emergency"
+              ><i class="ri-phone-fill"></i> Emergency</a
+            >
+          </li>
+          <li>
+            <a href="/profile"><i class="ri-user-settings-line"></i> Profile</a>
+          </li>
+        </ul>
+        <a href="/logout" class="logout-btn"
+          ><i class="ri-logout-box-line"></i> Logout</a
+        >
+      </aside>
+
+      <main class="main-content">
+        <div class="header-section">
+          <div class="header-title">
+            <h1>Facility Reservations</h1>
+            <p>Book amenities for your events.</p>
+          </div>
+        </div>
+
+        {% if success %}
+        <div
+          style="
+            color: #10b981;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 8px;
+          "
+        >
+          {{ success }}
+        </div>
+        {% endif %} {% if error %}
+        <div
+          style="
+            color: #ef4444;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 8px;
+          "
+        >
+          {{ error }}
+        </div>
+        {% endif %}
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+          "
+        >
+          <div class="form-box">
+            <h3 style="margin-bottom: 20px">
+              <i class="ri-add-circle-line"></i> New Booking
+            </h3>
+            <form method="POST">
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+
+              <label class="modern-label">Select Amenity</label>
+              <select name="facility" required>
+                {% for f in facilities %}
+                <option value="{{ f }}">{{ f }}</option>
+                {% endfor %}
+              </select>
+
+              <label class="modern-label">Date</label>
+              <input type="date" name="date" required />
+
+              <label class="modern-label">Time Slot</label>
+              <select name="slot" required>
+                {% for s in slots %}
+                <option value="{{ s }}">{{ s }}</option>
+                {% endfor %}
+              </select>
+
+              <button type="submit" class="btn-primary" style="width: 100%">
+                Confirm Booking
+              </button>
+            </form>
+          </div>
+
+          <div>
+            <h3 style="margin-bottom: 20px">My History</h3>
+            <div class="cards" style="grid-template-columns: 1fr">
+              {% if my_bookings %} {% for b in my_bookings %}
+              <div class="card">
+                <div class="card-header">
+                  <span>{{ b[1] }}</span>
+                  <span
+                    class="status {% if b[3]=='Confirmed' %}paid{% else %}unpaid{% endif %}"
+                    >{{ b[3] }}</span
+                  >
+                </div>
+                <h3>{{ b[0] }}</h3>
+                <p style="color: var(--text-muted); font-size: 14px">
+                  {{ b[2] }}
+                </p>
+              </div>
+              {% endfor %} {% else %}
+              <p style="color: var(--text-muted)">No bookings yet.</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

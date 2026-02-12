@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Admin Settings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo"><i class="ri-settings-4-line"></i> AdminPanel</div>
+        <ul class="menu">
+          <li>
+            <a href="/admin/dashboard"
+              ><i class="ri-dashboard-3-line"></i> Overview</a
+            >
+          </li>
+          <li>
+            <a href="/admin/tenants"><i class="ri-group-line"></i> Residents</a>
+          </li>
+          <li>
+            <a href="/admin/invoices"
+              ><i class="ri-file-list-3-line"></i> Finances</a
+            >
+          </li>
+          <li>
+            <a href="/admin/notices"
+              ><i class="ri-notification-badge-line"></i> Notices</a
+            >
+          </li>
+          <li>
+            <a href="/admin/visitors"
+              ><i class="ri-shield-check-line"></i> Security</a
+            >
+          </li>
+          <li>
+            <a href="/admin/bookings"
+              ><i class="ri-calendar-check-line"></i> Bookings</a
+            >
+          </li>
+          <li>
+            <a href="/admin/polls"
+              ><i class="ri-bar-chart-box-line"></i> Polls</a
+            >
+          </li>
+          <li>
+            <a href="/admin/complaints"
+              ><i class="ri-customer-service-2-line"></i> Helpdesk</a
+            >
+          </li>
+          <li>
+            <a href="/admin/settings" class="active"
+              ><i class="ri-settings-4-line"></i> Settings</a
+            >
+          </li>
+        </ul>
+        <a href="/logout" class="logout-btn"
+          ><i class="ri-logout-box-line"></i> Logout</a
+        >
+      </aside>
+
+      <main class="main-content">
+        <div class="header-section">
+          <div class="header-title">
+            <h1>Account Settings</h1>
+            <p>Manage your security preferences.</p>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <div class="form-box">
+            <h3 style="margin-bottom: 20px">
+              <i class="ri-lock-password-line"></i> Update Password
+            </h3>
+
+            <form method="POST" action="/admin/settings">
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+
+              <label class="modern-label">New Admin Password</label>
+              <input
+                type="password"
+                name="new_password"
+                placeholder="Enter strong password"
+                required
+              />
+
+              <button type="submit" class="btn-primary" style="width: 100%">
+                Update Password
+              </button>
+
+              {% if msg %}
+              <div
+                style="
+                  margin-top: 15px;
+                  color: #10b981;
+                  font-size: 14px;
+                  display: flex;
+                  align-items: center;
+                  gap: 5px;
+                "
+              >
+                <i class="ri-checkbox-circle-fill"></i> {{ msg }}
+              </div>
+              {% endif %}
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

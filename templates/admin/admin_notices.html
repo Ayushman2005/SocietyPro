@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Manage Notices</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo">
+          <i class="ri-notification-3-line"></i> AdminPanel
+        </div>
+        <ul class="menu">
+          <li>
+            <a href="/admin/dashboard"
+              ><i class="ri-dashboard-3-line"></i> Overview</a
+            >
+          </li>
+          <li>
+            <a href="/admin/tenants"><i class="ri-group-line"></i> Residents</a>
+          </li>
+          <li>
+            <a href="/admin/invoices"
+              ><i class="ri-file-list-3-line"></i> Finances</a
+            >
+          </li>
+          <li>
+            <a href="/admin/notices" class="active"
+              ><i class="ri-notification-badge-line"></i> Notices</a
+            >
+          </li>
+          <li>
+            <a href="/admin/visitors"
+              ><i class="ri-shield-check-line"></i> Security</a
+            >
+          </li>
+          <li>
+            <a href="/admin/bookings"
+              ><i class="ri-calendar-check-line"></i> Bookings</a
+            >
+          </li>
+          <li>
+            <a href="/admin/polls"
+              ><i class="ri-bar-chart-box-line"></i> Polls</a
+            >
+          </li>
+          <li>
+            <a href="/admin/complaints"
+              ><i class="ri-customer-service-2-line"></i> Helpdesk</a
+            >
+          </li>
+          <li>
+            <a href="/admin/settings"
+              ><i class="ri-settings-4-line"></i> Settings</a
+            >
+          </li>
+        </ul>
+        <a href="/logout" class="logout-btn"
+          ><i class="ri-logout-box-line"></i> Logout</a
+        >
+      </aside>
+
+      <main class="main-content">
+        <div class="header-section">
+          <div class="header-title">
+            <h1>Digital Notice Board</h1>
+            <p>Broadcast updates to all residents.</p>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <div class="cards" style="grid-template-columns: 1fr">
+            {% for n in notices %}
+            <div class="card" style="border-left: 4px solid var(--primary)">
+              <div class="card-header">
+                <span>{{ n[3] }}</span>
+                <div>
+                  <button
+                    onclick="openEditModal('{{ n[0] }}', '{{ n[1] }}', '{{ n[2] }}')"
+                    style="
+                      background: none;
+                      border: none;
+                      color: #3b82f6;
+                      cursor: pointer;
+                      margin-right: 10px;
+                    "
+                  >
+                    <i class="ri-edit-line"></i>
+                  </button>
+                  <a
+                    href="/admin/delete_notice/{{ n[0] }}"
+                    onclick="return confirm('Delete?');"
+                    style="color: #ef4444"
+                  >
+                    <i class="ri-delete-bin-line"></i>
+                  </a>
+                </div>
+              </div>
+              <h3 style="color: white; margin-bottom: 10px">{{ n[1] }}</h3>
+              <p style="color: var(--text-muted)">{{ n[2] }}</p>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="form-box" style="height: fit-content">
+            <h3 id="formTitle" style="margin-bottom: 20px">
+              <i class="ri-edit-2-line"></i> Post Notice
+            </h3>
+            <form id="noticeForm" action="/admin/notices" method="POST">
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+              <input type="hidden" name="notice_id" id="noticeId" />
+
+              <label class="modern-label">Title</label>
+              <input
+                type="text"
+                name="title"
+                id="noticeTitle"
+                placeholder="e.g. Water Supply Update"
+                required
+              />
+
+              <label class="modern-label">Content</label>
+              <textarea
+                name="content"
+                id="noticeContent"
+                rows="6"
+                placeholder="Details..."
+                required
+              ></textarea>
+
+              <button
+                type="submit"
+                id="submitBtn"
+                class="btn-primary"
+                style="width: 100%"
+              >
+                Publish
+              </button>
+              <button
+                type="button"
+                id="cancelBtn"
+                onclick="resetForm()"
+                style="
+                  width: 100%;
+                  margin-top: 10px;
+                  background: #333;
+                  border: 1px solid #444;
+                  color: white;
+                  display: none;
+                "
+              >
+                Cancel
+              </button>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+      function openEditModal(id, title, content) {
+        document.getElementById("formTitle").innerHTML =
+          '<i class="ri-edit-line"></i> Edit Notice';
+        document.getElementById("noticeForm").action = "/admin/edit_notice";
+        document.getElementById("noticeId").value = id;
+        document.getElementById("noticeTitle").value = title;
+        document.getElementById("noticeContent").value = content;
+        document.getElementById("submitBtn").innerText = "Update Notice";
+        document.getElementById("cancelBtn").style.display = "block";
+      }
+
+      function resetForm() {
+        document.getElementById("formTitle").innerHTML =
+          '<i class="ri-edit-2-line"></i> Post Notice';
+        document.getElementById("noticeForm").action = "/admin/notices";
+        document.getElementById("noticeId").value = "";
+        document.getElementById("noticeTitle").value = "";
+        document.getElementById("noticeContent").value = "";
+        document.getElementById("submitBtn").innerText = "Publish";
+        document.getElementById("cancelBtn").style.display = "none";
+      }
+    </script>
+  </body>
+</html>

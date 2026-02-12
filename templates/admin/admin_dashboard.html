@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo"><i class="ri-building-2-line"></i> AdminPanel</div>
+        <ul class="menu">
+          <li>
+            <a href="/admin/dashboard" class="active"
+              ><i class="ri-dashboard-3-line"></i> Overview</a
+            >
+          </li>
+          <li>
+            <a href="/admin/tenants"><i class="ri-group-line"></i> Residents</a>
+          </li>
+          <li>
+            <a href="/admin/invoices"
+              ><i class="ri-file-list-3-line"></i> Finances</a
+            >
+          </li>
+          <li>
+            <a href="/admin/notices"
+              ><i class="ri-notification-badge-line"></i> Notices</a
+            >
+          </li>
+          <li>
+            <a href="/admin/visitors"
+              ><i class="ri-shield-check-line"></i> Security</a
+            >
+          </li>
+          <li>
+            <a href="/admin/bookings"
+              ><i class="ri-calendar-check-line"></i> Bookings</a
+            >
+          </li>
+          <li>
+            <a href="/admin/polls"
+              ><i class="ri-bar-chart-box-line"></i> Polls</a
+            >
+          </li>
+          <li>
+            <a href="/admin/complaints"
+              ><i class="ri-customer-service-2-line"></i> Helpdesk</a
+            >
+          </li>
+          <li>
+            <a href="/admin/settings"
+              ><i class="ri-settings-4-line"></i> Settings</a
+            >
+          </li>
+        </ul>
+        <a href="/logout" class="logout-btn"
+          ><i class="ri-logout-box-line"></i> Logout</a
+        >
+      </aside>
+
+      <main class="main-content">
+        <div
+          class="header-section"
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+          "
+        >
+          <div class="header-title">
+            <h1>Dashboard Overview</h1>
+            <p>Welcome back, Secretary.</p>
+          </div>
+          <div style="text-align: right">
+            <p
+              style="
+                color: var(--text-muted);
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+              "
+            >
+              Total Fund
+            </p>
+            <h2 style="color: var(--primary); font-size: 32px; line-height: 1">
+              ₹ {{ total_fund }}
+            </h2>
+          </div>
+        </div>
+
+        <div class="cards" style="margin-bottom: 30px">
+          <div class="card">
+            <div class="card-header">Total Residents</div>
+            <div class="card-amount">{{ users|length }}</div>
+            <p style="color: #10b981; font-size: 13px">
+              <i class="ri-arrow-up-line"></i> Active Members
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-header">Pending Issues</div>
+            <div class="card-amount">3</div>
+            <p style="color: #fbbf24; font-size: 13px">Needs Attention</p>
+          </div>
+          <div class="card">
+            <div class="card-header">Visitors Today</div>
+            <div class="card-amount">12</div>
+            <p style="color: var(--text-muted); font-size: 13px">
+              Gate Entries
+            </p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px">
+          <div class="card">
+            <div class="card-header">
+              <span>Financial Overview</span>
+              <i class="ri-bar-chart-grouped-line"></i>
+            </div>
+            <canvas id="financeChart" style="max-height: 250px"></canvas>
+          </div>
+
+          <div class="form-box">
+            <h3 style="margin-bottom: 20px">
+              <i class="ri-flash-lightning-line"></i> Quick Invoice
+            </h3>
+
+            <form action="/admin/dashboard" method="POST">
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+
+              <label class="modern-label">Select Resident</label>
+              <select name="user_id" required>
+                <option value="" disabled selected>Choose...</option>
+                {% for u in users %}
+                <option value="{{ u[0] }}">{{ u[1] }}</option>
+                {% endfor %}
+              </select>
+
+              <label class="modern-label">Amount (₹)</label>
+              <input
+                type="number"
+                name="amount"
+                placeholder="e.g. 2500"
+                required
+              />
+
+              <button type="submit" class="btn-primary" style="width: 100%">
+                Generate Bill
+              </button>
+            </form>
+
+            <form
+              action="/admin/update_fund"
+              method="POST"
+              style="
+                margin-top: 20px;
+                padding-top: 20px;
+                border-top: 1px solid var(--border-subtle);
+              "
+            >
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+              <label class="modern-label">Update Fund Total</label>
+              <div style="display: flex; gap: 10px">
+                <input
+                  type="number"
+                  name="total_fund"
+                  placeholder="New Balance"
+                  required
+                  style="margin: 0"
+                />
+                <button
+                  type="submit"
+                  style="width: auto; margin: 0; background: #333"
+                >
+                  <i class="ri-save-line"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+      const ctx = document.getElementById('financeChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
+          datasets: [{
+            label: 'Funds Collected',
+            data: [12000, 19000, 15000, 22000, 28000, {{ total_fund }}],
+            borderColor: '#ff8c00',
+            backgroundColor: 'rgba(255, 140, 0, 0.1)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#666' }, grid: { display: false } },
+            y: { ticks: { color: '#666' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

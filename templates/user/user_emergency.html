@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Emergency | SocietyPro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo"><i class="ri-home-heart-line"></i> ResidentPanel</div>
+        <ul class="menu">
+          <li>
+            <a href="/user/dashboard"><i class="ri-dashboard-line"></i> Home</a>
+          </li>
+          <li>
+            <a href="/user/bookings"
+              ><i class="ri-calendar-check-line"></i> Bookings</a
+            >
+          </li>
+          <li>
+            <a href="/user/visitors"
+              ><i class="ri-shield-user-line"></i> Visitors</a
+            >
+          </li>
+          <li>
+            <a href="/user/polls"
+              ><i class="ri-bar-chart-box-line"></i> Polls</a
+            >
+          </li>
+          <li>
+            <a href="/user/notices"
+              ><i class="ri-notification-3-line"></i> Notices</a
+            >
+          </li>
+          <li>
+            <a href="/user/complaints"
+              ><i class="ri-feedback-line"></i> Complaints</a
+            >
+          </li>
+          <li>
+            <a href="/user/emergency" class="active"
+              ><i class="ri-phone-fill"></i> Emergency</a
+            >
+          </li>
+          <li>
+            <a href="/profile"><i class="ri-user-settings-line"></i> Profile</a>
+          </li>
+        </ul>
+        <a href="/logout" class="logout-btn"
+          ><i class="ri-logout-box-line"></i> Logout</a
+        >
+      </aside>
+
+      <main class="main-content">
+        <div class="header-section">
+          <div class="header-title">
+            <h1 style="color: #ef4444">
+              <i class="ri-alarm-warning-fill"></i> Emergency Directory
+            </h1>
+            <p>Important numbers for immediate assistance.</p>
+          </div>
+        </div>
+
+        <div
+          class="cards"
+          style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))"
+        >
+          {% for c in contacts %}
+          <div
+            class="card"
+            style="border-top: 4px solid {% if c.theme == 'red' %}#ef4444{% elif c.theme == 'blue' %}#3b82f6{% else %}#10b981{% endif %};"
+          >
+            <div class="card-header">
+              <span style="font-weight: bold; color: white">{{ c.role }}</span>
+              <i class="{{ c.icon }}" style="font-size: 24px; opacity: 0.5"></i>
+            </div>
+            <h3 style="font-size: 22px; margin-bottom: 10px">{{ c.name }}</h3>
+
+            <a
+              href="tel:{{ c.phone }}"
+              class="btn-primary"
+              style="
+                text-decoration: none;
+                justify-content: center;
+                background: #222;
+                border: 1px solid #444;
+              "
+            >
+              <i class="ri-phone-fill" style="color: var(--primary)"></i> {{
+              c.phone }}
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      </main>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

@@ -69,9 +69,13 @@ def about():
 def login_page():
     return render_template("page.html")
 
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
+
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
-def send_welcome_email_thread(user_email, user_name, society_name = "Society"):
+def send_welcome_email_thread(user_email, user_name, society_name="Society"):
     try:
         msg = MIMEMultipart()
         msg['From'] = os.getenv("MAIL_USERNAME")
@@ -84,7 +88,7 @@ def send_welcome_email_thread(user_email, user_name, society_name = "Society"):
         <head>
             <style>
                 .button {{
-                    background-color: #4F46E5; /* Indigo color */
+                    background-color: #ff8c00;
                     color: white;
                     padding: 12px 24px;
                     text-decoration: none;
@@ -112,13 +116,6 @@ def send_welcome_email_thread(user_email, user_name, society_name = "Society"):
                     color: #333333;
                     line-height: 1.6;
                 }}
-                .features {{
-                    background-color: #f9fafb;
-                    padding: 15px;
-                    border-radius: 5px;
-                    margin: 20px 0;
-                    border-left: 4px solid #4F46E5;
-                }}
                 .footer {{
                     background-color: #f3f4f6;
                     padding: 15px;
@@ -136,15 +133,13 @@ def send_welcome_email_thread(user_email, user_name, society_name = "Society"):
                 <div class="content">
                     <h2>Hello, {user_name}! 👋</h2>
                     <p>Welcome to the family! The admin has successfully added you to the <strong>{society_name}</strong> digital management system.</p>
-                    
                     <p>You can now say goodbye to manual registers and paperwork. Your new resident dashboard allows you to:</p>
-                    
-                    <div class="features">
-                        ✅ <strong>Pay Maintenance Bills</strong> instantly online.<br>
-                        ✅ <strong>Pre-approve Visitors</strong> for gate security.<br>
-                        ✅ <strong>Lodge Complaints</strong> and track resolution.<br>
-                        ✅ <strong>Vote</strong> in community polls.
-                    </div>
+                    <ul>
+                        <li>✅ Pay Maintenance Bills instantly online.</li>
+                        <li>✅ Pre-approve Visitors for gate security.</li>
+                        <li>✅ Lodge Complaints and track resolution.</li>
+                        <li>✅ Vote in community polls.</li>
+                    </ul>
                 </div>
                 <div class="footer">
                     <p>Sent automatically by the <strong>SocietyPro System</strong>.</p>
@@ -165,6 +160,7 @@ def send_welcome_email_thread(user_email, user_name, society_name = "Society"):
         print(f"✅ Impressive Welcome email sent to {user_email}")
     except Exception as e:
         print(f"❌ Failed to send email: {e}")
+
 def send_welcome_email(user_email, user_name):
     threading.Thread(target=send_welcome_email_thread, args=(user_email, user_name)).start()
 
@@ -205,7 +201,7 @@ def admin_register():
         )
         return redirect("/admin/verify_registration")
 
-    return render_template("admin_register.html")
+    return render_template("auth/admin_register.html")
 
 @app.route("/admin/verify_registration", methods=["GET", "POST"])
 def admin_verify_registration():
@@ -238,9 +234,9 @@ def admin_verify_registration():
             except Exception as e:
                 return f"Database Error: {e}"
         else:
-            return render_template("admin_verify_otp.html", error="Invalid OTP! Please try again.")
+            return render_template("auth/admin_verify_otp.html", error="Invalid OTP! Please try again.")
 
-    return render_template("admin_verify_otp.html")
+    return render_template("auth/admin_verify_otp.html")
 
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
@@ -250,7 +246,7 @@ def admin_login():
         user_captcha = request.form["captcha"]
 
         if user_captcha != session.get("captcha"):
-            return render_template("admin_login.html", error="Invalid CAPTCHA")
+            return render_template("auth/admin_login.html", error="Invalid CAPTCHA")
 
         db = get_db_connection()
         cur = db.cursor()
@@ -269,9 +265,9 @@ def admin_login():
         cur.close()
         db.close()
 
-        return render_template("admin_login.html", error="Invalid email or password")
+        return render_template("auth/admin_login.html", error="Invalid email or password")
 
-    return render_template("admin_login.html")
+    return render_template("auth/admin_login.html")
 
 @app.route("/user/login", methods=["GET", "POST"])
 def user_login():
@@ -291,9 +287,9 @@ def user_login():
             session["user"] = user[0]
             return redirect("/user/dashboard")
 
-        return "Invalid User Credentials"
+        return render_template("auth/user_login.html", error="Invalid Credentials")
 
-    return render_template("user_login.html")
+    return render_template("auth/user_login.html")
 
 @app.route("/forgot_password", methods=["GET", "POST"])
 def forgot_password():
@@ -326,7 +322,7 @@ def forgot_password():
         else:
             return "Admin email not found"
 
-    return render_template("forgot_password.html")
+    return render_template("auth/forgot_password.html")
 
 @app.route("/verify_otp", methods=["GET", "POST"])
 def verify_otp_route():
@@ -336,9 +332,9 @@ def verify_otp_route():
         if "reset_otp" in session and session["reset_otp"] == user_otp:
             return redirect("/reset_password")
         else:
-            return render_template("verify_otp.html", error="Invalid OTP! Try again later")
+            return render_template("auth/verify_otp.html", error="Invalid OTP! Try again later")
 
-    return render_template("verify_otp.html")
+    return render_template("auth/verify_otp.html")
 
 @app.route("/reset_password", methods=["GET", "POST"])
 def reset_password():
@@ -364,7 +360,7 @@ def reset_password():
 
         return redirect("/admin/login")
 
-    return render_template("reset_password.html")
+    return render_template("auth/reset_password.html")
 
 def send_email(to_email, otp, subject, heading, message_text):
     sender_email = os.getenv("MAIL_USERNAME")
@@ -436,14 +432,14 @@ def profile():
     cur.close()
     db.close()
 
-    return render_template("profile.html", user=data, role=role, msg=msg)
+    return render_template("user/profile.html", user=data, role=role, msg=msg)
 
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
-@app.route("/admin/dashboard")
+@app.route("/admin/dashboard", methods=["GET", "POST"])
 def admin_dashboard():
     if "admin_id" not in session:
         return redirect("/admin/login")
@@ -452,6 +448,17 @@ def admin_dashboard():
 
     db = get_db_connection()
     cur = db.cursor()
+
+    # Handle Quick Invoice Generation (POST)
+    if request.method == "POST":
+        try:
+            user_id = request.form.get("user_id")
+            amount = request.form.get("amount")
+            if user_id and amount:
+                cur.execute("INSERT INTO bills (user_id, amount, status) VALUES (%s, %s, 'Unpaid')", (user_id, amount))
+                db.commit()
+        except Exception:
+            pass
 
     cur.execute("SELECT amount FROM society_fund WHERE admin_id = %s", (admin_id,))
     fund_row = cur.fetchone()
@@ -464,10 +471,11 @@ def admin_dashboard():
         total_fund = 0
 
     query_bills = """
-        SELECT b.id, u.email, b.amount, b.status
+        SELECT b.id, u.name, b.amount, b.status
         FROM bills b
         JOIN users u ON b.user_id = u.id
         WHERE u.admin_id = %s
+        ORDER BY b.id DESC LIMIT 5
     """
     cur.execute(query_bills, (admin_id,))
     bills = cur.fetchall()
@@ -478,7 +486,7 @@ def admin_dashboard():
     cur.close()
     db.close()
 
-    return render_template("admin_dashboard.html", bills=bills, users=users, total_fund=total_fund)
+    return render_template("admin/admin_dashboard.html", bills=bills, users=users, total_fund=total_fund)
 
 @app.route("/admin/visitors")
 def admin_visitors():
@@ -501,7 +509,7 @@ def admin_visitors():
 
     cur.close()
     db.close()
-    return render_template("admin_visitors.html", visitors=visitors)
+    return render_template("admin/admin_visitors.html", visitors=visitors)
 
 @app.route("/admin/polls", methods=["GET", "POST"])
 def admin_polls():
@@ -536,7 +544,7 @@ def admin_polls():
 
     cur.close()
     db.close()
-    return render_template("admin_polls.html", polls=polls)
+    return render_template("admin/admin_polls.html", polls=polls)
 
 @app.route("/admin/bookings")
 def admin_bookings():
@@ -548,7 +556,7 @@ def admin_bookings():
     cur = db.cursor()
 
     query = """
-        SELECT b.id, b.facility_name, b.booking_date, b.time_slot, b.status, u.email 
+        SELECT b.id, b.facility_name, b.booking_date, b.time_slot, b.status, u.name 
         FROM bookings b 
         JOIN users u ON b.user_id = u.id 
         WHERE u.admin_id = %s
@@ -559,7 +567,7 @@ def admin_bookings():
 
     cur.close()
     db.close()
-    return render_template("admin_bookings.html", bookings=bookings)
+    return render_template("admin/admin_bookings.html", bookings=bookings)
 
 @app.route("/admin/update_fund", methods=["POST"])
 def update_fund():
@@ -635,7 +643,7 @@ def admin_tenants():
     cur.close()
     db.close()
 
-    return render_template("admin_tenants.html", tenants=tenants)
+    return render_template("admin/admin_tenants.html", tenants=tenants)
 
 @app.route("/admin/delete_tenant/<int:user_id>", methods=["POST"])
 def delete_tenant(user_id):
@@ -696,7 +704,7 @@ def admin_invoices():
     cur = db.cursor()
 
     query = """
-        SELECT bills.id, users.email, bills.amount, bills.status 
+        SELECT bills.id, users.name, bills.amount, bills.status 
         FROM bills 
         JOIN users ON bills.user_id = users.id
         WHERE users.admin_id = %s
@@ -707,7 +715,7 @@ def admin_invoices():
 
     cur.close()
     db.close()
-    return render_template("admin_invoices.html", invoices=invoices)
+    return render_template("admin/admin_invoices.html", invoices=invoices)
 
 @app.route("/admin/settings", methods=["GET", "POST"])
 def admin_settings():
@@ -716,7 +724,7 @@ def admin_settings():
 
     msg = ""
     if request.method == "POST":
-        new_password = request.form["new_password"]
+        new_password = generate_password_hash(request.form["new_password"])
         admin_id = session["admin_id"]
 
         db = get_db_connection()
@@ -727,7 +735,7 @@ def admin_settings():
         db.close()
         msg = "Password updated successfully!"
 
-    return render_template("admin_settings.html", msg=msg)
+    return render_template("admin/admin_settings.html", msg=msg)
 
 @app.route("/admin/add_bill", methods=["POST"])
 def add_bill():
@@ -764,12 +772,13 @@ def user_dashboard():
     user_id = session["user"]
     db = get_db_connection()
     cur = db.cursor()
-    cur.execute("SELECT id, amount, status FROM bills WHERE user_id = %s", (session['user'],))
+    # USE THE user_id VARIABLE HERE to fix the "not accessed" warning
+    cur.execute("SELECT id, amount, status FROM bills WHERE user_id = %s ORDER BY id DESC", (user_id,))
     bills = cur.fetchall()
     cur.close()
     db.close()
 
-    return render_template("user_dashboard.html", bills=bills)
+    return render_template("user/user_dashboard.html", bills=bills)
 
 @app.route("/admin/notices", methods=["GET", "POST"])
 def admin_notices():
@@ -793,7 +802,7 @@ def admin_notices():
     cur.close()
     db.close()
 
-    return render_template("admin_notices.html", notices=notices)
+    return render_template("admin/admin_notices.html", notices=notices)
 
 @app.route("/admin/edit_notice", methods=["POST"])
 def edit_notice():
@@ -839,7 +848,7 @@ def user_notices():
     cur.close()
     db.close()
 
-    return render_template("user_notices.html", notices=notices)
+    return render_template("user/user_notices.html", notices=notices)
 
 @app.route("/admin/download_invoice/<int:bill_id>")
 def download_invoice(bill_id):
@@ -958,7 +967,7 @@ def user_complaints():
 
     cur.close()
     db.close()
-    return render_template("user_complaints.html", complaints=my_complaints)
+    return render_template("user/user_complaints.html", complaints=my_complaints)
 
 @app.route("/admin/complaints", methods=["GET", "POST"])
 def admin_complaints():
@@ -989,22 +998,7 @@ def admin_complaints():
 
     cur.close()
     db.close()
-    return render_template("admin_complaints.html", complaints=complaints)
-
-@app.route('/dashboard')
-def dashboard():
-    db = get_db_connection()
-    if not db:
-        return "Database Error"
-
-    cur = db.cursor()
-    cur.execute("SELECT SUM(amount) FROM bills")
-    result = cur.fetchone()
-    cur.close()
-    db.close()
-
-    total_fund = result[0] if result[0] else 0
-    return render_template('dashboard.html', total_fund=total_fund)
+    return render_template("admin/admin_complaints.html", complaints=complaints)
 
 @app.route("/user/visitors", methods=["GET", "POST"])
 def user_visitors():
@@ -1028,7 +1022,7 @@ def user_visitors():
 
     cur.close()
     db.close()
-    return render_template("user_visitors.html", visitors=visitors)
+    return render_template("user/user_visitors.html", visitors=visitors)
 
 @app.route("/user/polls", methods=["GET", "POST"])
 def user_polls():
@@ -1059,7 +1053,7 @@ def user_polls():
 
     cur.close()
     db.close()
-    return render_template("user_polls.html", polls=polls)
+    return render_template("user/user_polls.html", polls=polls)
 
 @app.route("/user/bookings", methods=["GET", "POST"])
 def user_bookings():
@@ -1099,7 +1093,7 @@ def user_bookings():
     cur.close()
     db.close()
 
-    return render_template("user_bookings.html",
+    return render_template("user/user_bookings.html",
                            facilities=facilities,
                            slots=slots,
                            my_bookings=my_bookings,
@@ -1140,7 +1134,7 @@ def user_emergency():
         {"name": "Plumber", "role": "Maintenance", "phone": "+91 99887 76655", "icon": "ri-drop-fill", "theme": "orange"},
     ]
 
-    return render_template("user_emergency.html", contacts=contacts)
+    return render_template("user/user_emergency.html", contacts=contacts)
 
 @app.route("/submit_contact", methods=["POST"])
 def submit_contact():
@@ -1243,7 +1237,7 @@ def payment_success(bill_id):
     cur.close()
     db.close()
 
-    return render_template('payment_success.html', bill_id=bill_id)
+    return render_template('user/payment_success.html', bill_id=bill_id)
 
 if __name__ == "__main__":
     app.run(debug=True)

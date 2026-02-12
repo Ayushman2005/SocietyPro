@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -15,103 +15,163 @@
     <link
       rel="icon"
       type="image/png"
-      href="https://cdn-icons-png.flaticon.com/128/4727/4727424.png"
+      href="https://cdn-icons-png.flaticon.com/128/9195/9195785.png"
     />
   </head>
   <body class="landing-body">
-    <header class="navbar">
-  <div class="logo"><i class="ri-building-4-line"></i> SocietyPro</div>
+    <nav class="navbar">
+      <div class="logo"><i class="ri-building-2-fill"></i> SocietyPro</div>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/features">Features</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <button
+            class="btn-primary"
+            onclick="location.href = '/login'"
+            style="width: auto; padding: 15px 40px"
+          >
+            Start Now
+          </button>
+      </div>
+      <div class="hamburger"><i class="ri-menu-3-line"></i></div>
+    </nav>
 
-  <div class="hamburger">
-    <i class="ri-menu-3-line"></i>
-  </div>
-
-  <nav class="nav-links">
-    <a href="/">Home</a>
-    <a href="/features">Features</a>
-    <a href="/about">About</a>
-    <a href="/#contact">Contact</a>
-    <a href="/login" class="login-btn">
-      <i class="ri-login-circle-line"></i> Account
-    </a>
-  </nav>
-</header>
-
-    <section class="about-header">
-      <h1>Meet the Team</h1>
-      <p>The innovative minds behind SocietyPro.</p>
+    <section
+      class="about-header"
+      style="text-align: center; padding: 80px 20px"
+    >
+      <h1 style="font-size: 48px; margin-bottom: 10px">Meet the Team</h1>
+      <p style="color: var(--text-muted); font-size: 18px">
+        The innovative minds behind SocietyPro.
+      </p>
     </section>
 
-    <section class="team-section">
-      <div class="team-grid">
-        <div class="team-card">
-          <div class="profile-img-container">
-            <img
-              src="https://media.licdn.com/dms/image/v2/D4E03AQFHdkSbYjldJA/profile-displayphoto-shrink_400_400/B4EZTb6bHsGwAk-/0/1738856314497?e=1770249600&v=beta&t=zDxaj1eVlHazRdXQGrtVgy3r0LK1mKwAwd58k0T5jk0"
-              alt="Ayushman"
-              onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"
-            />
-          </div>
-          <h3 class="team-name">Ayushman Kar</h3>
-          <span class="team-role">Team Lead & Full Stack</span>
-          <p class="team-desc">
-            Lead developer responsible for the core system architecture, backend
-            logic, and overall project integration.
-          </p>
-          <a
-            href="https://linkedin.com/in/ayushman-kar-08370634b"
-            target="_blank"
-            class="linkedin-btn"
-          >
-            <i class="ri-linkedin-box-fill"></i> Connect on LinkedIn
-          </a>
-        </div>
+    <section class="features" style="padding-top: 0">
+      <div class="feature-card" style="text-align: center">
+        <img
+          src="https://media.licdn.com/dms/image/v2/D4E03AQFHdkSbYjldJA/profile-displayphoto-shrink_400_400/B4EZTb6bHsGwAk-/0/1738856314497?e=1770249600&v=beta&t=zDxaj1eVlHazRdXQGrtVgy3r0LK1mKwAwd58k0T5jk0"
+          alt="Ayushman"
+          style="
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 20px auto;
+            border: 3px solid var(--primary);
+          "
+        />
+        <h3 class="team-name">Ayushman Kar</h3>
+        <span
+          style="
+            color: var(--primary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+          "
+          >Team Lead & Full Stack</span
+        >
+        <p style="margin-top: 15px">
+          Lead developer responsible for the core system architecture, backend
+          logic, and overall project integration.
+        </p>
+        <a
+          href="https://linkedin.com/in/ayushman-kar-08370634b"
+          target="_blank"
+          style="
+            display: inline-block;
+            margin-top: 15px;
+            color: var(--text-white);
+            font-size: 24px;
+          "
+        >
+          <i class="ri-linkedin-box-fill"></i>
+        </a>
+      </div>
 
-        <div class="team-card">
-          <div class="profile-img-container">
-            <img
-              src="{{ url_for('static', filename='satwik.jpg') }}"
-              alt="Satwik Barik"
-              onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135768.png'"
-            />
-          </div>
-          <h3 class="team-name">Satwik Barik</h3>
-          <span class="team-role">Frontend & Design</span>
-          <p class="team-desc">
-            The creative mind behind the responsive UI/UX, crafting the visual
-            aesthetics and seamless user interactions.
-          </p>
-          <a
-            href="https://linkedin.com/in/satwik-barik-602659335"
-            target="_blank"
-            class="linkedin-btn"
-          >
-            <i class="ri-linkedin-box-fill"></i> Connect on LinkedIn
-          </a>
-        </div>
+      <div class="feature-card" style="text-align: center">
+        <img
+          src="{{ url_for('static', filename='satwik.jpg') }}"
+          alt="Satwik Barik"
+          style="
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 20px auto;
+            border: 3px solid var(--primary);
+          "
+        />
+        <h3 class="team-name">Satwik Barik</h3>
+        <span
+          style="
+            color: var(--primary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+          "
+          >Frontend & Design</span
+        >
+        <p style="margin-top: 15px">
+          The creative mind behind the responsive UI/UX, crafting the visual
+          aesthetics and seamless user interactions.
+        </p>
+        <a
+          href="https://linkedin.com/in/satwik-barik-602659335"
+          target="_blank"
+          style="
+            display: inline-block;
+            margin-top: 15px;
+            color: var(--text-white);
+            font-size: 24px;
+          "
+        >
+          <i class="ri-linkedin-box-fill"></i>
+        </a>
+      </div>
 
-        <div class="team-card">
-          <div class="profile-img-container">
-            <img
-              src="https://media.licdn.com/dms/image/v2/D5603AQHJVQA4xu0gJg/profile-displayphoto-scale_400_400/B56ZohgEEmIsAg-/0/1761498651186?e=1770249600&v=beta&t=UluZeFaDh7jfQ4lrxbDP8DugyJkTLtHgfnWaRTV6NSo"
-              alt="Nilamani Kundu"
-              onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'"
-            />
-          </div>
-          <h3 class="team-name">Nilamani Kundu</h3>
-          <span class="team-role">Database & Backend</span>
-          <p class="team-desc">
-            Database architect ensuring secure data management and efficient
-            server-side performance.
-          </p>
-          <a
-            href="https://linkedin.com/in/nilamani-kundu-8924bb259"
-            target="_blank"
-            class="linkedin-btn"
-          >
-            <i class="ri-linkedin-box-fill"></i> Connect on LinkedIn
-          </a>
-        </div>
+      <div class="feature-card" style="text-align: center">
+        <img
+          src="https://media.licdn.com/dms/image/v2/D5603AQHJVQA4xu0gJg/profile-displayphoto-scale_400_400/B56ZohgEEmIsAg-/0/1761498651186?e=1770249600&v=beta&t=UluZeFaDh7jfQ4lrxbDP8DugyJkTLtHgfnWaRTV6NSo"
+          alt="Nilamani Kundu"
+          style="
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 20px auto;
+            border: 3px solid var(--primary);
+          "
+        />
+        <h3 class="team-name">Nilamani Kundu</h3>
+        <span
+          style="
+            color: var(--primary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+          "
+          >Database & Backend</span
+        >
+        <p style="margin-top: 15px">
+          Database architect ensuring secure data management and efficient
+          server-side performance.
+        </p>
+        <a
+          href="https://linkedin.com/in/nilamani-kundu-8924bb259"
+          target="_blank"
+          style="
+            display: inline-block;
+            margin-top: 15px;
+            color: var(--text-white);
+            font-size: 24px;
+          "
+        >
+          <i class="ri-linkedin-box-fill"></i>
+        </a>
       </div>
     </section>
 

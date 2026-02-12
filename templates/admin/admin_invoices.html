@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Invoices | Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo"><i class="ri-building-2-line"></i> AdminPanel</div>
+        <ul class="menu">
+          <li>
+            <a href="/admin/dashboard"
+              ><i class="ri-dashboard-3-line"></i> Overview</a
+            >
+          </li>
+          <li>
+            <a href="/admin/tenants"><i class="ri-group-line"></i> Residents</a>
+          </li>
+          <li>
+            <a href="/admin/invoices" class="active"
+              ><i class="ri-file-list-3-line"></i> Finances</a
+            >
+          </li>
+          <li>
+            <a href="/admin/notices"
+              ><i class="ri-notification-badge-line"></i> Notices</a
+            >
+          </li>
+          <li>
+            <a href="/admin/visitors"
+              ><i class="ri-shield-check-line"></i> Security</a
+            >
+          </li>
+          <li>
+            <a href="/admin/bookings"
+              ><i class="ri-calendar-check-line"></i> Bookings</a
+            >
+          </li>
+          <li>
+            <a href="/admin/polls"
+              ><i class="ri-bar-chart-box-line"></i> Polls</a
+            >
+          </li>
+          <li>
+            <a href="/admin/complaints"
+              ><i class="ri-customer-service-2-line"></i> Helpdesk</a
+            >
+          </li>
+          <li>
+            <a href="/admin/settings"
+              ><i class="ri-settings-4-line"></i> Settings</a
+            >
+          </li>
+        </ul>
+        <a href="/logout" class="logout-btn"
+          ><i class="ri-logout-box-line"></i> Logout</a
+        >
+      </aside>
+
+      <main class="main-content">
+        <div class="header-section">
+          <div class="header-title">
+            <h1>Billing History</h1>
+            <p>Track payments and generate reports.</p>
+          </div>
+        </div>
+
+        <div class="table-box">
+          <table>
+            <thead>
+              <tr>
+                <th>Invoice ID</th>
+                <th>Resident</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Download</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for inv in invoices %}
+              <tr>
+                <td style="color: var(--text-muted)">#INV-{{ inv[0] }}</td>
+                <td style="font-weight: 600; color: white">{{ inv[1] }}</td>
+                <td style="color: var(--primary)">₹ {{ inv[2] }}</td>
+                <td>
+                  <span
+                    class="status {% if inv[3]=='Paid' %}paid{% else %}unpaid{% endif %}"
+                  >
+                    {{ inv[3] }}
+                  </span>
+                </td>
+                <td>
+                  <a
+                    href="/admin/download_invoice/{{ inv[0] }}"
+                    style="color: var(--text-muted); font-size: 18px"
+                  >
+                    <i class="ri-download-cloud-2-line"></i>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

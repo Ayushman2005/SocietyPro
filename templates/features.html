@@ -19,127 +19,100 @@
     />
   </head>
   <body class="landing-body">
-    <header class="navbar">
-  <div class="logo"><i class="ri-building-4-line"></i> SocietyPro</div>
+    <nav class="navbar">
+      <div class="logo"><i class="ri-building-2-fill"></i> SocietyPro</div>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/features">Features</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <button
+            class="btn-primary"
+            onclick="location.href = '/login'"
+            style="width: auto; padding: 15px 40px"
+          >
+            Start Now
+          </button>
+      </div>
+      <div class="hamburger"><i class="ri-menu-3-line"></i></div>
+    </nav>
 
-  <div class="hamburger">
-    <i class="ri-menu-3-line"></i>
-  </div>
-
-  <nav class="nav-links">
-    <a href="/">Home</a>
-    <a href="/features">Features</a>
-    <a href="/about">About</a>
-    <a href="/#contact">Contact</a>
-    <a href="/login" class="login-btn">
-      <i class="ri-login-circle-line"></i> Account
-    </a>
-  </nav>
-</header>
-
-    <section class="page-header">
-      <h1>Powerful Tools for Modern Societies</h1>
-      <p>
+    <section class="page-header" style="text-align: center; padding: 80px 20px">
+      <h1 style="font-size: 48px; margin-bottom: 15px">
+        Powerful Tools for Modern Societies
+      </h1>
+      <p
+        style="
+          color: var(--text-muted);
+          font-size: 18px;
+          max-width: 700px;
+          margin: 0 auto;
+        "
+      >
         From financial transparency to seamless communication, explore how
         SocietyPro transforms residential management.
       </p>
     </section>
 
-    <section class="feature-grid-large">
-      <div class="feature-box">
-        <div class="feature-icon-lg"><i class="ri-wallet-3-line"></i></div>
-        <h2>Automated Billing</h2>
+    <section class="features" style="padding-top: 0">
+      <div class="feature-card">
+        <div class="icon"><i class="ri-wallet-3-line"></i></div>
+        <h3>Automated Billing</h3>
         <p>
           Eliminate manual calculations. Generate and distribute monthly
           maintenance invoices to all residents in one click.
         </p>
-        <ul class="feature-list">
-          <li><i class="ri-check-line"></i> Auto-Generate Invoices</li>
-          <li>
-            <i class="ri-check-line"></i> Payment Status Tracking (Paid/Unpaid)
-          </li>
-          <li><i class="ri-check-line"></i> PDF Receipt Generation</li>
-        </ul>
       </div>
-
-      <div class="feature-box">
-        <div class="feature-icon-lg">
-          <i class="ri-customer-service-2-line"></i>
-        </div>
-        <h2>Complaint Resolution</h2>
+      <div class="feature-card">
+        <div class="icon"><i class="ri-customer-service-2-line"></i></div>
+        <h3>Complaint Resolution</h3>
         <p>
           A dedicated helpdesk for residents to report issues like plumbing or
           electrical faults directly to the admin.
         </p>
-        <ul class="feature-list">
-          <li><i class="ri-check-line"></i> Real-time Issue Tracking</li>
-          <li>
-            <i class="ri-check-line"></i> Status Updates (Pending/Resolved)
-          </li>
-          <li><i class="ri-check-line"></i> Admin Action Dashboard</li>
-        </ul>
       </div>
-
-      <div class="feature-box">
-        <div class="feature-icon-lg">
-          <i class="ri-notification-badge-line"></i>
-        </div>
-        <h2>Digital Notice Board</h2>
+      <div class="feature-card">
+        <div class="icon"><i class="ri-notification-badge-line"></i></div>
+        <h3>Digital Notice Board</h3>
         <p>
           Stop pasting papers on walls. Broadcast important announcements to
           every resident's mobile dashboard instantly.
         </p>
-        <ul class="feature-list">
-          <li><i class="ri-check-line"></i> Instant Announcements</li>
-          <li><i class="ri-check-line"></i> Event Reminders</li>
-          <li><i class="ri-check-line"></i> Edit & Delete Controls</li>
-        </ul>
       </div>
-
-      <div class="feature-box">
-        <div class="feature-icon-lg"><i class="ri-team-line"></i></div>
-        <h2>Resident Directory</h2>
+      <div class="feature-card">
+        <div class="icon"><i class="ri-team-line"></i></div>
+        <h3>Resident Directory</h3>
         <p>
           Maintain an organized, secure database of all flat owners and tenants
           with easy onboard/offboard tools.
         </p>
-        <ul class="feature-list">
-          <li><i class="ri-check-line"></i> Secure Data Storage</li>
-          <li><i class="ri-check-line"></i> Tenant Management</li>
-          <li><i class="ri-check-line"></i> Role-Based Access (Admin/User)</li>
-        </ul>
       </div>
-
-      <div class="feature-box">
-        <div class="feature-icon-lg"><i class="ri-shield-check-line"></i></div>
-        <h2>Gate Security</h2>
+      <div class="feature-card">
+        <div class="icon"><i class="ri-shield-check-line"></i></div>
+        <h3>Gate Security</h3>
         <p>
           Enhance safety with visitor logs. Track who enters and leaves the
           society premises in real-time.
         </p>
-        <ul class="feature-list">
-          <li><i class="ri-check-line"></i> Visitor Entry Logs</li>
-          <li><i class="ri-check-line"></i> Pre-Approve Guests</li>
-          <li><i class="ri-check-line"></i> Emergency Contacts</li>
-        </ul>
       </div>
-
-      <div class="feature-box">
-        <div class="feature-icon-lg"><i class="ri-safe-2-line"></i></div>
-        <h2>Fund Transparency</h2>
+      <div class="feature-card">
+        <div class="icon"><i class="ri-safe-2-line"></i></div>
+        <h3>Fund Transparency</h3>
         <p>
           Build trust with complete transparency. Admins can display total
           collected funds and expenses.
         </p>
-        <ul class="feature-list">
-          <li><i class="ri-check-line"></i> Total Revenue Display</li>
-          <li><i class="ri-check-line"></i> Manual Fund Updates</li>
-          <li><i class="ri-check-line"></i> Pending Dues Calculator</li>
-        </ul>
       </div>
     </section>
 
-    <div class="cta-section">
+    <div
+      class="cta-section"
+      style="
+        text-align: center;
+        padding: 80px 20px;
+        border-top: 1px solid var(--glass-border);
+      "
+    >
       <h2 style="font-size: 36px; color: white; margin-bottom: 20px">
         Ready to upgrade your society?
       </h2>

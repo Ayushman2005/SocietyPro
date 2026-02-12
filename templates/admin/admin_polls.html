@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Manage Polls</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <style>
+      .poll-bar {
+        height: 8px;
+        background: var(--primary);
+        border-radius: 4px;
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo">
+          <i class="ri-bar-chart-grouped-line"></i> AdminPanel
+        </div>
+        <ul class="menu">
+          <li>
+            <a href="/admin/dashboard"
+              ><i class="ri-dashboard-3-line"></i> Overview</a
+            >
+          </li>
+          <li>
+            <a href="/admin/tenants"><i class="ri-group-line"></i> Residents</a>
+          </li>
+          <li>
+            <a href="/admin/invoices"
+              ><i class="ri-file-list-3-line"></i> Finances</a
+            >
+          </li>
+          <li>
+            <a href="/admin/notices"
+              ><i class="ri-notification-badge-line"></i> Notices</a
+            >
+          </li>
+          <li>
+            <a href="/admin/visitors"
+              ><i class="ri-shield-check-line"></i> Security</a
+            >
+          </li>
+          <li>
+            <a href="/admin/bookings"
+              ><i class="ri-calendar-check-line"></i> Bookings</a
+            >
+          </li>
+          <li>
+            <a href="/admin/polls" class="active"
+              ><i class="ri-bar-chart-box-line"></i> Polls</a
+            >
+          </li>
+          <li>
+            <a href="/admin/complaints"
+              ><i class="ri-customer-service-2-line"></i> Helpdesk</a
+            >
+          </li>
+          <li>
+            <a href="/admin/settings"
+              ><i class="ri-settings-4-line"></i> Settings</a
+            >
+          </li>
+        </ul>
+        <a href="/logout" class="logout-btn"
+          ><i class="ri-logout-box-line"></i> Logout</a
+        >
+      </aside>
+
+      <main class="main-content">
+        <div class="header-section">
+          <div class="header-title">
+            <h1>Community Polls</h1>
+            <p>Gather feedback from residents.</p>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <div class="form-box">
+            <h3 style="margin-bottom: 20px">
+              <i class="ri-add-circle-line"></i> New Poll
+            </h3>
+            <form method="POST">
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+
+              <label class="modern-label">Question</label>
+              <input
+                type="text"
+                name="question"
+                placeholder="e.g. Paint Color?"
+                required
+              />
+
+              <label class="modern-label">Option 1</label>
+              <input
+                type="text"
+                name="option1"
+                placeholder="e.g. Red"
+                required
+              />
+
+              <label class="modern-label">Option 2</label>
+              <input
+                type="text"
+                name="option2"
+                placeholder="e.g. Blue"
+                required
+              />
+
+              <button type="submit" class="btn-primary" style="width: 100%">
+                Launch Poll
+              </button>
+            </form>
+          </div>
+
+          <div class="cards" style="grid-template-columns: 1fr">
+            {% for p in polls %}
+            <div class="card">
+              <h3 style="font-size: 18px; margin-bottom: 15px">{{ p[1] }}</h3>
+
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  font-size: 13px;
+                  color: #ccc;
+                "
+              >
+                <span>{{ p[2] }}</span> <span>{{ p[5] }} votes</span>
+              </div>
+              <div
+                style="
+                  background: #333;
+                  width: 100%;
+                  border-radius: 4px;
+                  margin-bottom: 10px;
+                "
+              >
+                <div
+                  class="poll-bar"
+                  style="width: {{ (p[5]/(p[5]+p[6])*100) if (p[5]+p[6]) > 0 else 0 }}%;"
+                ></div>
+              </div>
+
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  font-size: 13px;
+                  color: #ccc;
+                "
+              >
+                <span>{{ p[3] }}</span> <span>{{ p[6] }} votes</span>
+              </div>
+              <div style="background: #333; width: 100%; border-radius: 4px">
+                <div
+                  class="poll-bar"
+                  style="width: {{ (p[6]/(p[5]+p[6])*100) if (p[5]+p[6]) > 0 else 0 }}%; background: #3b82f6;"
+                ></div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

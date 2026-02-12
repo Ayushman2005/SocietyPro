@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>My Home | SocietyPro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="logo"><i class="ri-home-heart-line"></i> ResidentPanel</div>
+        <ul class="menu">
+          <li>
+            <a href="/user/dashboard" class="active"
+              ><i class="ri-dashboard-line"></i> Home</a
+            >
+          </li>
+          <li>
+            <a href="/user/bookings"
+              ><i class="ri-calendar-check-line"></i> Bookings</a
+            >
+          </li>
+          <li>
+            <a href="/user/visitors"
+              ><i class="ri-shield-user-line"></i> Visitors</a
+            >
+          </li>
+          <li>
+            <a href="/user/polls"
+              ><i class="ri-bar-chart-box-line"></i> Polls</a
+            >
+          </li>
+          <li>
+            <a href="/user/notices"
+              ><i class="ri-notification-3-line"></i> Notices</a
+            >
+          </li>
+          <li>
+            <a href="/user/complaints"
+              ><i class="ri-feedback-line"></i> Complaints</a
+            >
+          </li>
+          <li>
+            <a href="/user/emergency"
+              ><i class="ri-phone-fill"></i> Emergency</a
+            >
+          </li>
+          <li>
+            <a href="/profile"><i class="ri-user-settings-line"></i> Profile</a>
+          </li>
+        </ul>
+        <a href="/logout" class="logout-btn"
+          ><i class="ri-logout-box-line"></i> Logout</a
+        >
+      </aside>
+
+      <main class="main-content">
+        <div class="header-section">
+          <div class="header-title">
+            <h1>Welcome Home</h1>
+            <p>Your maintenance & activity overview.</p>
+          </div>
+        </div>
+
+        <div
+          class="stats-banner"
+          style="
+            margin: 0;
+            padding: 0;
+            border: none;
+            background: transparent;
+            justify-content: flex-start;
+            gap: 20px;
+          "
+        >
+          <div class="card" style="min-width: 200px">
+            <div class="card-header">Unpaid Dues</div>
+            <div class="card-amount" id="totalDueDisplay">₹ 0.00</div>
+          </div>
+          <div class="card" style="min-width: 200px">
+            <div class="card-header">Pending Bills</div>
+            <div class="card-amount" id="pendingCount">0</div>
+          </div>
+        </div>
+
+        <h3
+          style="
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-family: &quot;Outfit&quot;;
+            font-size: 20px;
+          "
+        >
+          Invoice History
+        </h3>
+
+        <div class="cards">
+          {% if bills %} {% for b in bills %}
+          <div
+            class="card bill-card"
+            data-amount="{{ b[1] }}"
+            data-status="{{ b[2] }}"
+          >
+            <div class="card-header">
+              <span>INV #{{ b[0] }}</span>
+              <i class="ri-file-list-line"></i>
+            </div>
+            <h3 style="font-size: 18px; margin-bottom: 5px">
+              Maintenance Bill
+            </h3>
+
+            <div class="card-amount">₹ {{ "{:,.2f}".format(b[1]) }}</div>
+
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 15px;
+              "
+            >
+              <span
+                class="status {% if b[2] == 'Paid' %}paid{% else %}unpaid{% endif %}"
+                >{{ b[2] }}</span
+              >
+
+              {% if b[2] == 'Unpaid' %}
+              <form
+                action="/pay_bill/{{ b[0] }}"
+                method="POST"
+                style="margin: 0"
+              >
+                <input
+                  type="hidden"
+                  name="csrf_token"
+                  value="{{ csrf_token() }}"
+                />
+                <button
+                  type="submit"
+                  class="btn-primary"
+                  style="
+                    width: auto;
+                    margin: 0;
+                    padding: 8px 16px;
+                    font-size: 12px;
+                  "
+                >
+                  Pay Now <i class="ri-arrow-right-line"></i>
+                </button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %} {% else %}
+          <p style="color: var(--text-muted)">No invoices found.</p>
+          {% endif %}
+        </div>
+      </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        let total = 0,
+          count = 0;
+        document.querySelectorAll(".bill-card").forEach((c) => {
+          if (c.dataset.status === "Unpaid") {
+            total += parseFloat(c.dataset.amount);
+            count++;
+          }
+        });
+        // Format Total Dues nicely
+        document.getElementById("totalDueDisplay").innerText =
+          "₹ " +
+          total.toLocaleString("en-IN", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+        document.getElementById("pendingCount").innerText = count;
+      });
+    </script>
+  </body>
+</html>
