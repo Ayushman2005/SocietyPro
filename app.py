@@ -45,20 +45,20 @@ def get_db_connection():
             password=os.getenv("CLOUD_DB_PASSWORD"),
             database=os.getenv("CLOUD_DB_NAME"),
             ssl_ca=os.getenv("SSL_CA_PATH"),
-            connection_timeout=5
+            connection_timeout=1
         )
         if cloud_conn.is_connected():
-            print("Connected to Cloud Database (Aiven)")
+            print("✅ Connected to Cloud Database (Aiven)")
             return cloud_conn
     except mysql.connector.Error as err:
-        print(f"Cloud connection failed: {err}. Switching to Local...")
+        print(f"⚠️ Cloud connection failed: {err}. Switching to Local...")
 
     try:
         local_conn = mysql.connector.connect(**db_config)
-        print("Connected to Local MySQL Database")
+        print("🏠 Connected to Local MySQL Database")
         return local_conn
     except mysql.connector.Error as err:
-        print(f"Local connection also failed: {err}")
+        print(f"❌ Local connection also failed: {err}")
         return None
 
 def generate_captcha_text():
@@ -631,6 +631,9 @@ def admin_tenants():
 
     admin_id = session["admin_id"]
     db = get_db_connection()
+    
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
 
     if request.method == "POST":
         name = request.form["name"]

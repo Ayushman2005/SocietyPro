@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Resident Login</title>
+    <title>Resident Login | SocietyPro</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
@@ -12,19 +12,118 @@
       href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
       rel="stylesheet"
     />
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/3637/3637797.png" />
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/609/609803.png">
+    <style>
+      :root {
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --user-gradient: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+      }
+
+      .auth-body {
+        background: radial-gradient(circle at top left, #0f172a, #1e293b);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 28px;
+        padding: 40px;
+        width: 100%;
+        max-width: 440px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+        text-align: center;
+        animation: fadeIn 0.8s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .user-icon-badge {
+        width: 70px;
+        height: 70px;
+        background: var(--user-gradient);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 35px;
+        color: white;
+        box-shadow: 0 8px 15px rgba(0, 210, 255, 0.3);
+      }
+
+      .modern-input-group {
+        text-align: left;
+        margin-bottom: 20px;
+      }
+
+      .glass-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 14px 18px;
+        color: white;
+        margin-top: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .glass-input:focus {
+        border-color: #00d2ff;
+        background: rgba(255, 255, 255, 0.07);
+        box-shadow: 0 0 15px rgba(0, 210, 255, 0.1);
+        outline: none;
+      }
+
+      .btn-user {
+        background: var(--user-gradient);
+        color: white;
+        border: none;
+        width: 100%;
+        padding: 16px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .btn-user:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(58, 123, 213, 0.4);
+      }
+    </style>
   </head>
   <body class="auth-body">
-    <div class="auth-container">
-      <div style="margin-bottom: 20px">
-        <i
-          class="ri-user-smile-line"
-          style="font-size: 48px; color: var(--primary)"
-        ></i>
+    <div class="glass-card">
+      <div class="user-icon-badge">
+        <i class="ri-user-smile-line"></i>
       </div>
-      <h1>Resident Login</h1>
-      <p style="color: var(--text-muted); margin-bottom: 30px">
-        Access your personal dashboard.
+      <h1 style="color: white; font-size: 28px; letter-spacing: -0.5px">
+        Resident Login
+      </h1>
+      <p style="color: #94a3b8; margin-bottom: 35px">
+        Welcome back to your society portal.
       </p>
 
       {% if error %}
@@ -32,46 +131,72 @@
         style="
           background: rgba(239, 68, 68, 0.1);
           color: #ef4444;
-          padding: 10px;
-          border-radius: 8px;
-          margin-bottom: 20px;
+          padding: 12px;
+          border-radius: 10px;
+          margin-bottom: 25px;
           font-size: 14px;
+          border: 1px solid rgba(239, 68, 68, 0.2);
         "
       >
-        {{ error }}
+        <i class="ri-error-warning-line"></i> {{ error }}
       </div>
       {% endif %}
 
       <form action="/user/login" method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
-        <div style="text-align: left">
-          <label class="modern-label">Email Address</label>
+        <div class="modern-input-group">
+          <label style="color: #cbd5e1; font-size: 14px; font-weight: 500"
+            >Email ID</label
+          >
           <input
             type="email"
             name="email"
+            class="glass-input"
             required
-            placeholder="Enter your email"
+            placeholder="yourname@email.com"
           />
         </div>
 
-        <div style="text-align: left">
-          <label class="modern-label">Password</label>
+        <div class="modern-input-group">
+          <label style="color: #cbd5e1; font-size: 14px; font-weight: 500"
+            >Password</label
+          >
           <input
             type="password"
             name="password"
+            class="glass-input"
             required
-            placeholder="Enter your password"
+            placeholder="••••••••"
           />
         </div>
 
-        <button class="btn-auth" style="margin-top: 15px">
-          Login Now <i class="ri-arrow-right-line"></i>
+        <button class="btn-user">
+          Sign In to Dashboard <i class="ri-arrow-right-circle-line"></i>
         </button>
       </form>
 
-      <div style="margin-top: 25px; font-size: 13px; color: var(--text-muted)">
-        <a href="/" class="auth-link">Back to Home</a>
+      <div
+        style="
+          margin-top: 30px;
+          border-top: 1px solid var(--glass-border);
+          padding-top: 20px;
+        "
+      >
+        <a
+          href="/"
+          style="
+            font-size: 14px;
+            color: #94a3b8;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+          "
+        >
+          <i class="ri-home-4-line"></i> Back to Main Website
+        </a>
       </div>
     </div>
   </body>

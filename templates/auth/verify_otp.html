@@ -2,13 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Verify OTP - SocietyPro</title>
+    <title>Verify Identity | SocietyPro</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="icon"
-      type="image/png"
-      href="https://cdn-icons-png.flaticon.com/128/9402/9402264.png"
-    />
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
@@ -17,70 +12,161 @@
       href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
       rel="stylesheet"
     />
+    <style>
+      :root {
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --accent-gradient: linear-gradient(135deg, #ff8c00 0%, #ff2e63 100%);
+      }
+
+      .auth-body {
+        background: radial-gradient(circle at top right, #1a1a2e, #16213e);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 40px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .icon-badge {
+        width: 80px;
+        height: 80px;
+        background: var(--accent-gradient);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+        font-size: 40px;
+        color: white;
+        box-shadow: 0 10px 20px rgba(255, 46, 99, 0.3);
+      }
+
+      .modern-input-group {
+        position: relative;
+        margin-bottom: 25px;
+      }
+
+      .otp-field {
+        background: rgba(0, 0, 0, 0.2) !important;
+        border: 2px solid var(--glass-border) !important;
+        color: white !important;
+        font-size: 28px !important;
+        letter-spacing: 12px !important;
+        text-align: center !important;
+        padding: 15px !important;
+        transition: all 0.3s ease;
+      }
+
+      .otp-field:focus {
+        border-color: #ff8c00 !important;
+        box-shadow: 0 0 15px rgba(255, 140, 0, 0.2);
+      }
+
+      .submit-btn {
+        background: var(--accent-gradient);
+        border: none;
+        padding: 16px;
+        border-radius: 12px;
+        color: white;
+        font-weight: 700;
+        width: 100%;
+        cursor: pointer;
+        transition: transform 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .submit-btn:hover {
+        transform: scale(1.02);
+      }
+    </style>
   </head>
-
   <body class="auth-body">
-    <div class="auth-overlay"></div>
-
-    <div class="auth-container">
-      <div
-        style="
-          font-size: 40px;
-          color: var(--primary-orange);
-          margin-bottom: 10px;
-        "
-      >
-        <i class="ri-shield-keyhole-line"></i>
+    <div class="glass-card">
+      <div class="icon-badge">
+        <i class="ri-shield-check-line"></i>
       </div>
 
-      <h1>Verify Identity</h1>
-      <p>Enter the 6-digit code sent to your email.</p>
+      <h1 style="color: white; margin-bottom: 10px; font-size: 28px">
+        Verify Identity
+      </h1>
+      <p style="color: #94a3b8; margin-bottom: 30px">
+        Enter the security code sent to your email.
+      </p>
 
       <form method="POST" action="/verify_otp">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
-        <label class="modern-label" style="text-align: left; color: #ccc"
-          >One-Time Password</label
-        >
-        <div class="input-wrapper">
-          <i class="ri-lock-password-line input-icon"></i>
+        <div class="modern-input-group">
           <input
-            class="modern-input"
+            class="otp-field"
             type="text"
             name="otp"
-            placeholder="e.g. 123456"
+            placeholder="000000"
             maxlength="6"
-            style="letter-spacing: 5px; font-weight: bold; text-align: left"
             required
+            autocomplete="off"
           />
         </div>
 
-        <button class="primary-btn-glow" type="submit">
-          Verify Code
+        <button class="submit-btn" type="submit">
+          Verify Account
           <i class="ri-arrow-right-line"></i>
         </button>
       </form>
 
-      <div style="margin-top: 20px; text-align: center">
-        <span style="font-size: 13px; color: #666">Didn't receive code?</span>
+      <div style="margin-top: 30px; font-size: 14px; color: #94a3b8">
+        Didn't receive the code?
         <a
           href="/forgot_password"
-          class="auth-link"
-          style="font-weight: 600; margin-left: 5px"
+          style="color: #ff8c00; text-decoration: none; font-weight: 600"
+          >Resend</a
         >
-          Resend
-        </a>
       </div>
-
-      <footer style="margin-top: 30px; font-size: 11px; color: #666">
-        &copy; 2026 Society Management System
-      </footer>
     </div>
 
     {% if error %}
-    <script>
-      alert("{{ error }}");
-    </script>
+    <div
+      style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #ef4444;
+        color: white;
+        padding: 15px 25px;
+        border-radius: 8px;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+      "
+    >
+      {{ error }}
+    </div>
     {% endif %}
   </body>
 </html>
