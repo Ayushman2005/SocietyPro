@@ -17,11 +17,10 @@
       :root {
         --glass-bg: rgba(255, 255, 255, 0.05);
         --glass-border: rgba(255, 255, 255, 0.1);
-        --user-gradient: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+        --user-gradient: linear-gradient(135deg, #ff7b00 0%, #ff7b00 100%);
       }
 
       .auth-body {
-        background: radial-gradient(circle at top left, #0f172a, #1e293b);
         min-height: 100vh;
         display: flex;
         align-items: center;
@@ -83,7 +82,7 @@
       }
 
       .glass-input:focus {
-        border-color: #00d2ff;
+        border-color: #ffffff;
         background: rgba(255, 255, 255, 0.07);
         box-shadow: 0 0 15px rgba(0, 210, 255, 0.1);
         outline: none;
@@ -110,7 +109,7 @@
 
       .btn-user:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(58, 123, 213, 0.4);
+        box-shadow: 0 10px 20px rgba(255, 255, 255, 0.475);
       }
     </style>
   </head>
@@ -146,7 +145,7 @@
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
         <div class="modern-input-group">
-          <label style="color: #cbd5e1; font-size: 14px; font-weight: 500"
+          <label style="color: #ffffff; font-size: 14px; font-weight: 500"
             >Email ID</label
           >
           <input
