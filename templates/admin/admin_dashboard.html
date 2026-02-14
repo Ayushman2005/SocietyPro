@@ -176,20 +176,18 @@
                 name="csrf_token"
                 value="{{ csrf_token() }}"
               />
+
               <label class="modern-label">Update Fund Total</label>
-              <div style="display: flex; gap: 10px">
+              <div style="display: flex; flex-direction: column; gap: 12px">
                 <input
                   type="number"
-                  name="total_fund"
-                  placeholder="New Balance"
+                  name="amount"
+                  placeholder="Enter New Balance"
                   required
-                  style="margin: 0"
+                  style="margin: 0; width: 100%"
                 />
-                <button
-                  type="submit"
-                  style="width: auto; margin: 0; background: #333"
-                >
-                  <i class="ri-save-line"></i>
+                <button type="submit" class="btn-secondary-save">
+                  <i class="ri-save-line"></i> Save New Balance
                 </button>
               </div>
             </form>

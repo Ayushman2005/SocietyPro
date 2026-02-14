@@ -8,11 +8,22 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/10527/10527376.png" />
     <link
       href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
       rel="stylesheet"
     />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://cdn-icons-png.flaticon.com/128/5075/5075374.png"
+    />
+    <style>
+      .step-card:hover {
+        background: rgba(255, 255, 255, 0.06) !important;
+        border-color: var(--primary) !important;
+        transform: translateY(-10px);
+      }
+    </style>
   </head>
   <body>
     <nav class="navbar">
@@ -22,13 +33,6 @@
         <a href="/features">Features</a>
         <a href="/about">About</a>
         <a href="/contact">Contact</a>
-        <button
-            class="btn-primary"
-            onclick="location.href = '/login'"
-            style="width: auto; padding: 15px 40px"
-          >
-            Start Now
-          </button>
       </div>
       <div class="hamburger"><i class="ri-menu-3-line"></i></div>
     </nav>
@@ -83,15 +87,14 @@
           The operating system for modern residential complexes. Automate
           billing, secure your gates, and connect residents instantly.
         </p>
-
         <div style="display: flex; gap: 20px">
-          <!-- <button
+          <button
             class="btn-primary"
             onclick="location.href = '/login'"
             style="width: auto; padding: 15px 40px"
           >
             Start Now
-          </button> -->
+          </button>
         </div>
       </div>
 
@@ -173,7 +176,7 @@
           class="stat-number"
           style="font-size: 48px; font-weight: 800; color: white"
         >
-          99
+          99%
         </div>
         <div
           style="
@@ -184,18 +187,258 @@
             text-transform: uppercase;
           "
         >
-          Uptime
+          Satisfaction Rate
         </div>
       </div>
     </div>
 
     <section
-      id="features"
       style="
         padding: 100px 5%;
+        background: linear-gradient(
+          180deg,
+          rgba(3, 3, 3, 1) 0%,
+          rgba(15, 15, 15, 1) 100%
+        );
+        position: relative;
+        overflow: hidden;
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 400px;
+          height: 400px;
+          background: var(--primary);
+          filter: blur(150px);
+          opacity: 0.05;
+          z-index: 0;
+        "
+      ></div>
+
+      <div
+        style="
+          text-align: center;
+          margin-bottom: 60px;
+          position: relative;
+          z-index: 1;
+        "
+      >
+        <h2
+          style="
+            font-size: 42px;
+            font-family: &quot;Outfit&quot;;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 15px;
+          "
+        >
+          Three Steps to
+          <span style="color: var(--primary)">Digital Harmony</span>
+        </h2>
+        <p
+          style="
+            color: var(--text-muted);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+          "
+        >
+          Transitioning your society to the cloud is faster than your morning
+          coffee.
+        </p>
+      </div>
+
+      <div
+        style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 40px;
+          position: relative;
+          z-index: 1;
+        "
+      >
+        <div
+          class="step-card"
+          style="
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 50px 35px;
+            border-radius: 30px;
+            transition: 0.4s ease;
+            position: relative;
+          "
+        >
+          <div
+            style="
+              position: absolute;
+              top: -20px;
+              left: 35px;
+              background: var(--primary);
+              color: black;
+              font-weight: 900;
+              width: 45px;
+              height: 45px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border-radius: 12px;
+              font-size: 20px;
+              box-shadow: 0 10px 20px rgba(255, 140, 0, 0.3);
+            "
+          >
+            1
+          </div>
+          <i
+            class="ri-building-line"
+            style="
+              font-size: 48px;
+              color: var(--primary);
+              margin-bottom: 25px;
+              display: block;
+            "
+          ></i>
+          <h3
+            style="
+              font-size: 24px;
+              margin-bottom: 15px;
+              color: white;
+              font-family: &quot;Outfit&quot;;
+            "
+          >
+            Register Society
+          </h3>
+          <p style="color: #888; line-height: 1.7; font-size: 15px">
+            Admins create a secure profile for the society, defining blocks,
+            units, and management roles in under 5 minutes.
+          </p>
+        </div>
+
+        <div
+          class="step-card"
+          style="
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 50px 35px;
+            border-radius: 30px;
+            transition: 0.4s ease;
+            position: relative;
+          "
+        >
+          <div
+            style="
+              position: absolute;
+              top: -20px;
+              left: 35px;
+              background: var(--primary);
+              color: black;
+              font-weight: 900;
+              width: 45px;
+              height: 45px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border-radius: 12px;
+              font-size: 20px;
+              box-shadow: 0 10px 20px rgba(255, 140, 0, 0.3);
+            "
+          >
+            2
+          </div>
+          <i
+            class="ri-user-add-line"
+            style="
+              font-size: 48px;
+              color: var(--primary);
+              margin-bottom: 25px;
+              display: block;
+            "
+          ></i>
+          <h3
+            style="
+              font-size: 24px;
+              margin-bottom: 15px;
+              color: white;
+              font-family: &quot;Outfit&quot;;
+            "
+          >
+            Swift Onboarding
+          </h3>
+          <p style="color: #888; line-height: 1.7; font-size: 15px">
+            Residents are added via email and receive instant access to their
+            personalized dashboard to view dues and updates.
+          </p>
+        </div>
+
+        <div
+          class="step-card"
+          style="
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 50px 35px;
+            border-radius: 30px;
+            transition: 0.4s ease;
+            position: relative;
+          "
+        >
+          <div
+            style="
+              position: absolute;
+              top: -20px;
+              left: 35px;
+              background: var(--primary);
+              color: black;
+              font-weight: 900;
+              width: 45px;
+              height: 45px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border-radius: 12px;
+              font-size: 20px;
+              box-shadow: 0 10px 20px rgba(255, 140, 0, 0.3);
+            "
+          >
+            3
+          </div>
+          <i
+            class="ri-rocket-2-line"
+            style="
+              font-size: 48px;
+              color: var(--primary);
+              margin-bottom: 25px;
+              display: block;
+            "
+          ></i>
+          <h3
+            style="
+              font-size: 24px;
+              margin-bottom: 15px;
+              color: white;
+              font-family: &quot;Outfit&quot;;
+            "
+          >
+            Live Smarter
+          </h3>
+          <p style="color: #888; line-height: 1.7; font-size: 15px">
+            Enable digital payments, visitor tracking, and automated notices.
+            Experience management without the headaches.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="features"
+      style="
+        padding: 80px 5%;
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 40px;
+        background: rgba(255, 255, 255, 0.02);
       "
     >
       <div class="card">
@@ -207,7 +450,8 @@
           Smart Billing
         </h3>
         <p style="color: #999">
-          Automated invoice generation and payment tracking. Zero paperwork.
+          Automated invoice generation and payment tracking. Say goodbye to late
+          fees with instant digital receipts.
         </p>
       </div>
       <div class="card">
@@ -219,7 +463,8 @@
           Gate Security
         </h3>
         <p style="color: #999">
-          Real-time visitor tracking and digital pass generation.
+          Pre-approve guests and receive real-time entry notifications. A safer
+          community for your family.
         </p>
       </div>
       <div class="card">
@@ -228,13 +473,99 @@
           style="font-size: 40px; color: var(--primary); margin-bottom: 20px"
         ></i>
         <h3 style="color: white; font-size: 24px; margin-bottom: 10px">
-          Directory
+          Amenity Booking
         </h3>
         <p style="color: #999">
-          Unified digital registry for all owners and tenants.
+          Reserve the clubhouse, tennis court, or pool area instantly from your
+          phone without manual registers.
         </p>
       </div>
     </section>
+
+    <section style="padding: 100px 5%; max-width: 900px; margin: 0 auto">
+      <h2
+        style="
+          font-size: 32px;
+          font-family: &quot;Outfit&quot;;
+          text-align: center;
+          margin-bottom: 40px;
+        "
+      >
+        Common Questions
+      </h2>
+      <div class="form-box" style="margin-bottom: 20px">
+        <h4 style="color: var(--primary); margin-bottom: 10px">
+          Is my data secure?
+        </h4>
+        <p style="color: var(--text-muted)">
+          Yes, we use industry-standard encryption to protect all resident and
+          financial information.
+        </p>
+      </div>
+      <div class="form-box" style="margin-bottom: 20px">
+        <h4 style="color: var(--primary); margin-bottom: 10px">
+          Can I pay maintenance via credit card?
+        </h4>
+        <p style="color: var(--text-muted)">
+          Absolutely. Our Stripe integration supports credit cards, debit cards,
+          and net banking.
+        </p>
+      </div>
+    </section>
+
+    <div
+      style="
+        text-align: center;
+        padding: 100px 5%;
+        border-top: 1px solid var(--glass-border);
+      "
+    >
+      <h2
+        style="
+          font-size: 42px;
+          font-family: &quot;Outfit&quot;;
+          margin-bottom: 20px;
+        "
+      >
+        Ready to Transform Your Society?
+      </h2>
+      <p
+        style="
+          color: var(--text-muted);
+          margin-bottom: 40px;
+          max-width: 600px;
+          margin-left: auto;
+          margin-right: auto;
+        "
+      >
+        Join hundreds of communities making management easier and living better.
+      </p>
+      <button
+        class="btn-auth"
+        style="width: auto; padding: 18px 60px"
+        onclick="location.href = '/admin/register'"
+      >
+        Join SocietyPro Now
+      </button>
+    </div>
+
+    <footer
+      style="
+        background: black;
+        padding: 40px 5%;
+        text-align: center;
+        color: #666;
+        border-top: 1px solid #222;
+      "
+    >
+      <div style="margin-bottom: 20px">
+        <a href="/" style="margin: 0 15px">Home</a>
+        <a href="/features" style="margin: 0 15px">Features</a>
+        <a href="/about" style="margin: 0 15px">About</a>
+        <a href="/contact" style="margin: 0 15px">Contact</a>
+      </div>
+      &copy; 2026 SocietyPro Management System. All rights reserved.
+    </footer>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>

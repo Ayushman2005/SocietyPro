@@ -96,6 +96,7 @@ stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 def send_welcome_email_thread(user_email, user_name, society_name="Society"):
     try:
+        print(f"DEBUG: Preparing to send Welcome Email to {user_email} ({user_name})")
         msg = MIMEMultipart()
         msg['From'] = os.getenv("MAIL_USERNAME")
         msg['To'] = user_email
@@ -384,6 +385,7 @@ def reset_password():
 def send_email(to_email, otp, subject, heading, message_text):
     sender_email = os.getenv("MAIL_USERNAME")
     sender_password = os.getenv("MAIL_PASSWORD")
+    print(f"DEBUG: OTP sent to {to_email} is: {otp}")
     body = f"""
     <html>
       <body style="font-family: Arial, sans-serif; color: #333;">
@@ -594,7 +596,11 @@ def update_fund():
         return redirect("/admin/login")
 
     admin_id = session["admin_id"]
-    new_amount = request.form["amount"]
+    # This looks for name="amount" in your HTML
+    new_amount = request.form.get("amount") 
+    
+    if not new_amount:
+        return "Error: Amount is required", 400
 
     db = get_db_connection()
     cur = db.cursor()
