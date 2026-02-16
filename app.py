@@ -469,8 +469,6 @@ def admin_dashboard():
 
     db = get_db_connection()
     cur = db.cursor()
-
-    # Handle Quick Invoice Generation (POST)
     if request.method == "POST":
         try:
             user_id = request.form.get("user_id")
@@ -1259,13 +1257,38 @@ def payment_success(bill_id):
         return redirect('/user/login')
 
     db = get_db_connection()
-    cur = db.cursor()
-    cur.execute("UPDATE bills SET status = 'Paid' WHERE id = %s", (bill_id,))
-    db.commit()
-    cur.close()
-    db.close()
+    if db:
+        cur = db.cursor()
+        
+        # 1. Fetch the amount and the admin_id for this specific bill
+        query_fetch = """
+            SELECT b.amount, u.admin_id 
+            FROM bills b 
+            JOIN users u ON b.user_id = u.id 
+            WHERE b.id = %s
+        """
+        cur.execute(query_fetch, (bill_id,))
+        bill_data = cur.fetchone()
+
+        if bill_data:
+            paid_amount = bill_data[0]
+            admin_id = bill_data[1]
+
+            # 2. Update the bill status to 'Paid'
+            cur.execute("UPDATE bills SET status = 'Paid' WHERE id = %s", (bill_id,))
+
+            # 3. Automatically add the paid amount to the Society Fund
+            cur.execute(
+                "UPDATE society_fund SET amount = amount + %s WHERE admin_id = %s",
+                (paid_amount, admin_id)
+            )
+
+            db.commit()
+            print(f"💰 Fund Updated: ₹{paid_amount} added for Admin ID {admin_id}")
+        
+        cur.close()
+        db.close()
 
     return render_template('user/payment_success.html', bill_id=bill_id)
-
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=5000)
