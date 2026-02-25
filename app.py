@@ -182,7 +182,7 @@ def send_welcome_email_thread(user_email, user_name, society_name="Society"):
         print(f"❌ Failed to send email: {e}")
 
 def send_welcome_email(user_email, user_name):
-    threading.Thread(target=send_welcome_email_thread, args=(user_email, user_name)).start()
+    send_welcome_email_thread(user_email, user_name)
 
 @app.route("/admin/register", methods=["GET", "POST"])
 def admin_register():
