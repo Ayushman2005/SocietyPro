@@ -89,3 +89,19 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   
 });
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === "fetchData") {
+        
+        someAsyncFunction()
+            .then(data => {
+                sendResponse({ status: "success", data: data });
+            })
+            .catch(error => {
+                sendResponse({ status: "error", message: error.toString() });
+            });
+
+        return true; 
+    }
+    
+    return false;
+});
