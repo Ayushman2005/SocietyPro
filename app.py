@@ -43,6 +43,8 @@ db_config = {
     "database": os.getenv("DB_NAME", "society_db"),
 }
 
+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
+
 
 def get_db_connection():
     try:
@@ -113,7 +115,8 @@ stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 def send_welcome_email_thread(user_email, user_name, society_name="Society"):
     try:
-        print(f"DEBUG: Preparing to send Welcome Email to {user_email} ({user_name})")
+        print(
+            f"DEBUG: Preparing to send Welcome Email to {user_email} ({user_name})")
         msg = MIMEMultipart()
         msg["From"] = os.getenv("MAIL_USERNAME")
         msg["To"] = user_email
@@ -189,10 +192,12 @@ def send_welcome_email_thread(user_email, user_name, society_name="Society"):
 
         msg.attach(MIMEText(body, "html"))
 
-        server = smtplib.SMTP(os.getenv("MAIL_SERVER", ""), int(os.getenv("MAIL_PORT")))
+        server = smtplib.SMTP(os.getenv("MAIL_SERVER", ""),
+                              int(os.getenv("MAIL_PORT")))
         server.starttls()
         server.login(os.getenv("MAIL_USERNAME"), os.getenv("MAIL_PASSWORD"))
-        server.sendmail(os.getenv("MAIL_USERNAME"), user_email, msg.as_string())
+        server.sendmail(os.getenv("MAIL_USERNAME"),
+                        user_email, msg.as_string())
         server.quit()
         print(f"✅ Impressive Welcome email sent to {user_email}")
     except Exception as e:
@@ -427,7 +432,8 @@ def reset_password():
         cur = db.cursor()
 
         cur.execute(
-            "UPDATE admins SET password = %s WHERE email = %s", (hashed_pw, email)
+            "UPDATE admins SET password = %s WHERE email = %s", (
+                hashed_pw, email)
         )
         db.commit()
         cur.close()
@@ -550,7 +556,8 @@ def admin_dashboard():
         except Exception:
             pass
 
-    cur.execute("SELECT amount FROM society_fund WHERE admin_id = %s", (admin_id,))
+    cur.execute(
+        "SELECT amount FROM society_fund WHERE admin_id = %s", (admin_id,))
     fund_row = cur.fetchone()
 
     if fund_row:
@@ -572,7 +579,8 @@ def admin_dashboard():
     cur.execute(query_bills, (admin_id,))
     bills = cur.fetchall()
 
-    cur.execute("SELECT id, name, email FROM users WHERE admin_id = %s", (admin_id,))
+    cur.execute(
+        "SELECT id, name, email FROM users WHERE admin_id = %s", (admin_id,))
     users = cur.fetchall()
 
     cur.close()
@@ -825,7 +833,8 @@ def edit_tenant():
         )
     else:
         cur.execute(
-            "UPDATE users SET name=%s, email=%s WHERE id=%s", (name, email, user_id)
+            "UPDATE users SET name=%s, email=%s WHERE id=%s", (
+                name, email, user_id)
         )
 
     db.commit()
@@ -842,7 +851,7 @@ def admin_invoices():
 
     admin_id = session["admin_id"]
     db = get_db_connection()
-    
+
     if db is None:
         return (
             "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.",
@@ -882,7 +891,8 @@ def admin_settings():
 
         cur = db.cursor()
         cur.execute(
-            "UPDATE admins SET password=%s WHERE id=%s", (new_password, admin_id)
+            "UPDATE admins SET password=%s WHERE id=%s", (
+                new_password, admin_id)
         )
         db.commit()
         cur.close()
@@ -942,7 +952,11 @@ def user_dashboard():
     cur.close()
     db.close()
 
-    return render_template("user/user_dashboard.html", bills=bills)
+    return render_template(
+        "user/user_dashboard.html",
+        bills=bills,
+        weather_key=WEATHER_API_KEY
+    )
 
 
 @app.route("/admin/notices", methods=["GET", "POST"])
@@ -1196,7 +1210,8 @@ def admin_complaints():
         complaint_id = request.form["complaint_id"]
         status = request.form["status"]
         cur.execute(
-            "UPDATE complaints SET status=%s WHERE id=%s", (status, complaint_id)
+            "UPDATE complaints SET status=%s WHERE id=%s", (
+                status, complaint_id)
         )
         db.commit()
         return redirect("/admin/complaints")
@@ -1297,7 +1312,8 @@ def user_bookings():
         return redirect("/user/login")
     user_id = session["user"]
 
-    facilities = ["Community Hall", "Clubhouse", "Tennis Court", "Swimming Pool Area"]
+    facilities = ["Community Hall", "Clubhouse",
+                  "Tennis Court", "Swimming Pool Area"]
     slots = [
         "Morning (9 AM - 1 PM)",
         "Afternoon (2 PM - 6 PM)",
@@ -1365,7 +1381,8 @@ def booking_action():
 
     cur = db.cursor()
     cur.execute(
-        "UPDATE bookings SET status = %s WHERE id = %s", (new_status, booking_id)
+        "UPDATE bookings SET status = %s WHERE id = %s", (
+            new_status, booking_id)
     )
     db.commit()
     cur.close()
@@ -1522,7 +1539,8 @@ def pay_bill(bill_id):
                 }
             ],
             mode="payment",
-            success_url=url_for("payment_success", bill_id=bill_id, _external=True)
+            success_url=url_for("payment_success",
+                                bill_id=bill_id, _external=True)
             + "?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=url_for("user_dashboard", _external=True),
         )
@@ -1556,7 +1574,8 @@ def payment_success(bill_id):
             admin_id = bill_data[1]
 
             # 2. Update the bill status to 'Paid'
-            cur.execute("UPDATE bills SET status = 'Paid' WHERE id = %s", (bill_id,))
+            cur.execute(
+                "UPDATE bills SET status = 'Paid' WHERE id = %s", (bill_id,))
 
             # 3. Automatically add the paid amount to the Society Fund
             cur.execute(
@@ -1565,7 +1584,8 @@ def payment_success(bill_id):
             )
 
             db.commit()
-            print(f"💰 Fund Updated: ₹{paid_amount} added for Admin ID {admin_id}")
+            print(
+                f"💰 Fund Updated: ₹{paid_amount} added for Admin ID {admin_id}")
 
         cur.close()
         db.close()

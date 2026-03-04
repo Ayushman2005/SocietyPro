@@ -92,6 +92,43 @@ img {
   animation: fadeInUp 0.8s ease-out;
 }
 
+#weather-box {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 220px;
+  background: linear-gradient(135deg,#4facfe,#00f2fe);
+  color: white;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  z-index: 9999;
+  font-family: "Outfit";
+  animation: floatWeather 4s ease-in-out infinite;
+}
+
+.weather-header{
+  font-weight: 600;
+  margin-bottom:10px;
+  font-size:16px;
+}
+
+.weather-content h3{
+  margin:0;
+  font-size:18px;
+}
+
+.weather-content p{
+  margin:3px 0;
+  font-size:14px;
+}
+
+@keyframes floatWeather {
+  0%{transform:translateY(0px)}
+  50%{transform:translateY(-5px)}
+  100%{transform:translateY(0px)}
+}
+
 .logo {
   font-family: "Outfit", sans-serif;
   font-size: 24px;
