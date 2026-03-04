@@ -215,6 +215,9 @@ def admin_register():
         society_name = request.form["society_name"]
 
         db = get_db_connection()
+        if db is None:
+            return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
         cur = db.cursor()
         cur.execute("SELECT id FROM admins WHERE email = %s", (email,))
         existing_admin = cur.fetchone()
@@ -259,6 +262,9 @@ def admin_verify_registration():
 
             try:
                 db = get_db_connection()
+                if db is None:
+                    return render_template("auth/admin_verify_otp.html", error="Database is offline.")
+
                 cur = db.cursor()
                 cur.execute(
                     "INSERT INTO admins (name, email, password, society_name) VALUES (%s, %s, %s, %s)",
@@ -299,6 +305,9 @@ def admin_login():
             return render_template("auth/admin_login.html", error="Invalid CAPTCHA")
 
         db = get_db_connection()
+        if db is None:
+            return render_template("auth/admin_login.html", error="System maintenance: Database is currently offline.")
+
         cur = db.cursor()
         cur.execute("SELECT * FROM admins WHERE email=%s", (email,))
         admin = cur.fetchone()
@@ -329,6 +338,9 @@ def user_login():
         password = request.form["password"]
 
         db = get_db_connection()
+        if db is None:
+            return render_template("auth/user_login.html", error="System maintenance: Database is currently offline.")
+
         cur = db.cursor()
         cur.execute("SELECT id, password FROM users WHERE email=%s", (email,))
         user = cur.fetchone()
@@ -351,6 +363,9 @@ def forgot_password():
         email = request.form["email"]
 
         db = get_db_connection()
+        if db is None:
+            return render_template("auth/forgot_password.html", error="Database offline. Try again later.")
+
         cur = db.cursor()
 
         cur.execute("SELECT id FROM admins WHERE email = %s", (email,))
@@ -374,7 +389,7 @@ def forgot_password():
 
             return redirect("/verify_otp")
         else:
-            return "Admin email not found"
+            return render_template("auth/forgot_password.html", error="Admin email not found")
 
     return render_template("auth/forgot_password.html")
 
@@ -406,6 +421,9 @@ def reset_password():
         hashed_pw = generate_password_hash(new_password)
 
         db = get_db_connection()
+        if db is None:
+            return render_template("auth/reset_password.html", error="Database offline. Try again later.")
+
         cur = db.cursor()
 
         cur.execute(
@@ -475,6 +493,9 @@ def profile():
         return redirect("/")
 
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
     msg = ""
 
@@ -512,6 +533,9 @@ def admin_dashboard():
     admin_id = session["admin_id"]
 
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
     if request.method == "POST":
         try:
@@ -566,6 +590,9 @@ def admin_visitors():
 
     admin_id = session["admin_id"]
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
 
     query = """
@@ -590,6 +617,9 @@ def admin_polls():
 
     admin_id = session["admin_id"]
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
 
     if request.method == "POST":
@@ -626,6 +656,9 @@ def admin_bookings():
 
     admin_id = session["admin_id"]
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
 
     query = """
@@ -649,13 +682,15 @@ def update_fund():
         return redirect("/admin/login")
 
     admin_id = session["admin_id"]
-    # This looks for name="amount" in your HTML
     new_amount = request.form.get("amount")
 
     if not new_amount:
         return "Error: Amount is required", 400
 
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
 
     cur.execute(
@@ -677,6 +712,9 @@ def delete_bill(bill_id):
 
     try:
         db = get_db_connection()
+        if db is None:
+            return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
         cur = db.cursor()
         cur.execute("DELETE FROM bills WHERE id = %s", (bill_id,))
         db.commit()
@@ -748,6 +786,9 @@ def delete_tenant(user_id):
 
     try:
         db = get_db_connection()
+        if db is None:
+            return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
         cur = db.cursor()
         cur.execute("DELETE FROM bills WHERE user_id = %s", (user_id,))
         cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
@@ -771,6 +812,9 @@ def edit_tenant():
     password_input = request.form["password"]
 
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
 
     if password_input.strip():
@@ -798,6 +842,13 @@ def admin_invoices():
 
     admin_id = session["admin_id"]
     db = get_db_connection()
+    
+    if db is None:
+        return (
+            "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.",
+            500,
+        )
+
     cur = db.cursor()
 
     query = """
@@ -826,6 +877,9 @@ def admin_settings():
         admin_id = session["admin_id"]
 
         db = get_db_connection()
+        if db is None:
+            return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
         cur = db.cursor()
         cur.execute(
             "UPDATE admins SET password=%s WHERE id=%s", (new_password, admin_id)
@@ -851,6 +905,9 @@ def add_bill():
             return "Error: Missing User or Amount", 400
 
         db = get_db_connection()
+        if db is None:
+            return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
         cur = db.cursor()
         cur.execute(
             "INSERT INTO bills (user_id, amount, status) VALUES (%s, %s, 'Unpaid')",
@@ -873,8 +930,10 @@ def user_dashboard():
 
     user_id = session["user"]
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
-    # USE THE user_id VARIABLE HERE to fix the "not accessed" warning
     cur.execute(
         "SELECT id, amount, status FROM bills WHERE user_id = %s ORDER BY id DESC",
         (user_id,),
@@ -893,6 +952,9 @@ def admin_notices():
 
     admin_id = session["admin_id"]
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
 
     if request.method == "POST":
@@ -926,6 +988,9 @@ def edit_notice():
     content = request.form["content"]
 
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
     cur.execute(
         "UPDATE notices SET title=%s, content=%s WHERE id=%s",
@@ -944,6 +1009,9 @@ def delete_notice(id):
         return redirect("/admin/login")
 
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
     cur.execute("DELETE FROM notices WHERE id=%s", (id,))
     db.commit()
@@ -959,6 +1027,9 @@ def user_notices():
         return redirect("/user/login")
 
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
     cur.execute(
         "SELECT title, content, DATE_FORMAT(created_at, '%d %b %Y') as date FROM notices ORDER BY id DESC"
@@ -976,6 +1047,9 @@ def download_invoice(bill_id):
         return redirect("/admin/login")
 
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
     query = """
         SELECT bills.id, bills.amount, bills.status, users.email 
@@ -1081,6 +1155,9 @@ def user_complaints():
 
     user_id = session["user"]
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
 
     if request.method == "POST":
@@ -1110,6 +1187,9 @@ def admin_complaints():
 
     admin_id = session["admin_id"]
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
 
     if request.method == "POST":
@@ -1143,6 +1223,9 @@ def user_visitors():
         return redirect("/user/login")
     user_id = session["user"]
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
 
     if request.method == "POST":
@@ -1173,6 +1256,9 @@ def user_polls():
         return redirect("/user/login")
     user_id = session["user"]
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
 
     if request.method == "POST":
@@ -1222,6 +1308,9 @@ def user_bookings():
     success = None
 
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
 
     if request.method == "POST":
@@ -1271,6 +1360,9 @@ def booking_action():
     new_status = "Confirmed" if action == "approve" else "Rejected"
 
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
     cur.execute(
         "UPDATE bookings SET status = %s WHERE id = %s", (new_status, booking_id)
@@ -1398,7 +1490,11 @@ def submit_contact():
 def pay_bill(bill_id):
     if "user" not in session:
         return redirect("/user/login")
+
     db = get_db_connection()
+    if db is None:
+        return "Database Connection Error: Please check if your Local MySQL or Aiven Cloud is active.", 500
+
     cur = db.cursor()
     cur.execute("SELECT amount FROM bills WHERE id = %s", (bill_id,))
     bill = cur.fetchone()
