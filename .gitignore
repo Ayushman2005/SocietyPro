@@ -3,3 +3,4 @@ ca.pem
 society_db.sql
 .git
 test_db.py
+flake8_output.txt
