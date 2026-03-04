@@ -4,3 +4,7 @@ society_db.sql
 .git
 test_db.py
 flake8_output.txt
+flake8_errors.txt
+.flake8
+output.txt
+pylint_errors.txt
