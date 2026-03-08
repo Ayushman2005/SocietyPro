@@ -17,9 +17,11 @@
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
@@ -30,6 +32,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -50,11 +53,9 @@ body {
   font-size: 16px;
   overflow-x: hidden;
   background-image:
-    radial-gradient(
-      circle at 15% 50%,
+    radial-gradient(circle at 15% 50%,
       rgba(255, 140, 0, 0.08),
-      transparent 40%
-    ),
+      transparent 40%),
     radial-gradient(circle at 85% 30%, rgba(79, 70, 229, 0.08), transparent 40%);
   background-size: 120% 120%;
   animation: aurora 15s ease infinite;
@@ -65,9 +66,11 @@ a {
   color: inherit;
   transition: 0.3s ease;
 }
+
 ul {
   list-style: none;
 }
+
 img {
   max-width: 100%;
   display: block;
@@ -97,36 +100,44 @@ img {
   bottom: 20px;
   right: 20px;
   width: 220px;
-  background: linear-gradient(135deg,#4facfe,#00f2fe);
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
   color: white;
   border-radius: 15px;
   padding: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   z-index: 9999;
   font-family: "Outfit";
   animation: floatWeather 4s ease-in-out infinite;
 }
 
-.weather-header{
+.weather-header {
   font-weight: 600;
-  margin-bottom:10px;
-  font-size:16px;
+  margin-bottom: 10px;
+  font-size: 16px;
 }
 
-.weather-content h3{
-  margin:0;
-  font-size:18px;
+.weather-content h3 {
+  margin: 0;
+  font-size: 18px;
 }
 
-.weather-content p{
-  margin:3px 0;
-  font-size:14px;
+.weather-content p {
+  margin: 3px 0;
+  font-size: 14px;
 }
 
 @keyframes floatWeather {
-  0%{transform:translateY(0px)}
-  50%{transform:translateY(-5px)}
-  100%{transform:translateY(0px)}
+  0% {
+    transform: translateY(0px)
+  }
+
+  50% {
+    transform: translateY(-5px)
+  }
+
+  100% {
+    transform: translateY(0px)
+  }
 }
 
 .logo {
@@ -138,6 +149,7 @@ img {
   gap: 10px;
   color: white;
 }
+
 .logo i {
   color: var(--primary);
   font-size: 26px;
@@ -149,12 +161,14 @@ img {
   gap: 30px;
   align-items: center;
 }
+
 .nav-links a {
   font-weight: 600;
   color: var(--text-muted);
   font-size: 14px;
   transition: 0.3s;
 }
+
 .nav-links a:hover {
   color: white;
 }
@@ -167,51 +181,64 @@ img {
   font-size: 14px;
   color: white !important;
 }
+
 .login-btn:hover {
   background: var(--primary);
   border-color: var(--primary);
   color: black !important;
 }
+
 /* --- NEW: Animated Auth Buttons --- */
 .btn-auth {
-    background: linear-gradient(45deg, #ff8c00, #ff2e63, #ff8c00); /* Vibrant Gradient */
-    background-size: 200% auto;
-    color: white;
-    padding: 14px 32px;
-    border: none;
-    border-radius: 50px;
-    font-weight: 700;
-    font-size: 16px;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: 0 0 20px rgba(255, 140, 0, 0.6); /* Neon Glow */
-    transition: all 0.4s ease;
-    width: 100%;
-    animation: gradientMove 3s linear infinite; /* Constant movement */
+  background: linear-gradient(45deg, #ff8c00, #ff2e63, #ff8c00);
+  /* Vibrant Gradient */
+  background-size: 200% auto;
+  color: white;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 0 20px rgba(255, 140, 0, 0.6);
+  /* Neon Glow */
+  transition: all 0.4s ease;
+  width: 100%;
+  animation: gradientMove 3s linear infinite;
+  /* Constant movement */
 }
 
 .btn-auth:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 0 30px rgba(255, 46, 99, 0.8); /* Stronger Glow on Hover */
-    background-position: right center;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 0 30px rgba(255, 46, 99, 0.8);
+  /* Stronger Glow on Hover */
+  background-position: right center;
 }
 
 @keyframes gradientMove {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 200% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 200% 50%;
+  }
 }
 
 .auth-link {
-    color: var(--primary);
-    font-weight: 600;
-    text-decoration: none;
-    transition: 0.3s;
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.3s;
 }
+
 .auth-link:hover {
-    color: #ff2e63;
-    text-decoration: underline;
+  color: #ff2e63;
+  text-decoration: underline;
 }
+
 .hamburger {
   display: none;
   font-size: 24px;
@@ -247,30 +274,32 @@ img {
   color: var(--text-muted);
   margin-bottom: 40px;
 }
+
 .btn-secondary-save {
-    background: #2d2d2d;
-    color: white;
-    padding: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.3s ease;
+  background: #2d2d2d;
+  color: white;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
 }
 
 .btn-secondary-save:hover {
-    background: #3d3d3d;
-    border-color: var(--primary);
-    color: var(--primary);
+  background: #3d3d3d;
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .btn-secondary-save i {
-    font-size: 18px;
+  font-size: 18px;
 }
+
 .btn-primary {
   background: linear-gradient(135deg, #ff8c00, #ff5e00);
   color: white;
@@ -288,6 +317,7 @@ img {
   align-items: center;
   gap: 10px;
 }
+
 .btn-primary:hover {
   transform: translateY(-4px);
   box-shadow: 0 15px 40px rgba(255, 140, 0, 0.5);
@@ -298,12 +328,14 @@ img {
   display: flex;
   justify-content: center;
 }
+
 .hero-image img {
   border-radius: var(--radius-xl);
   border: 1px solid var(--glass-border);
   box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.6);
   transition: transform 0.5s ease;
 }
+
 .hero-image:hover img {
   transform: scale(1.02);
 }
@@ -317,6 +349,7 @@ img {
   border-bottom: 1px solid var(--glass-border);
   background: rgba(0, 0, 0, 0.3);
 }
+
 .stat-number {
   font-family: "Outfit";
   font-size: 48px;
@@ -324,6 +357,7 @@ img {
   color: white;
   line-height: 1;
 }
+
 .stat-label {
   font-size: 12px;
   font-weight: 700;
@@ -347,6 +381,7 @@ img {
   padding: 40px 30px;
   transition: 0.4s ease;
 }
+
 .feature-card:hover {
   transform: translateY(-8px);
   border-color: var(--primary);
@@ -358,12 +393,14 @@ img {
   margin-bottom: 20px;
   display: block;
 }
+
 .feature-card h3 {
   font-family: "Outfit";
   font-size: 22px;
   margin-bottom: 10px;
   color: white;
 }
+
 .feature-card p {
   color: var(--text-muted);
   font-size: 15px;
@@ -381,18 +418,17 @@ img {
   height: calc(100vh - 40px);
   position: sticky;
   top: 20px;
-  background: linear-gradient(
-    180deg,
-    rgba(20, 20, 20, 0.85) 0%,
-    rgba(10, 10, 10, 0.95) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(20, 20, 20, 0.85) 0%,
+      rgba(10, 10, 10, 0.95) 100%);
   backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
   padding: 30px;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Fixes corner bleed */
+  overflow: hidden;
+  /* Fixes corner bleed */
 }
 
 .menu {
@@ -401,15 +437,19 @@ img {
   flex-direction: column;
   gap: 8px;
   flex: 1;
-  overflow-y: auto; /* SCROLL IF MENU IS TOO LONG */
-  min-height: 0; /* CRITICAL FOR FLEX SCROLLING */
-  padding-right: 5px; /* Space for scrollbar */
+  overflow-y: auto;
+  /* SCROLL IF MENU IS TOO LONG */
+  min-height: 0;
+  /* CRITICAL FOR FLEX SCROLLING */
+  padding-right: 5px;
+  /* Space for scrollbar */
 }
 
 /* Custom Scrollbar for Menu */
 .menu::-webkit-scrollbar {
   width: 4px;
 }
+
 .menu::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
@@ -425,8 +465,10 @@ img {
   font-weight: 600;
   font-size: 14px;
   transition: 0.3s;
-  flex-shrink: 0; /* Prevents items from squishing */
+  flex-shrink: 0;
+  /* Prevents items from squishing */
 }
+
 .menu a:hover,
 .menu a.active {
   background: linear-gradient(90deg, rgba(255, 140, 0, 0.15), transparent);
@@ -436,7 +478,8 @@ img {
 }
 
 .logout-btn {
-  margin-top: 20px; /* Separates from menu */
+  margin-top: 20px;
+  /* Separates from menu */
   padding: 14px 18px;
   border-radius: 12px;
   color: #ef4444;
@@ -448,14 +491,17 @@ img {
   background: rgba(239, 68, 68, 0.05);
   border: 1px solid rgba(239, 68, 68, 0.1);
   transition: 0.3s;
-  flex-shrink: 0; /* Ensures logout button never shrinks */
+  flex-shrink: 0;
+  /* Ensures logout button never shrinks */
 }
+
 .logout-btn:hover {
   background: rgba(239, 68, 68, 0.15);
   border-color: rgba(239, 68, 68, 0.3);
   color: white;
   transform: translateY(-2px);
 }
+
 /* --- SIDEBAR FIX END --- */
 
 .main-content {
@@ -480,6 +526,7 @@ img {
   overflow: hidden;
   transition: 0.4s;
 }
+
 .card:hover {
   transform: translateY(-5px) scale(1.01);
   border-color: rgba(255, 140, 0, 0.3);
@@ -495,12 +542,14 @@ img {
   letter-spacing: 1px;
   margin-bottom: 10px;
 }
+
 .card-amount {
   font-size: 32px;
   font-weight: 800;
   color: white;
   margin: 5px 0;
 }
+
 .card h3 {
   font-size: 18px;
   margin-bottom: 5px;
@@ -536,6 +585,7 @@ textarea {
   font-size: 15px;
   transition: 0.3s;
 }
+
 input:focus,
 select:focus {
   border-color: var(--primary);
@@ -559,17 +609,20 @@ select:focus {
   transition: 0.3s;
   display: block;
 }
+
 .role-card:hover {
   background: rgba(255, 140, 0, 0.1);
   border-color: var(--primary);
   transform: translateY(-5px);
   box-shadow: 0 10px 30px -5px rgba(255, 140, 0, 0.2);
 }
+
 .role-icon {
   font-size: 42px;
   color: var(--primary);
   margin-bottom: 15px;
 }
+
 .role-title {
   display: block;
   font-family: "Outfit";
@@ -578,6 +631,7 @@ select:focus {
   color: white;
   margin-bottom: 5px;
 }
+
 .role-desc {
   display: block;
   font-size: 13px;
@@ -591,6 +645,7 @@ select:focus {
   min-height: 100vh;
   padding: 20px;
 }
+
 .auth-container {
   width: 100%;
   max-width: 450px;
@@ -602,6 +657,7 @@ select:focus {
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(20px);
 }
+
 .auth-container h1 {
   font-size: 28px;
   font-family: "Outfit";
@@ -614,10 +670,12 @@ select:focus {
   border-radius: var(--radius-xl);
   border: 1px solid var(--glass-border);
 }
+
 table {
   width: 100%;
   border-collapse: collapse;
 }
+
 th {
   text-align: left;
   padding: 18px 20px;
@@ -626,12 +684,14 @@ th {
   text-transform: uppercase;
   border-bottom: 1px solid var(--glass-border);
 }
+
 td {
   padding: 20px;
   border-bottom: 1px solid var(--glass-border);
   color: white;
   font-size: 14px;
 }
+
 tr:last-child td {
   border-bottom: none;
 }
@@ -643,23 +703,51 @@ tr:last-child td {
   font-weight: 700;
   text-transform: uppercase;
 }
+
 .status.paid {
   background: rgba(16, 185, 129, 0.15);
   color: #10b981;
 }
+
 .status.unpaid {
   background: rgba(245, 158, 11, 0.15);
   color: #fbbf24;
 }
+
 .status.rejected {
   background: rgba(239, 68, 68, 0.15);
   color: #f87171;
+}
+
+.split-grid-2-1 {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.split-grid-1-1 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-container {
+    grid-template-columns: 220px 1fr;
+  }
+
+  .hero {
+    gap: 40px;
+  }
 }
 
 @media (max-width: 900px) {
   .navbar {
     padding: 15px 20px;
   }
+
   .nav-links {
     display: none;
     position: absolute;
@@ -671,25 +759,32 @@ tr:last-child td {
     flex-direction: column;
     border-radius: 20px;
     border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    z-index: 1000;
   }
+
   .nav-links.active {
     display: flex;
   }
+
   .hamburger {
     display: block;
   }
 
   .hero {
-    flex-direction: column;
-    text-align: center;
-    padding-top: 50px;
+    flex-direction: column !important;
+    text-align: center !important;
+    padding-top: 50px !important;
   }
+
   .hero h1 {
     font-size: 42px;
   }
+
   .stats-banner {
     flex-wrap: wrap;
     gap: 30px;
+    padding: 40px 5%;
   }
 
   .dashboard-container {
@@ -701,7 +796,7 @@ tr:last-child td {
   .sidebar {
     height: auto;
     width: 100%;
-    position: relative;
+    position: sticky;
     top: 0;
     margin: 0;
     padding: 15px;
@@ -709,38 +804,144 @@ tr:last-child td {
     border-right: none;
     border-bottom: 1px solid var(--glass-border);
     flex-direction: row;
+    align-items: center;
     overflow-x: auto;
     white-space: nowrap;
+    z-index: 100;
   }
 
   .sidebar .logo {
     display: none;
   }
+
   .sidebar .menu {
     margin-top: 0;
     flex-direction: row;
     gap: 10px;
     overflow-y: hidden;
     overflow-x: auto;
+    padding-bottom: 5px;
+    flex: 1;
   }
 
   .sidebar .menu a {
-    padding: 8px 12px;
-    font-size: 12px;
+    padding: 8px 16px;
+    font-size: 13px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--glass-border);
+    white-space: nowrap;
   }
+
   .logout-btn {
-    display: none;
+    margin-top: 0;
+    margin-left: 10px;
+    padding: 8px 16px;
+    font-size: 13px;
+    background: rgba(239, 68, 68, 0.05);
+    white-space: nowrap;
+    display: flex;
   }
 
   .main-content {
     padding: 20px;
   }
+
   .role-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
+
+  .split-grid-2-1,
+  .split-grid-1-1 {
+    grid-template-columns: 1fr !important;
+  }
+
   .features {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero h1 {
+    font-size: 32px;
+    margin-bottom: 15px;
+  }
+
+  .hero p {
+    font-size: 15px;
+  }
+
+  .btn-primary {
+    padding: 14px 24px;
+    font-size: 14px;
+    width: 100%;
+  }
+
+  .stat-number {
+    font-size: 32px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  .auth-container {
+    padding: 30px 20px;
+    max-width: 90%;
+  }
+
+  .auth-container h1 {
+    font-size: 24px;
+  }
+
+  td,
+  th {
+    padding: 12px 10px;
+    font-size: 13px;
+  }
+
+  #weather-box {
+    width: calc(100% - 40px);
+    right: 20px;
+    left: 20px;
+    bottom: 20px;
+  }
+}
+
+@media (max-width: 400px) {
+  .hero h1 {
+    font-size: 28px;
+  }
+
+  .card-amount {
+    font-size: 24px;
+  }
+
+  .feature-card {
+    padding: 25px 20px;
+  }
+
+  .navbar {
+    padding: 12px 15px;
+    margin: 10px;
+    border-radius: 20px;
+  }
+
+  .nav-links {
+    left: 2.5%;
+    width: 95%;
+  }
+
+  .stat-number {
+    font-size: 28px;
+  }
+
+  .sidebar .menu a {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .logout-btn {
+    font-size: 12px;
+    padding: 6px 12px;
   }
 }

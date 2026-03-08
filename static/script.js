@@ -73,18 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (hamburger) {
     hamburger.addEventListener("click", () => {
       navLinks.classList.toggle("active");
-      // Simple toggle logic for mobile
-      if (navLinks.style.display === "flex") navLinks.style.display = "none";
-      else {
-        navLinks.style.display = "flex";
-        navLinks.style.flexDirection = "column";
-        navLinks.style.position = "absolute";
-        navLinks.style.top = "80px";
-        navLinks.style.right = "20px";
-        navLinks.style.background = "#111";
-        navLinks.style.padding = "20px";
-        navLinks.style.borderRadius = "12px";
-      }
     });
   }
   

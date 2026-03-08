@@ -1,268 +1,200 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <title>Manage Residents</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
-      rel="stylesheet"
-    />
-  
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👥</text></svg>">
+
+<head>
+  <title>Manage Residents</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet" />
+
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👥</text></svg>">
 </head>
-  <body class="dashboard-body">
-    <div class="dashboard-container">
-      <aside class="sidebar">
-        <div class="logo"><i class="ri-building-2-line"></i> AdminPanel</div>
-        <ul class="menu">
-          <li>
-            <a href="/admin/dashboard"
-              ><i class="ri-dashboard-3-line"></i> Overview</a
-            >
-          </li>
-          <li>
-            <a href="/admin/tenants" class="active"
-              ><i class="ri-group-line"></i> Residents</a
-            >
-          </li>
-          <li>
-            <a href="/admin/invoices"
-              ><i class="ri-file-list-3-line"></i> Finances</a
-            >
-          </li>
-          <li>
-            <a href="/admin/notices"
-              ><i class="ri-notification-badge-line"></i> Notices</a
-            >
-          </li>
-          <li>
-            <a href="/admin/visitors"
-              ><i class="ri-shield-check-line"></i> Security</a
-            >
-          </li>
-          <li>
-            <a href="/admin/bookings"
-              ><i class="ri-calendar-check-line"></i> Bookings</a
-            >
-          </li>
-          <li>
-            <a href="/admin/polls"
-              ><i class="ri-bar-chart-box-line"></i> Polls</a
-            >
-          </li>
-          <li>
-            <a href="/admin/complaints"
-              ><i class="ri-customer-service-2-line"></i> Helpdesk</a
-            >
-          </li>
-          <li>
-            <a href="/admin/settings"
-              ><i class="ri-settings-4-line"></i> Settings</a
-            >
-          </li>
-        </ul>
-        <a href="/logout" class="logout-btn"
-          ><i class="ri-logout-box-line"></i> Logout</a
-        >
-      </aside>
 
-      <main class="main-content">
-        <div class="header-section">
-          <div class="header-title">
-            <h1>Resident Directory</h1>
-            <p>Manage access for owners and tenants.</p>
-          </div>
+<body class="dashboard-body">
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div class="logo"><i class="ri-building-2-line"></i> AdminPanel</div>
+      <ul class="menu">
+        <li>
+          <a href="/admin/dashboard"><i class="ri-dashboard-3-line"></i> Overview</a>
+        </li>
+        <li>
+          <a href="/admin/tenants" class="active"><i class="ri-group-line"></i> Residents</a>
+        </li>
+        <li>
+          <a href="/admin/invoices"><i class="ri-file-list-3-line"></i> Finances</a>
+        </li>
+        <li>
+          <a href="/admin/notices"><i class="ri-notification-badge-line"></i> Notices</a>
+        </li>
+        <li>
+          <a href="/admin/visitors"><i class="ri-shield-check-line"></i> Security</a>
+        </li>
+        <li>
+          <a href="/admin/bookings"><i class="ri-calendar-check-line"></i> Bookings</a>
+        </li>
+        <li>
+          <a href="/admin/polls"><i class="ri-bar-chart-box-line"></i> Polls</a>
+        </li>
+        <li>
+          <a href="/admin/complaints"><i class="ri-customer-service-2-line"></i> Helpdesk</a>
+        </li>
+        <li>
+          <a href="/admin/settings"><i class="ri-settings-4-line"></i> Settings</a>
+        </li>
+      </ul>
+      <a href="/logout" class="logout-btn"><i class="ri-logout-box-line"></i> Logout</a>
+    </aside>
+
+    <main class="main-content">
+      <div class="header-section">
+        <div class="header-title">
+          <h1>Resident Directory</h1>
+          <p>Manage access for owners and tenants.</p>
         </div>
+      </div>
 
-        <div
-          style="
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
-            align-items: start;
-          "
-        >
-          <div class="card" style="padding: 0; overflow: hidden">
-            <div
-              style="
+      <div class="split-grid-2-1">
+        <div class="card" style="padding: 0; overflow: hidden">
+          <div style="
                 padding: 15px 20px;
                 border-bottom: 1px solid var(--border-subtle);
                 background: rgba(255, 255, 255, 0.02);
-              "
-            >
-              <input
-                type="text"
-                id="searchBox"
-                placeholder="Search by name..."
-                style="margin: 0; background: #000; border: none"
-              />
-            </div>
+              ">
+            <input type="text" id="searchBox" placeholder="Search by name..."
+              style="margin: 0; background: #000; border: none" />
+          </div>
 
-            <div style="max-height: 60vh; overflow-y: auto">
-              <table style="margin: 0">
-                <thead>
-                  <tr>
-                    <th style="padding-left: 20px">Name</th>
-                    <th>Email</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="tenantTable">
-                  {% for t in tenants %}
-                  <tr>
-                    <td style="padding-left: 20px; font-weight: 600">
-                      {{ t[1] }}
-                    </td>
-                    <td style="color: var(--text-muted); font-size: 13px">
-                      {{ t[2] }}
-                    </td>
-                    <td>
-                      <button
-                        onclick="editTenant('{{ t[0] }}', '{{ t[1] }}', '{{ t[2] }}')"
-                        style="
+          <div style="max-height: 60vh; overflow-y: auto">
+            <table style="margin: 0">
+              <thead>
+                <tr>
+                  <th style="padding-left: 20px">Name</th>
+                  <th>Email</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tenantTable">
+                {% for t in tenants %}
+                <tr>
+                  <td style="padding-left: 20px; font-weight: 600">
+                    {{ t[1] }}
+                  </td>
+                  <td style="color: var(--text-muted); font-size: 13px">
+                    {{ t[2] }}
+                  </td>
+                  <td>
+                    <button onclick="editTenant('{{ t[0] }}', '{{ t[1] }}', '{{ t[2] }}')" style="
                           background: none;
                           border: none;
                           color: var(--primary);
                           cursor: pointer;
                           padding: 5px;
-                        "
-                      >
-                        <i class="ri-edit-2-line"></i>
-                      </button>
-                      <form
-                        action="/admin/delete_tenant/{{ t[0] }}"
-                        method="POST"
-                        style="display: inline"
-                        onsubmit="return confirm('Delete this user?');"
-                      >
-                        <input
-                          type="hidden"
-                          name="csrf_token"
-                          value="{{ csrf_token() }}"
-                        />
-                        <button
-                          type="submit"
-                          style="
+                        ">
+                      <i class="ri-edit-2-line"></i>
+                    </button>
+                    <form action="/admin/delete_tenant/{{ t[0] }}" method="POST" style="display: inline"
+                      onsubmit="return confirm('Delete this user?');">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                      <button type="submit" style="
                             background: none;
                             border: none;
                             color: #ef4444;
                             cursor: pointer;
                             padding: 5px;
-                          "
-                        >
-                          <i class="ri-delete-bin-line"></i>
-                        </button>
-                      </form>
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
+                          ">
+                        <i class="ri-delete-bin-line"></i>
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
           </div>
+        </div>
 
-          <div class="form-box" style="position: sticky; top: 20px">
-            <h3 id="formTitle" style="margin-bottom: 20px">
-              <i class="ri-user-add-line"></i> Add Resident
-            </h3>
+        <div class="form-box" style="position: sticky; top: 20px">
+          <h3 id="formTitle" style="margin-bottom: 20px">
+            <i class="ri-user-add-line"></i> Add Resident
+          </h3>
 
-            <form id="tenantForm" action="/admin/tenants" method="POST">
-              <input
-                type="hidden"
-                name="csrf_token"
-                value="{{ csrf_token() }}"
-              />
-              <input type="hidden" name="user_id" id="editUserId" />
+          <form id="tenantForm" action="/admin/tenants" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <input type="hidden" name="user_id" id="editUserId" />
 
-              <label class="modern-label">Full Name</label>
-              <input type="text" name="name" id="editName" required />
+            <label class="modern-label">Full Name</label>
+            <input type="text" name="name" id="editName" required />
 
-              <label class="modern-label">Email Address</label>
-              <input type="email" name="email" id="editEmail" required />
+            <label class="modern-label">Email Address</label>
+            <input type="email" name="email" id="editEmail" required />
 
-              <label class="modern-label">Password</label>
-              <input
-                type="password"
-                name="password"
-                id="editPassword"
-                placeholder="Assign Password"
-              />
+            <label class="modern-label">Password</label>
+            <input type="password" name="password" id="editPassword" placeholder="Assign Password" />
 
-              <button
-                type="submit"
-                id="submitBtn"
-                class="btn-primary"
-                style="width: 100%"
-              >
-                Add Resident
-              </button>
-              <button
-                type="button"
-                id="cancelBtn"
-                onclick="resetForm()"
-                style="
+            <button type="submit" id="submitBtn" class="btn-primary" style="width: 100%">
+              Add Resident
+            </button>
+            <button type="button" id="cancelBtn" onclick="resetForm()" style="
                   width: 100%;
                   margin-top: 10px;
                   background: #333;
                   color: white;
                   border: 1px solid #444;
                   display: none;
-                "
-              >
-                Cancel
-              </button>
-            </form>
-          </div>
+                ">
+              Cancel
+            </button>
+          </form>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
+  </div>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-    <script>
-      // Search Logic
-      document
-        .getElementById("searchBox")
-        .addEventListener("keyup", function (e) {
-          const term = e.target.value.toLowerCase();
-          const rows = document.querySelectorAll("#tenantTable tr");
-          rows.forEach((row) => {
-            row.style.display = row.innerText.toLowerCase().includes(term)
-              ? ""
-              : "none";
-          });
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script>
+    // Search Logic
+    document
+      .getElementById("searchBox")
+      .addEventListener("keyup", function (e) {
+        const term = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll("#tenantTable tr");
+        rows.forEach((row) => {
+          row.style.display = row.innerText.toLowerCase().includes(term)
+            ? ""
+            : "none";
         });
+      });
 
-      // Edit Mode
-      function editTenant(id, name, email) {
-        document.getElementById("formTitle").innerText = "Edit Resident";
-        document.getElementById("tenantForm").action = "/admin/edit_tenant";
-        document.getElementById("editUserId").value = id;
-        document.getElementById("editName").value = name;
-        document.getElementById("editEmail").value = email;
-        document.getElementById("editPassword").placeholder =
-          "Leave empty to keep current";
-        document.getElementById("editPassword").required = false;
-        document.getElementById("submitBtn").innerText = "Update Details";
-        document.getElementById("cancelBtn").style.display = "block";
-      }
+    // Edit Mode
+    function editTenant(id, name, email) {
+      document.getElementById("formTitle").innerText = "Edit Resident";
+      document.getElementById("tenantForm").action = "/admin/edit_tenant";
+      document.getElementById("editUserId").value = id;
+      document.getElementById("editName").value = name;
+      document.getElementById("editEmail").value = email;
+      document.getElementById("editPassword").placeholder =
+        "Leave empty to keep current";
+      document.getElementById("editPassword").required = false;
+      document.getElementById("submitBtn").innerText = "Update Details";
+      document.getElementById("cancelBtn").style.display = "block";
+    }
 
-      // Reset Mode
-      function resetForm() {
-        document.getElementById("formTitle").innerHTML =
-          '<i class="ri-user-add-line"></i> Add Resident';
-        document.getElementById("tenantForm").action = "/admin/tenants";
-        document.getElementById("editUserId").value = "";
-        document.getElementById("editName").value = "";
-        document.getElementById("editEmail").value = "";
-        document.getElementById("editPassword").placeholder = "Assign Password";
-        document.getElementById("editPassword").required = true;
-        document.getElementById("submitBtn").innerText = "Add Resident";
-        document.getElementById("cancelBtn").style.display = "none";
-      }
-    </script>
-  </body>
+    // Reset Mode
+    function resetForm() {
+      document.getElementById("formTitle").innerHTML =
+        '<i class="ri-user-add-line"></i> Add Resident';
+      document.getElementById("tenantForm").action = "/admin/tenants";
+      document.getElementById("editUserId").value = "";
+      document.getElementById("editName").value = "";
+      document.getElementById("editEmail").value = "";
+      document.getElementById("editPassword").placeholder = "Assign Password";
+      document.getElementById("editPassword").required = true;
+      document.getElementById("submitBtn").innerText = "Add Resident";
+      document.getElementById("cancelBtn").style.display = "none";
+    }
+  </script>
+</body>
+
 </html>
