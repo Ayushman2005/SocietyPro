@@ -50,7 +50,7 @@ def get_db_connection():
     try:
         ssl_path = os.getenv("SSL_CA_PATH", "ca.pem")
         if not os.path.isabs(ssl_path):
-            ssl_path = os.path.join(os.path.dirname(__file__), ssl_path)
+            ssl_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ssl_path)
 
         cloud_conn = mysql.connector.connect(
             host=os.getenv("CLOUD_DB_HOST"),
