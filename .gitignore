@@ -1,5 +1,4 @@
 .env
-ca.pem
 society_db.sql
 .git
 test_db.py
