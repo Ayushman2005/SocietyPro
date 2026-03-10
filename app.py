@@ -1269,14 +1269,30 @@ def user_complaints():
     if request.method == "POST":
         subject = request.form["subject"]
         description = request.form["description"]
+        
+        text = (subject + " " + description).lower()
+        category = "General"
+        if any(word in text for word in ["leak", "pipe", "water", "plumb", "tap"]):
+            category = "Plumbing"
+        elif any(word in text for word in ["power", "light", "wire", "electric", "short"]):
+            category = "Electrical"
+        elif any(word in text for word in ["guard", "unknown", "visitor", "theft", "unsafe", "secur"]):
+            category = "Security"
+        elif any(word in text for word in ["garbage", "dirt", "dust", "sweep", "clean"]):
+            category = "Cleanliness"
+            
+        priority = "Normal"
+        if any(word in text for word in ["emergency", "urgent", "immediate", "burst", "shock", "fire", "critical", "broken", "danger"]):
+            priority = "High"
+
         cur.execute(
-            "INSERT INTO complaints (user_id, subject, description) VALUES (%s, %s, %s)",
-            (user_id, subject, description),
+            "INSERT INTO complaints (user_id, subject, description, category, priority) VALUES (%s, %s, %s, %s, %s)",
+            (user_id, subject, description, category, priority),
         )
         db.commit()
 
     cur.execute(
-        "SELECT subject, description, status, created_at FROM complaints WHERE user_id = %s ORDER BY id DESC",
+        "SELECT subject, description, status, created_at, category, priority FROM complaints WHERE user_id = %s ORDER BY id DESC",
         (user_id,),
     )
     my_complaints = cur.fetchall()
@@ -1315,11 +1331,11 @@ def admin_complaints():
 
     query = """
         SELECT c.id, u.email, c.subject, c.description, c.status, 
-               DATE_FORMAT(c.created_at, '%d %b %Y') as date
+               DATE_FORMAT(c.created_at, '%d %b %Y') as date, c.category, c.priority
         FROM complaints c
         JOIN users u ON c.user_id = u.id
         WHERE u.admin_id = %s
-        ORDER BY c.status ASC, c.created_at DESC
+        ORDER BY FIELD(c.priority, 'High', 'Normal') ASC, c.status ASC, c.created_at DESC
     """
     cur.execute(query, (admin_id,))
     complaints = cur.fetchall()
@@ -1712,6 +1728,75 @@ def payment_success(bill_id):
         db.close()
 
     return render_template("user/payment_success.html", bill_id=bill_id)
+
+
+@app.route("/api/chatbot", methods=["POST"])
+def chatbot_api():
+    if "user" not in session:
+        return {"error": "Unauthorized"}, 401
+    
+    data = request.get_json(silent=True)
+    if not data:
+        return {"answer": "I didn't understand that."}, 400
+        
+    question = data.get("question", "").lower()
+
+    if any(word in question for word in ["hi", "hello", "hey"]):
+        answer = "Hello! I am your SocietyPro AI Assistant. How can I help you today?"
+    elif any(word in question for word in ["pay", "bill", "maintenance", "due", "money"]):
+        answer = "To pay your maintenance bills, go to the 'Home' dashboard and look under 'Invoice History'."
+    elif any(word in question for word in ["book", "clubhouse", "pool", "gym", "facility"]):
+        answer = "You can book society facilities like the Clubhouse or Swimming Pool from the 'Bookings' tab."
+    elif any(word in question for word in ["visitor", "guest", "delivery"]):
+        answer = "Expecting someone? Pre-approve your guests in the 'Visitors' section."
+    elif any(word in question for word in ["complain", "issue", "plumber", "electrician", "broken", "water", "electricity"]):
+        answer = "You can raise a ticket for any issue in the 'Complaints' section. I will automatically categorize and prioritize it for the admin!"
+    elif any(word in question for word in ["contact", "admin", "emergency", "help"]):
+        answer = "For emergencies, check the 'Emergency' section. For admin issues, please raise a complaint."
+    else:
+        answer = "I am a simple AI and I'm still learning! Could you rephrase that? Or check the specific sections in your sidebar."
+
+    import time
+    time.sleep(1) # Simulate thinking
+    return {"answer": answer}
+
+@app.route("/api/predict_crowd", methods=["GET"])
+def predict_crowd():
+    facility = request.args.get("facility", "")
+    slot = request.args.get("slot", "")
+    
+    if not facility or not slot:
+        return {"error": "Missing parameters"}, 400
+        
+    crowd_probability = 30 # Base
+    
+    if "pool" in facility.lower():
+        if "evening" in slot.lower():
+            crowd_probability += 50
+        elif "afternoon" in slot.lower():
+            crowd_probability += 30
+            
+    if "clubhouse" in facility.lower() or "hall" in facility.lower():
+        if "evening" in slot.lower():
+            crowd_probability += 60
+            
+    if "morning" in slot.lower():
+        crowd_probability += 10
+        
+    import random
+    variation = random.randint(-10, 10)
+    final_prob = min(max(crowd_probability + variation, 10), 95)
+    
+    level = "Low"
+    if final_prob > 75:
+        level = "High"
+    elif final_prob > 40:
+        level = "Medium"
+        
+    return {
+        "probability": final_prob,
+        "level": level
+    }
 
 
 if __name__ == "__main__":

@@ -3,8 +3,9 @@
 
 <head>
   <title>My Home | SocietyPro</title>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2.0" />
   <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet" />
 
   <link rel="icon"
@@ -58,13 +59,14 @@
             border: none;
             background: transparent;
             justify-content: flex-start;
+            flex-wrap: wrap;
             gap: 20px;
           ">
-        <div class="card" style="min-width: 200px">
+        <div class="card" style="flex: 1; min-width: 150px">
           <div class="card-header">Unpaid Dues</div>
           <div class="card-amount" id="totalDueDisplay">₹ 0.00</div>
         </div>
-        <div class="card" style="min-width: 200px">
+        <div class="card" style="flex: 1; min-width: 150px">
           <div class="card-header">Pending Bills</div>
           <div class="card-amount" id="pendingCount">0</div>
         </div>
@@ -120,6 +122,28 @@
         {% endif %}
       </div>
     </main>
+    <!-- AI Chatbot Widget -->
+    <div id="ai-chat-widget">
+      <div id="ai-chat-button" onclick="toggleChat()">
+        <i class="ri-robot-2-fill"></i>
+      </div>
+      <div id="ai-chat-window" style="display: none;">
+        <div class="chat-header">
+          <div><i class="ri-robot-2-line"></i> AI Assistant</div>
+          <button onclick="toggleChat()"
+            style="background:none;border:none;color:white;cursor:pointer;font-size:20px;"><i
+              class="ri-close-line"></i></button>
+        </div>
+        <div id="chat-messages">
+          <div class="bot-msg">Hi there! I am your AI assistant. How can I help you?</div>
+        </div>
+        <div class="chat-input-area">
+          <input type="text" id="chat-input" placeholder="Ask a question..." onkeypress="handleChatPress(event)" />
+          <button onclick="sendChatMessage()"><i class="ri-send-plane-fill"></i></button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Enhanced Weather Widget -->
@@ -270,7 +294,164 @@
     } else {
       document.getElementById("weather-error").style.display = "flex";
     }
+
+    // Chatbot functionality
+    function toggleChat() {
+      const win = document.getElementById("ai-chat-window");
+      win.style.display = win.style.display === "none" ? "flex" : "none";
+    }
+
+    function handleChatPress(e) {
+      if (e.key === "Enter") sendChatMessage();
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById("chat-input");
+      const text = input.value.trim();
+      if (!text) return;
+
+      const msgs = document.getElementById("chat-messages");
+
+      // User message
+      const uDiv = document.createElement("div");
+      uDiv.className = "user-msg";
+      uDiv.textContent = text;
+      msgs.appendChild(uDiv);
+      input.value = "";
+
+      // Typing indicator
+      const tDiv = document.createElement("div");
+      tDiv.className = "bot-msg";
+      tDiv.textContent = "...";
+      msgs.appendChild(tDiv);
+      msgs.scrollTop = msgs.scrollHeight;
+
+      fetch("/api/chatbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": "{{ csrf_token() }}" },
+        body: JSON.stringify({ question: text })
+      }).then(r => r.json()).then(data => {
+        msgs.removeChild(tDiv);
+        const bDiv = document.createElement("div");
+        bDiv.className = "bot-msg";
+        bDiv.textContent = data.answer || "Error processing request.";
+        msgs.appendChild(bDiv);
+        msgs.scrollTop = msgs.scrollHeight;
+      }).catch(err => {
+        msgs.removeChild(tDiv);
+      });
+    }
   </script>
+
+  <style>
+    /* Chatbot CSS */
+    #ai-chat-widget {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    #ai-chat-button {
+      background: var(--primary);
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 30px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    #ai-chat-button:hover {
+      transform: scale(1.1);
+    }
+
+    #ai-chat-window {
+      width: 350px;
+      height: 450px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+    }
+
+    .chat-header {
+      background: var(--primary);
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Outfit';
+      font-weight: 600;
+    }
+
+    #chat-messages {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #f9fafb;
+    }
+
+    .bot-msg {
+      background: #e0e7ff;
+      color: #3730a3;
+      padding: 10px 15px;
+      border-radius: 15px 15px 15px 0;
+      max-width: 80%;
+      align-self: flex-start;
+      font-size: 14px;
+    }
+
+    .user-msg {
+      background: var(--primary);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 15px 15px 0 15px;
+      max-width: 80%;
+      align-self: flex-end;
+      font-size: 14px;
+    }
+
+    .chat-input-area {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #eee;
+      background: white;
+    }
+
+    #chat-input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      outline: none;
+    }
+
+    .chat-input-area button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+  </style>
 </body>
 
 </html>

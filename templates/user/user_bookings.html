@@ -1,166 +1,225 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <title>Bookings | SocietyPro</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
-      rel="stylesheet"
-    />
-  
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>">
+
+<head>
+  <title>Bookings | SocietyPro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2.0" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet" />
+
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>">
 </head>
-  <body class="dashboard-body">
-    <div class="dashboard-container">
-      <aside class="sidebar">
-        <div class="logo"><i class="ri-home-heart-line"></i> ResidentPanel</div>
-        <ul class="menu">
-          <li>
-            <a href="/user/dashboard"><i class="ri-dashboard-line"></i> Home</a>
-          </li>
-          <li>
-            <a href="/user/bookings" class="active"
-              ><i class="ri-calendar-check-line"></i> Bookings</a
-            >
-          </li>
-          <li>
-            <a href="/user/visitors"
-              ><i class="ri-shield-user-line"></i> Visitors</a
-            >
-          </li>
-          <li>
-            <a href="/user/polls"
-              ><i class="ri-bar-chart-box-line"></i> Polls</a
-            >
-          </li>
-          <li>
-            <a href="/user/notices"
-              ><i class="ri-notification-3-line"></i> Notices</a
-            >
-          </li>
-          <li>
-            <a href="/user/complaints"
-              ><i class="ri-feedback-line"></i> Complaints</a
-            >
-          </li>
-          <li>
-            <a href="/user/emergency"
-              ><i class="ri-phone-fill"></i> Emergency</a
-            >
-          </li>
-          <li>
-            <a href="/profile"><i class="ri-user-settings-line"></i> Profile</a>
-          </li>
-        </ul>
-        <a href="/logout" class="logout-btn"
-          ><i class="ri-logout-box-line"></i> Logout</a
-        >
-      </aside>
 
-      <main class="main-content">
-        <div class="header-section">
-          <div class="header-title">
-            <h1>Facility Reservations</h1>
-            <p>Book amenities for your events.</p>
-          </div>
+<body class="dashboard-body">
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div class="logo"><i class="ri-home-heart-line"></i> ResidentPanel</div>
+      <ul class="menu">
+        <li>
+          <a href="/user/dashboard"><i class="ri-dashboard-line"></i> Home</a>
+        </li>
+        <li>
+          <a href="/user/bookings" class="active"><i class="ri-calendar-check-line"></i> Bookings</a>
+        </li>
+        <li>
+          <a href="/user/visitors"><i class="ri-shield-user-line"></i> Visitors</a>
+        </li>
+        <li>
+          <a href="/user/polls"><i class="ri-bar-chart-box-line"></i> Polls</a>
+        </li>
+        <li>
+          <a href="/user/notices"><i class="ri-notification-3-line"></i> Notices</a>
+        </li>
+        <li>
+          <a href="/user/complaints"><i class="ri-feedback-line"></i> Complaints</a>
+        </li>
+        <li>
+          <a href="/user/emergency"><i class="ri-phone-fill"></i> Emergency</a>
+        </li>
+        <li>
+          <a href="/profile"><i class="ri-user-settings-line"></i> Profile</a>
+        </li>
+      </ul>
+      <a href="/logout" class="logout-btn"><i class="ri-logout-box-line"></i> Logout</a>
+    </aside>
+
+    <main class="main-content">
+      <div class="header-section">
+        <div class="header-title">
+          <h1>Facility Reservations</h1>
+          <p>Book amenities for your events.</p>
         </div>
+      </div>
 
-        {% if success %}
-        <div
-          style="
+      {% if success %}
+      <div style="
             color: #10b981;
             margin-bottom: 20px;
             padding: 10px;
             background: rgba(16, 185, 129, 0.1);
             border-radius: 8px;
-          "
-        >
-          {{ success }}
-        </div>
-        {% endif %} {% if error %}
-        <div
-          style="
+          ">
+        {{ success }}
+      </div>
+      {% endif %} {% if error %}
+      <div style="
             color: #ef4444;
             margin-bottom: 20px;
             padding: 10px;
             background: rgba(239, 68, 68, 0.1);
             border-radius: 8px;
-          "
-        >
-          {{ error }}
-        </div>
-        {% endif %}
+          ">
+        {{ error }}
+      </div>
+      {% endif %}
 
-        <div
-          style="
+      <div style="
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
-          "
-        >
-          <div class="form-box">
-            <h3 style="margin-bottom: 20px">
-              <i class="ri-add-circle-line"></i> New Booking
-            </h3>
-            <form method="POST">
-              <input
-                type="hidden"
-                name="csrf_token"
-                value="{{ csrf_token() }}"
-              />
+          ">
+        <div class="form-box">
+          <h3 style="margin-bottom: 20px">
+            <i class="ri-add-circle-line"></i> New Booking
+          </h3>
+          <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
-              <label class="modern-label">Select Amenity</label>
-              <select name="facility" required>
-                {% for f in facilities %}
-                <option value="{{ f }}">{{ f }}</option>
-                {% endfor %}
-              </select>
+            <label class="modern-label">Select Amenity</label>
+            <select name="facility" required>
+              {% for f in facilities %}
+              <option value="{{ f }}">{{ f }}</option>
+              {% endfor %}
+            </select>
 
-              <label class="modern-label">Date</label>
-              <input type="date" name="date" required />
+            <label class="modern-label">Date</label>
+            <input type="date" name="date" required />
 
-              <label class="modern-label">Time Slot</label>
-              <select name="slot" required>
-                {% for s in slots %}
-                <option value="{{ s }}">{{ s }}</option>
-                {% endfor %}
-              </select>
+            <label class="modern-label">Time Slot</label>
+            <select name="slot" required>
+              {% for s in slots %}
+              <option value="{{ s }}">{{ s }}</option>
+              {% endfor %}
+            </select>
 
-              <button type="submit" class="btn-primary" style="width: 100%">
-                Confirm Booking
-              </button>
-            </form>
-          </div>
+            <button type="submit" class="btn-primary" style="width: 100%">
+              Confirm Booking
+            </button>
+          </form>
+        </div>
 
-          <div>
-            <h3 style="margin-bottom: 20px">My History</h3>
-            <div class="cards" style="grid-template-columns: 1fr">
-              {% if my_bookings %} {% for b in my_bookings %}
-              <div class="card">
-                <div class="card-header">
-                  <span>{{ b[1] }}</span>
-                  <span
-                    class="status {% if b[3]=='Confirmed' %}paid{% else %}unpaid{% endif %}"
-                    >{{ b[3] }}</span
-                  >
-                </div>
-                <h3>{{ b[0] }}</h3>
-                <p style="color: var(--text-muted); font-size: 14px">
-                  {{ b[2] }}
-                </p>
+        <div id="history-panel">
+          <h3 style="margin-bottom: 20px">My History</h3>
+          <div class="cards" style="grid-template-columns: 1fr">
+            {% if my_bookings %} {% for b in my_bookings %}
+            <div class="card">
+              <div class="card-header">
+                <span>{{ b[1] }}</span>
+                <span class="status {% if b[3]=='Confirmed' %}paid{% else %}unpaid{% endif %}">{{ b[3] }}</span>
               </div>
-              {% endfor %} {% else %}
-              <p style="color: var(--text-muted)">No bookings yet.</p>
-              {% endif %}
+              <h3>{{ b[0] }}</h3>
+              <p style="color: var(--text-muted); font-size: 14px">
+                {{ b[2] }}
+              </p>
             </div>
+            {% endfor %} {% else %}
+            <p style="color: var(--text-muted)">No bookings yet.</p>
+            {% endif %}
           </div>
         </div>
-      </main>
-    </div>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-  </body>
+      </div>
+    </main>
+  </div>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const facilitySelect = document.querySelector('select[name="facility"]');
+      const slotSelect = document.querySelector('select[name="slot"]');
+
+      if (!facilitySelect || !slotSelect) return;
+
+      const predictionBox = document.createElement('div');
+      predictionBox.id = "prediction-box";
+      predictionBox.style.marginTop = "20px";
+      predictionBox.style.padding = "16px";
+      predictionBox.style.borderRadius = "12px";
+      predictionBox.style.fontSize = "14px";
+      predictionBox.style.display = "none";
+      predictionBox.style.transition = "all 0.4s ease-out";
+      predictionBox.style.border = "1px solid transparent";
+      predictionBox.style.boxShadow = "0 8px 24px rgba(0,0,0,0.1)";
+
+      document.getElementById("history-panel").appendChild(predictionBox);
+
+      function updatePrediction() {
+        const facility = facilitySelect.value;
+        const slot = slotSelect.value;
+        if (!facility || !slot) return;
+
+        // Reset display with fade effect
+        predictionBox.style.opacity = "0";
+
+        fetch(`/api/predict_crowd?facility=${encodeURIComponent(facility)}&slot=${encodeURIComponent(slot)}`)
+          .then(r => r.json())
+          .then(data => {
+            predictionBox.style.display = "flex";
+            predictionBox.style.alignItems = "center";
+            predictionBox.style.gap = "12px";
+
+            // Progress bar mapping based on probability
+            const width = data.probability + "%";
+
+            predictionBox.innerHTML = `
+              <div style="font-size: 24px; color: inherit;">
+                ${data.level === 'High' ? '<i class="ri-alert-fill"></i>' : data.level === 'Medium' ? '<i class="ri-information-fill"></i>' : '<i class="ri-check-double-fill"></i>'}
+              </div>
+              <div style="flex: 1;">
+                <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
+                  <strong style="font-family:'Outfit'; font-size:15px; letter-spacing:0.5px;">
+                     AI Crowd Prediction
+                  </strong>
+                  <span style="font-weight:700;">${data.level}</span>
+                </div>
+                <div style="background: rgba(0,0,0,0.1); border-radius: 10px; height: 6px; width: 100%; overflow: hidden;">
+                  <div style="width: ${width}; height: 100%; border-radius: 10px; background: currentColor; opacity:0.8; transition: width 1s ease-in-out;"></div>
+                </div>
+                <div style="font-size: 13px; margin-top: 6px; opacity: 0.9;">
+                  Based on historical data, we expect around <strong>${data.probability}%</strong> capacity.
+                </div>
+              </div>
+            `;
+
+            // Apply theming
+            if (data.level === "High") {
+              predictionBox.style.background = "linear-gradient(135deg, rgba(254, 226, 226, 1), rgba(252, 165, 165, 1))";
+              predictionBox.style.color = "#991b1b";
+              predictionBox.style.borderColor = "#f87171";
+              predictionBox.style.boxShadow = "0 8px 24px rgba(239, 68, 68, 0.25)";
+            } else if (data.level === "Medium") {
+              predictionBox.style.background = "linear-gradient(135deg, rgba(254, 243, 199, 1), rgba(253, 230, 138, 1))";
+              predictionBox.style.color = "#92400e";
+              predictionBox.style.borderColor = "#fbbf24";
+              predictionBox.style.boxShadow = "0 8px 24px rgba(245, 158, 11, 0.25)";
+            } else {
+              predictionBox.style.background = "linear-gradient(135deg, rgba(209, 250, 229, 1), rgba(167, 243, 208, 1))";
+              predictionBox.style.color = "#065f46";
+              predictionBox.style.borderColor = "#34d399";
+              predictionBox.style.boxShadow = "0 8px 24px rgba(16, 185, 129, 0.25)";
+            }
+
+            setTimeout(() => {
+              predictionBox.style.opacity = "1";
+            }, 50);
+          });
+      }
+
+      facilitySelect.addEventListener('change', updatePrediction);
+      slotSelect.addEventListener('change', updatePrediction);
+
+      updatePrediction();
+    });
+  </script>
+</body>
+
 </html>

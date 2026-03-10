@@ -1,137 +1,110 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <title>Helpdesk | SocietyPro</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
-      rel="stylesheet"
-    />
-  
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚨</text></svg>">
+
+<head>
+  <title>Helpdesk | SocietyPro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2.0" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet" />
+
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚨</text></svg>">
 </head>
-  <body class="dashboard-body">
-    <div class="dashboard-container">
-      <aside class="sidebar">
-        <div class="logo"><i class="ri-home-heart-line"></i> ResidentPanel</div>
-        <ul class="menu">
-          <li>
-            <a href="/user/dashboard"><i class="ri-dashboard-line"></i> Home</a>
-          </li>
-          <li>
-            <a href="/user/bookings"
-              ><i class="ri-calendar-check-line"></i> Bookings</a
-            >
-          </li>
-          <li>
-            <a href="/user/visitors"
-              ><i class="ri-shield-user-line"></i> Visitors</a
-            >
-          </li>
-          <li>
-            <a href="/user/polls"
-              ><i class="ri-bar-chart-box-line"></i> Polls</a
-            >
-          </li>
-          <li>
-            <a href="/user/notices"
-              ><i class="ri-notification-3-line"></i> Notices</a
-            >
-          </li>
-          <li>
-            <a href="/user/complaints" class="active"
-              ><i class="ri-feedback-line"></i> Complaints</a
-            >
-          </li>
-          <li>
-            <a href="/user/emergency"
-              ><i class="ri-phone-fill"></i> Emergency</a
-            >
-          </li>
-          <li>
-            <a href="/profile"><i class="ri-user-settings-line"></i> Profile</a>
-          </li>
-        </ul>
-        <a href="/logout" class="logout-btn"
-          ><i class="ri-logout-box-line"></i> Logout</a
-        >
-      </aside>
 
-      <main class="main-content">
-        <div class="header-section">
-          <div class="header-title">
-            <h1>Helpdesk</h1>
-            <p>Report issues and track resolutions.</p>
-          </div>
+<body class="dashboard-body">
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div class="logo"><i class="ri-home-heart-line"></i> ResidentPanel</div>
+      <ul class="menu">
+        <li>
+          <a href="/user/dashboard"><i class="ri-dashboard-line"></i> Home</a>
+        </li>
+        <li>
+          <a href="/user/bookings"><i class="ri-calendar-check-line"></i> Bookings</a>
+        </li>
+        <li>
+          <a href="/user/visitors"><i class="ri-shield-user-line"></i> Visitors</a>
+        </li>
+        <li>
+          <a href="/user/polls"><i class="ri-bar-chart-box-line"></i> Polls</a>
+        </li>
+        <li>
+          <a href="/user/notices"><i class="ri-notification-3-line"></i> Notices</a>
+        </li>
+        <li>
+          <a href="/user/complaints" class="active"><i class="ri-feedback-line"></i> Complaints</a>
+        </li>
+        <li>
+          <a href="/user/emergency"><i class="ri-phone-fill"></i> Emergency</a>
+        </li>
+        <li>
+          <a href="/profile"><i class="ri-user-settings-line"></i> Profile</a>
+        </li>
+      </ul>
+      <a href="/logout" class="logout-btn"><i class="ri-logout-box-line"></i> Logout</a>
+    </aside>
+
+    <main class="main-content">
+      <div class="header-section">
+        <div class="header-title">
+          <h1>Helpdesk</h1>
+          <p>Report issues and track resolutions.</p>
         </div>
+      </div>
 
-        <div
-          style="
+      <div style="
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
-          "
-        >
-          <div class="form-box">
-            <h3 style="margin-bottom: 20px">
-              <i class="ri-flag-line"></i> Raise a Ticket
-            </h3>
-            <form method="POST">
-              <input
-                type="hidden"
-                name="csrf_token"
-                value="{{ csrf_token() }}"
-              />
+          ">
+        <div class="form-box">
+          <h3 style="margin-bottom: 20px">
+            <i class="ri-flag-line"></i> Raise a Ticket
+          </h3>
+          <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
-              <label class="modern-label">Subject</label>
-              <input
-                type="text"
-                name="subject"
-                required
-                placeholder="e.g. Water Leakage"
-              />
+            <label class="modern-label">Subject</label>
+            <input type="text" name="subject" required placeholder="e.g. Water Leakage" />
 
-              <label class="modern-label">Description</label>
-              <textarea
-                name="description"
-                rows="5"
-                required
-                placeholder="Describe the issue..."
-              ></textarea>
+            <label class="modern-label">Description</label>
+            <textarea name="description" rows="5" required placeholder="Describe the issue..."></textarea>
 
-              <button type="submit" class="btn-primary" style="width: 100%">
-                Submit Complaint
-              </button>
-            </form>
-          </div>
+            <button type="submit" class="btn-primary" style="width: 100%">
+              Submit Complaint
+            </button>
+          </form>
+        </div>
 
-          <div>
-            <h3 style="margin-bottom: 20px">My Tickets</h3>
-            <div class="cards" style="grid-template-columns: 1fr">
-              {% for c in complaints %}
-              <div class="card">
-                <div class="card-header">
-                  <span>{{ c[3] }}</span>
-                  <span
-                    class="status {% if c[2]=='Resolved' %}paid{% else %}unpaid{% endif %}"
-                    >{{ c[2] }}</span
-                  >
-                </div>
-                <h3 style="font-size: 18px">{{ c[0] }}</h3>
-                <p style="color: var(--text-muted); font-size: 14px">
-                  {{ c[1] }}
-                </p>
+        <div>
+          <h3 style="margin-bottom: 20px">My Tickets</h3>
+          <div class="cards" style="grid-template-columns: 1fr">
+            {% for c in complaints %}
+            <div class="card">
+              <div class="card-header">
+                <span>{{ c[3] }}</span>
+                <span class="status {% if c[2]=='Resolved' %}paid{% else %}unpaid{% endif %}">{{ c[2] }}</span>
               </div>
-              {% endfor %}
+              <h3 style="font-size: 18px">{{ c[0] }}</h3>
+              <div style="margin-top: 5px; margin-bottom: 10px; display: flex; gap: 8px; align-items: center;">
+                <span
+                  style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); color: #e5e7eb; padding: 4px 10px; border-radius: 50px; font-weight: 600; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);">
+                  <i class="ri-price-tag-3-line"></i> {{ c[4] }}</span>
+                <span
+                  style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; background: {% if c[5] == 'High' %}linear-gradient(135deg, rgba(239,68,68,0.2), rgba(220,38,38,0.1)); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); box-shadow: 0 0 10px rgba(239,68,68,0.2);{% else %}linear-gradient(135deg, rgba(99,102,241,0.2), rgba(79,70,229,0.1)); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); box-shadow: 0 0 10px rgba(99,102,241,0.2);{% endif %} padding: 4px 10px; border-radius: 50px; font-weight: 700;">
+                  <i class="ri-flashlight-line"></i> {{ c[5] }} Priority</span>
+              </div>
+              <p style="color: var(--text-muted); font-size: 14px">
+                {{ c[1] }}
+              </p>
             </div>
+            {% endfor %}
           </div>
         </div>
-      </main>
-    </div>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-  </body>
+      </div>
+    </main>
+  </div>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
 </html>

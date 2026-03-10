@@ -1,143 +1,108 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <title>Visitors | SocietyPro</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
-      rel="stylesheet"
-    />
-  
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚶</text></svg>">
+
+<head>
+  <title>Visitors | SocietyPro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2.0" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet" />
+
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚶</text></svg>">
 </head>
-  <body class="dashboard-body">
-    <div class="dashboard-container">
-      <aside class="sidebar">
-        <div class="logo"><i class="ri-home-heart-line"></i> ResidentPanel</div>
-        <ul class="menu">
-          <li>
-            <a href="/user/dashboard"><i class="ri-dashboard-line"></i> Home</a>
-          </li>
-          <li>
-            <a href="/user/bookings"
-              ><i class="ri-calendar-check-line"></i> Bookings</a
-            >
-          </li>
-          <li>
-            <a href="/user/visitors" class="active"
-              ><i class="ri-shield-user-line"></i> Visitors</a
-            >
-          </li>
-          <li>
-            <a href="/user/polls"
-              ><i class="ri-bar-chart-box-line"></i> Polls</a
-            >
-          </li>
-          <li>
-            <a href="/user/notices"
-              ><i class="ri-notification-3-line"></i> Notices</a
-            >
-          </li>
-          <li>
-            <a href="/user/complaints"
-              ><i class="ri-feedback-line"></i> Complaints</a
-            >
-          </li>
-          <li>
-            <a href="/user/emergency"
-              ><i class="ri-phone-fill"></i> Emergency</a
-            >
-          </li>
-          <li>
-            <a href="/profile"><i class="ri-user-settings-line"></i> Profile</a>
-          </li>
-        </ul>
-        <a href="/logout" class="logout-btn"
-          ><i class="ri-logout-box-line"></i> Logout</a
-        >
-      </aside>
 
-      <main class="main-content">
-        <div class="header-section">
-          <div class="header-title">
-            <h1>Visitor Access</h1>
-            <p>Pre-approve guests for faster entry.</p>
-          </div>
+<body class="dashboard-body">
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div class="logo"><i class="ri-home-heart-line"></i> ResidentPanel</div>
+      <ul class="menu">
+        <li>
+          <a href="/user/dashboard"><i class="ri-dashboard-line"></i> Home</a>
+        </li>
+        <li>
+          <a href="/user/bookings"><i class="ri-calendar-check-line"></i> Bookings</a>
+        </li>
+        <li>
+          <a href="/user/visitors" class="active"><i class="ri-shield-user-line"></i> Visitors</a>
+        </li>
+        <li>
+          <a href="/user/polls"><i class="ri-bar-chart-box-line"></i> Polls</a>
+        </li>
+        <li>
+          <a href="/user/notices"><i class="ri-notification-3-line"></i> Notices</a>
+        </li>
+        <li>
+          <a href="/user/complaints"><i class="ri-feedback-line"></i> Complaints</a>
+        </li>
+        <li>
+          <a href="/user/emergency"><i class="ri-phone-fill"></i> Emergency</a>
+        </li>
+        <li>
+          <a href="/profile"><i class="ri-user-settings-line"></i> Profile</a>
+        </li>
+      </ul>
+      <a href="/logout" class="logout-btn"><i class="ri-logout-box-line"></i> Logout</a>
+    </aside>
+
+    <main class="main-content">
+      <div class="header-section">
+        <div class="header-title">
+          <h1>Visitor Access</h1>
+          <p>Pre-approve guests for faster entry.</p>
         </div>
+      </div>
 
-        <div
-          style="
+      <div style="
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
-          "
-        >
-          <div class="form-box">
-            <h3 style="margin-bottom: 20px">
-              <i class="ri-user-add-line"></i> Add Visitor
-            </h3>
-            <form method="POST">
-              <input
-                type="hidden"
-                name="csrf_token"
-                value="{{ csrf_token() }}"
-              />
+          ">
+        <div class="form-box">
+          <h3 style="margin-bottom: 20px">
+            <i class="ri-user-add-line"></i> Add Visitor
+          </h3>
+          <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
-              <label class="modern-label">Visitor Name</label>
-              <input
-                type="text"
-                name="name"
-                required
-                placeholder="e.g. Delivery Agent"
-              />
+            <label class="modern-label">Visitor Name</label>
+            <input type="text" name="name" required placeholder="e.g. Delivery Agent" />
 
-              <label class="modern-label">Phone Number</label>
-              <input
-                type="text"
-                name="phone"
-                required
-                placeholder="e.g. 9876543210"
-              />
+            <label class="modern-label">Phone Number</label>
+            <input type="text" name="phone" required placeholder="e.g. 9876543210" />
 
-              <label class="modern-label">Expected Date</label>
-              <input type="date" name="date" required />
+            <label class="modern-label">Expected Date</label>
+            <input type="date" name="date" required />
 
-              <label class="modern-label">Expected Time</label>
-              <input type="time" name="time" required />
+            <label class="modern-label">Expected Time</label>
+            <input type="time" name="time" required />
 
-              <button type="submit" class="btn-primary" style="width: 100%">
-                Pre-Approve Entry
-              </button>
-            </form>
-          </div>
+            <button type="submit" class="btn-primary" style="width: 100%">
+              Pre-Approve Entry
+            </button>
+          </form>
+        </div>
 
-          <div>
-            <h3 style="margin-bottom: 20px">Visitor Log</h3>
-            <div class="cards" style="grid-template-columns: 1fr">
-              {% for v in visitors %}
-              <div class="card">
-                <div class="card-header">
-                  <span>{{ v[2] }}</span>
-                  <span
-                    class="status {% if v[4]=='Expected' %}unpaid{% else %}paid{% endif %}"
-                    >{{ v[4] }}</span
-                  >
-                </div>
-                <h3>{{ v[0] }}</h3>
-                <p style="color: var(--text-muted); font-size: 14px">
-                  {{ v[1] }} • {{ v[3] }}
-                </p>
+        <div>
+          <h3 style="margin-bottom: 20px">Visitor Log</h3>
+          <div class="cards" style="grid-template-columns: 1fr">
+            {% for v in visitors %}
+            <div class="card">
+              <div class="card-header">
+                <span>{{ v[2] }}</span>
+                <span class="status {% if v[4]=='Expected' %}unpaid{% else %}paid{% endif %}">{{ v[4] }}</span>
               </div>
-              {% endfor %}
+              <h3>{{ v[0] }}</h3>
+              <p style="color: var(--text-muted); font-size: 14px">
+                {{ v[1] }} • {{ v[3] }}
+              </p>
             </div>
+            {% endfor %}
           </div>
         </div>
-      </main>
-    </div>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-  </body>
+      </div>
+    </main>
+  </div>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
 </html>

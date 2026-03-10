@@ -1,90 +1,74 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <title>Notices | SocietyPro</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
-      rel="stylesheet"
-    />
-  
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📢</text></svg>">
+
+<head>
+  <title>Notices | SocietyPro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2.0" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet" />
+
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📢</text></svg>">
 </head>
-  <body class="dashboard-body">
-    <div class="dashboard-container">
-      <aside class="sidebar">
-        <div class="logo"><i class="ri-home-heart-line"></i> ResidentPanel</div>
-        <ul class="menu">
-          <li>
-            <a href="/user/dashboard"><i class="ri-dashboard-line"></i> Home</a>
-          </li>
-          <li>
-            <a href="/user/bookings"
-              ><i class="ri-calendar-check-line"></i> Bookings</a
-            >
-          </li>
-          <li>
-            <a href="/user/visitors"
-              ><i class="ri-shield-user-line"></i> Visitors</a
-            >
-          </li>
-          <li>
-            <a href="/user/polls"
-              ><i class="ri-bar-chart-box-line"></i> Polls</a
-            >
-          </li>
-          <li>
-            <a href="/user/notices" class="active"
-              ><i class="ri-notification-3-line"></i> Notices</a
-            >
-          </li>
-          <li>
-            <a href="/user/complaints"
-              ><i class="ri-feedback-line"></i> Complaints</a
-            >
-          </li>
-          <li>
-            <a href="/user/emergency"
-              ><i class="ri-phone-fill"></i> Emergency</a
-            >
-          </li>
-          <li>
-            <a href="/profile"><i class="ri-user-settings-line"></i> Profile</a>
-          </li>
-        </ul>
-        <a href="/logout" class="logout-btn"
-          ><i class="ri-logout-box-line"></i> Logout</a
-        >
-      </aside>
 
-      <main class="main-content">
-        <div class="header-section">
-          <div class="header-title">
-            <h1>Digital Notice Board</h1>
-            <p>Official announcements from the administration.</p>
-          </div>
-        </div>
+<body class="dashboard-body">
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div class="logo"><i class="ri-home-heart-line"></i> ResidentPanel</div>
+      <ul class="menu">
+        <li>
+          <a href="/user/dashboard"><i class="ri-dashboard-line"></i> Home</a>
+        </li>
+        <li>
+          <a href="/user/bookings"><i class="ri-calendar-check-line"></i> Bookings</a>
+        </li>
+        <li>
+          <a href="/user/visitors"><i class="ri-shield-user-line"></i> Visitors</a>
+        </li>
+        <li>
+          <a href="/user/polls"><i class="ri-bar-chart-box-line"></i> Polls</a>
+        </li>
+        <li>
+          <a href="/user/notices" class="active"><i class="ri-notification-3-line"></i> Notices</a>
+        </li>
+        <li>
+          <a href="/user/complaints"><i class="ri-feedback-line"></i> Complaints</a>
+        </li>
+        <li>
+          <a href="/user/emergency"><i class="ri-phone-fill"></i> Emergency</a>
+        </li>
+        <li>
+          <a href="/profile"><i class="ri-user-settings-line"></i> Profile</a>
+        </li>
+      </ul>
+      <a href="/logout" class="logout-btn"><i class="ri-logout-box-line"></i> Logout</a>
+    </aside>
 
-        <div class="cards" style="grid-template-columns: 1fr">
-          {% for n in notices %}
-          <div class="card" style="border-left: 4px solid var(--primary)">
-            <div class="card-header">
-              <span><i class="ri-calendar-event-line"></i> {{ n[2] }}</span>
-              <span class="status unpaid">Official</span>
-            </div>
-            <h3 style="font-size: 20px; color: white; margin-bottom: 10px">
-              {{ n[0] }}
-            </h3>
-            <p style="color: var(--text-muted); line-height: 1.6">{{ n[1] }}</p>
-          </div>
-          {% endfor %}
+    <main class="main-content">
+      <div class="header-section">
+        <div class="header-title">
+          <h1>Digital Notice Board</h1>
+          <p>Official announcements from the administration.</p>
         </div>
-      </main>
-    </div>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-  </body>
+      </div>
+
+      <div class="cards" style="grid-template-columns: 1fr">
+        {% for n in notices %}
+        <div class="card" style="border-left: 4px solid var(--primary); box-shadow: -5px 0 25px var(--primary-glow);">
+          <div class="card-header">
+            <span><i class="ri-calendar-event-line"></i> {{ n[2] }}</span>
+            <span class="status unpaid">Official</span>
+          </div>
+          <h3 style="font-size: 20px; color: white; margin-bottom: 10px">
+            {{ n[0] }}
+          </h3>
+          <p style="color: var(--text-muted); line-height: 1.6">{{ n[1] }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </main>
+  </div>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
 </html>
