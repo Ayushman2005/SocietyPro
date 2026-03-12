@@ -626,6 +626,11 @@ def admin_dashboard():
     )
     users = cur.fetchall()
 
+    cur.execute("SELECT name, society_name FROM admins WHERE id = %s", (admin_id,))
+    admin_row = cur.fetchone()
+    admin_name = admin_row[0] if admin_row else "Secretary"
+    society_name = admin_row[1] if admin_row else "Dashboard Overview"
+
     cur.close()
     db.close()
 
@@ -634,6 +639,8 @@ def admin_dashboard():
         bills=bills,
         users=users,
         total_fund=total_fund,
+        admin_name=admin_name,
+        society_name=society_name,
     )
 
 
@@ -1025,11 +1032,20 @@ def user_dashboard():
         (user_id,),
     )
     bills = cur.fetchall()
+
+    cur.execute(
+        "SELECT u.name, a.society_name FROM users u JOIN admins a ON u.admin_id = a.id WHERE u.id = %s",
+        (user_id,),
+    )
+    user_row = cur.fetchone()
+    user_name = user_row[0] if user_row else "Resident"
+    society_name = user_row[1] if user_row else "Your Society"
+
     cur.close()
     db.close()
 
     return render_template(
-        "user/user_dashboard.html", bills=bills, weather_key=WEATHER_API_KEY
+        "user/user_dashboard.html", bills=bills, weather_key=WEATHER_API_KEY, user_name=user_name, society_name=society_name
     )
 
 

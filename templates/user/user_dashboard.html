@@ -48,8 +48,8 @@
     <main class="main-content">
       <div class="header-section">
         <div class="header-title">
-          <h1>Welcome Home</h1>
-          <p>Your maintenance & activity overview.</p>
+          <h1>{{ society_name }}</h1>
+          <p>Welcome, {{ user_name }}. Your maintenance & activity overview.</p>
         </div>
       </div>
 
@@ -148,51 +148,12 @@
 
   <!-- Enhanced Weather Widget -->
   <div id="weather-box">
-    <div class="weather-top-bar">
-      <div class="weather-location-row">
-        <i class="ri-map-pin-2-fill weather-pin-icon"></i>
-        <span id="weather-city">Locating...</span>
-      </div>
-      <button id="weather-toggle" aria-label="Collapse weather">
-        <i class="ri-subtract-line"></i>
-      </button>
+    <div class="weather-main-row" style="margin-bottom: 0; gap: 5px;">
+      <i class="ri-temp-hot-line" style="color: var(--primary); font-size: 20px;"></i>
+      <span id="weather-temp" class="weather-temp-big" style="font-size: 24px;">--</span>
     </div>
-
-    <div id="weather-body">
-      <div class="weather-main-row">
-        <img id="weather-icon" src="" alt="Weather Icon" class="weather-icon-img" style="display:none" />
-        <div class="weather-temp-block">
-          <span id="weather-temp" class="weather-temp-big">--</span>
-          <span id="weather-condition-pill" class="weather-pill">--</span>
-        </div>
-      </div>
-
-      <div class="weather-details-grid">
-        <div class="weather-detail-item">
-          <i class="ri-temp-cold-line"></i>
-          <span class="wd-label">Feels like</span>
-          <span id="weather-feels" class="wd-value">--</span>
-        </div>
-        <div class="weather-detail-item">
-          <i class="ri-drop-line"></i>
-          <span class="wd-label">Humidity</span>
-          <span id="weather-humidity" class="wd-value">--</span>
-        </div>
-        <div class="weather-detail-item">
-          <i class="ri-windy-line"></i>
-          <span class="wd-label">Wind</span>
-          <span id="weather-wind" class="wd-value">--</span>
-        </div>
-        <div class="weather-detail-item">
-          <i class="ri-eye-line"></i>
-          <span class="wd-label">Visibility</span>
-          <span id="weather-visibility" class="wd-value">--</span>
-        </div>
-      </div>
-
-      <div id="weather-error" class="weather-error" style="display:none">
-        <i class="ri-error-warning-line"></i> Unable to fetch weather
-      </div>
+    <div id="weather-error" class="weather-error" style="display:none; margin-top: 5px; font-size: 10px; padding: 4px 8px;">
+      <i class="ri-error-warning-line"></i> Error
     </div>
   </div>
 
@@ -218,68 +179,14 @@
 
     const API_KEY = "{{ weather_key }}";
 
-    // Weather widget collapse/expand
-    const weatherToggle = document.getElementById("weather-toggle");
-    const weatherBody = document.getElementById("weather-body");
-    weatherToggle.addEventListener("click", () => {
-      const collapsed = weatherBody.style.display === "none";
-      weatherBody.style.display = collapsed ? "block" : "none";
-      weatherToggle.innerHTML = collapsed
-        ? '<i class="ri-subtract-line"></i>'
-        : '<i class="ri-add-line"></i>';
-    });
-
-    // Map OWM icon prefix to a RemixIcon class
-    function getWeatherRiIcon(iconCode) {
-      const code = iconCode.slice(0, 2);
-      const map = {
-        "01": "ri-sun-line",
-        "02": "ri-sun-cloudy-line",
-        "03": "ri-cloud-line",
-        "04": "ri-cloudy-line",
-        "09": "ri-drizzle-line",
-        "10": "ri-heavy-showers-line",
-        "11": "ri-thunderstorms-line",
-        "13": "ri-snowy-line",
-        "50": "ri-mist-line",
-      };
-      return map[code] || "ri-cloud-line";
-    }
-
+    // Weather logic
     function loadWeather(lat, lon) {
       fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`)
         .then(res => res.json())
         .then(data => {
           if (data.cod !== 200) throw new Error("API error");
 
-          const iconCode = data.weather[0].icon;
-          const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
-          const desc = data.weather[0].description;
-
-          document.getElementById("weather-city").innerText = `${data.name}, ${data.sys.country}`;
           document.getElementById("weather-temp").innerText = Math.round(data.main.temp) + "°C";
-          document.getElementById("weather-feels").innerText = Math.round(data.main.feels_like) + "°C";
-          document.getElementById("weather-humidity").innerText = data.main.humidity + "%";
-          document.getElementById("weather-wind").innerText = Math.round(data.wind.speed * 3.6) + " km/h";
-          document.getElementById("weather-visibility").innerText = data.visibility ? (data.visibility / 1000).toFixed(1) + " km" : "N/A";
-
-          const pill = document.getElementById("weather-condition-pill");
-          pill.innerText = desc.charAt(0).toUpperCase() + desc.slice(1);
-
-          // Change pill colour based on condition
-          const main = data.weather[0].main.toLowerCase();
-          pill.className = "weather-pill";
-          if (main.includes("rain") || main.includes("drizzle")) pill.classList.add("pill-rain");
-          else if (main.includes("cloud")) pill.classList.add("pill-cloud");
-          else if (main.includes("clear")) pill.classList.add("pill-clear");
-          else if (main.includes("snow")) pill.classList.add("pill-snow");
-          else if (main.includes("thunder")) pill.classList.add("pill-thunder");
-          else pill.classList.add("pill-default");
-
-          // Load OWM icon
-          const imgEl = document.getElementById("weather-icon");
-          imgEl.src = iconUrl;
-          imgEl.style.display = "block";
         })
         .catch(() => {
           document.getElementById("weather-error").style.display = "flex";
