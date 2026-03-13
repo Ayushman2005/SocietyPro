@@ -14,13 +14,11 @@
     />
     <style>
       :root {
-        --glass-bg: rgba(255, 255, 255, 0.05);
-        --glass-border: rgba(255, 255, 255, 0.1);
         --accent-gradient: linear-gradient(135deg, #ff8c00 0%, #ff2e63 100%);
       }
 
       .auth-body {
-        background: radial-gradient(circle at top right, #1a1a2e, #16213e);
+        background: radial-gradient(circle at top right, #f8fafc, #e2e8f0);
         min-height: 100vh;
         display: flex;
         align-items: center;
@@ -29,14 +27,13 @@
       }
 
       .glass-card {
-        background: var(--glass-bg);
-        backdrop-filter: blur(15px);
-        border: 1px solid var(--glass-border);
+        background: #ffffff;
+        border: 1.5px solid #e2e8f0;
         border-radius: 24px;
         padding: 40px;
         width: 100%;
         max-width: 420px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
         text-align: center;
         animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1);
       }
@@ -62,7 +59,7 @@
         justify-content: center;
         margin: 0 auto 24px;
         font-size: 40px;
-        color: white;
+        color: var(--text-white);
         box-shadow: 0 10px 20px rgba(255, 46, 99, 0.3);
       }
 
@@ -72,14 +69,18 @@
       }
 
       .otp-field {
-        background: rgba(0, 0, 0, 0.2) !important;
+        background: rgba(0, 0, 0, 0.02) !important;
         border: 2px solid var(--glass-border) !important;
-        color: white !important;
+        color: var(--text-white) !important;
         font-size: 28px !important;
         letter-spacing: 12px !important;
         text-align: center !important;
         padding: 15px !important;
         transition: all 0.3s ease;
+      }
+      
+      .otp-field::placeholder {
+        color: var(--text-muted);
       }
 
       .otp-field:focus {
@@ -92,7 +93,7 @@
         border: none;
         padding: 16px;
         border-radius: 12px;
-        color: white;
+        color: var(--text-white);
         font-weight: 700;
         width: 100%;
         cursor: pointer;
@@ -116,7 +117,7 @@
         <i class="ri-shield-check-line"></i>
       </div>
 
-      <h1 style="color: white; margin-bottom: 10px; font-size: 28px">
+      <h1 style="color: var(--text-white); margin-bottom: 10px; font-size: 28px">
         Verify Identity
       </h1>
       <p style="color: #94a3b8; margin-bottom: 30px">
@@ -161,10 +162,10 @@
         top: 20px;
         right: 20px;
         background: #ef4444;
-        color: white;
+        color: var(--text-white);
         padding: 15px 25px;
         border-radius: 8px;
-        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.02);
       "
     >
       {{ error }}

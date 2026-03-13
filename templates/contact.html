@@ -19,7 +19,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(255, 255, 255, 0.9);
       z-index: 2000;
       justify-content: center;
       align-items: center;
@@ -28,7 +28,7 @@
     }
 
     .modal-content {
-      background: rgba(30, 30, 30, 0.9);
+      background: rgba(255, 255, 255, 0.95);
       border: 1px solid var(--primary);
       padding: 40px;
       border-radius: 24px;
@@ -121,7 +121,7 @@
         <div style="margin-bottom: 20px">
           <label class="modern-label">Full Name</label>
           <div style="position: relative">
-            <i class="ri-user-line" style="position: absolute; left: 15px; top: 14px; color: #666"></i>
+            <i class="ri-user-line" style="position: absolute; left: 15px; top: 14px; color: var(--text-muted);"></i>
             <input type="text" name="name" required placeholder="Enter your name" style="padding-left: 45px" />
           </div>
         </div>
@@ -129,7 +129,7 @@
         <div style="margin-bottom: 20px">
           <label class="modern-label">Email Address</label>
           <div style="position: relative">
-            <i class="ri-mail-line" style="position: absolute; left: 15px; top: 14px; color: #666"></i>
+            <i class="ri-mail-line" style="position: absolute; left: 15px; top: 14px; color: var(--text-muted);"></i>
             <input type="email" name="email" required placeholder="name@example.com" style="padding-left: 45px" />
           </div>
         </div>
@@ -137,7 +137,7 @@
         <div style="margin-bottom: 30px">
           <label class="modern-label">Comments / Message</label>
           <div style="position: relative">
-            <i class="ri-message-2-line" style="position: absolute; left: 15px; top: 14px; color: #666"></i>
+            <i class="ri-message-2-line" style="position: absolute; left: 15px; top: 14px; color: var(--text-muted);"></i>
             <textarea name="message" rows="5" required placeholder="How can we help you?"
               style="padding-left: 45px"></textarea>
           </div>
@@ -154,7 +154,7 @@
     <div class="modal-content">
       <i class="ri-checkbox-circle-fill" style="font-size: 60px; color: #10b981; margin-bottom: 20px"></i>
       <h2 style="
-            color: white;
+            color: var(--text-white);
             margin-bottom: 10px;
             font-family: &quot;Outfit&quot;;
           ">
@@ -168,11 +168,11 @@
   </div>
 
   <footer style="
-        background: black;
+        background: #ffffff;
         padding: 20px;
         text-align: center;
-        color: #666;
-        border-top: 1px solid #222;
+        color: var(--text-muted);
+        border-top: 1px solid #e2e8f0;
       ">
     &copy; 2026 SocietyPro Management System. All rights reserved.
   </footer>

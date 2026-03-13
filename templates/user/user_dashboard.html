@@ -131,7 +131,7 @@
         <div class="chat-header">
           <div><i class="ri-robot-2-line"></i> AI Assistant</div>
           <button onclick="toggleChat()"
-            style="background:none;border:none;color:white;cursor:pointer;font-size:20px;"><i
+            style="background:none;border:none;color: var(--text-white);cursor:pointer;font-size:20px;"><i
               class="ri-close-line"></i></button>
         </div>
         <div id="chat-messages">
@@ -261,7 +261,7 @@
 
     #ai-chat-button {
       background: var(--primary);
-      color: white;
+      color: var(--text-white);
       width: 60px;
       height: 60px;
       border-radius: 50%;
@@ -269,7 +269,7 @@
       justify-content: center;
       align-items: center;
       font-size: 30px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
       cursor: pointer;
       transition: transform 0.2s;
     }
@@ -283,7 +283,7 @@
       height: 450px;
       background: white;
       border-radius: 12px;
-      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.02);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -294,7 +294,7 @@
 
     .chat-header {
       background: var(--primary);
-      color: white;
+      color: var(--text-white);
       padding: 15px;
       display: flex;
       justify-content: space-between;
@@ -325,7 +325,7 @@
 
     .user-msg {
       background: var(--primary);
-      color: white;
+      color: var(--text-white);
       padding: 10px 15px;
       border-radius: 15px 15px 0 15px;
       max-width: 80%;
@@ -350,7 +350,7 @@
 
     .chat-input-area button {
       background: var(--primary);
-      color: white;
+      color: var(--text-white);
       border: none;
       width: 40px;
       height: 40px;

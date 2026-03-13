@@ -14,28 +14,22 @@
     />
     
     <style>
-      :root {
-        --glass-bg: rgba(255, 255, 255, 0.05);
-        --glass-border: rgba(255, 255, 255, 0.1);
-        --accent-gradient: linear-gradient(135deg, #ff8c00 100%);
-      }
-
       .auth-body {
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
+        background: var(--bg-deep);
       }
 
       .glass-card {
-        background: var(--glass-bg);
-        backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
+        background: #ffffff;
+        border: 1.5px solid #e2e8f0;
         border-radius: 28px;
         padding: 40px;
         width: 100%;
         max-width: 440px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
         text-align: center;
       }
 
@@ -43,7 +37,7 @@
         font-size: 50px;
         color: #ff8c00;
         margin-bottom: 15px;
-        filter: drop-shadow(0 0 10px rgba(255, 46, 99, 0.4));
+        filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.3));
       }
 
       .modern-input-group {
@@ -53,33 +47,42 @@
 
       .glass-input {
         width: 100%;
-        background: rgba(0, 0, 0, 0.2);
-        border: 1px solid var(--glass-border);
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
         border-radius: 12px;
         padding: 12px 15px;
-        color: white;
+        color: #0f172a;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 15px;
         margin-top: 8px;
         outline: none;
+        transition: all 0.3s ease;
+      }
+
+      .glass-input::placeholder {
+        color: #94a3b8;
       }
 
       .glass-input:focus {
-        border-color: #ff2e63;
-        background: rgb(0, 0, 0);
+        border-color: var(--primary);
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.12);
       }
 
       .captcha-container {
         display: flex;
         align-items: center;
         gap: 15px;
-        background: rgba(255, 255, 255, 0.03);
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
         padding: 10px;
         border-radius: 12px;
         margin-bottom: 20px;
       }
 
       .btn-glass {
-        background: var(--accent-gradient);
-        color: white;
+        background: linear-gradient(135deg, #ff8c00, #ff5500);
+        color: #ffffff;
         border: none;
         width: 100%;
         padding: 15px;
@@ -96,6 +99,7 @@
       .btn-glass:hover {
         opacity: 0.9;
         transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(255, 140, 0, 0.35);
       }
     </style>
   
@@ -106,8 +110,8 @@
       <div class="icon-header">
         <i class="ri-shield-keyhole-line"></i>
       </div>
-      <h1 style="color: white; font-size: 26px">Admin Portal</h1>
-      <p style="color: #94a3b8; margin-bottom: 30px">
+      <h1 style="color: #0f172a; font-size: 26px">Admin Portal</h1>
+      <p style="color: #64748b; margin-bottom: 30px">
         Secure management access.
       </p>
 
@@ -131,7 +135,7 @@
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
         <div class="modern-input-group">
-          <label style="color: #cbd5e1; font-size: 14px">Email Address</label>
+          <label style="color: #475569; font-size: 14px; font-weight: 600">Email Address</label>
           <input
             type="email"
             name="email"
@@ -142,7 +146,7 @@
         </div>
 
         <div class="modern-input-group">
-          <label style="color: #cbd5e1; font-size: 14px">Password</label>
+          <label style="color: #475569; font-size: 14px; font-weight: 600">Password</label>
           <input
             type="password"
             name="password"
@@ -153,7 +157,7 @@
         </div>
 
         <div class="modern-input-group">
-          <label style="color: #cbd5e1; font-size: 14px">Security Check</label>
+          <label style="color: #475569; font-size: 14px; font-weight: 600">Security Check</label>
           <div class="captcha-container">
             <img
               src="{{ url_for('captcha') }}"
@@ -181,7 +185,7 @@
         </button>
       </form>
 
-      <div style="margin-top: 25px; font-size: 14px; color: #94a3b8">
+      <div style="margin-top: 25px; font-size: 14px; color: #64748b">
         New Society?
         <a
           href="/admin/register"
