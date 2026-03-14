@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Verify Registration - SocietyPro</title>
+    <title>Verify Registration | SocietyPro Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
@@ -12,57 +12,407 @@
       href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
       rel="stylesheet"
     />
-  
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔢</text></svg>">
-</head>
-  <body class="auth-body">
-    <div class="auth-overlay"></div>
-    <div class="auth-container">
-      <div
-        style="
-          font-size: 40px;
-          color: var(--primary-orange);
-          margin-bottom: 10px;
-        "
-      >
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f0f4ff;
+        position: relative;
+        overflow: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        top: -100px; right: -100px;
+        width: 450px; height: 450px;
+        background: radial-gradient(circle, rgba(255,140,0,0.16) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        bottom: -120px; left: -120px;
+        width: 500px; height: 500px;
+        background: radial-gradient(circle, rgba(100,116,215,0.10) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      /* Admin badge chip */
+      .admin-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: linear-gradient(135deg, #ff8c00, #ff5500);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 4px 12px;
+        border-radius: 20px;
+        margin-bottom: 20px;
+      }
+
+      .glass-card {
+        background: #ffffff;
+        border: 1.5px solid rgba(255,140,0,0.10);
+        border-radius: 28px;
+        padding: 44px 40px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.10), 0 4px 16px rgba(255,140,0,0.06);
+        text-align: center;
+        position: relative;
+        z-index: 10;
+        animation: cardIn 0.7s cubic-bezier(0.23,1,0.32,1) both;
+      }
+
+      @keyframes cardIn {
+        from { opacity: 0; transform: translateY(36px) scale(0.97); }
+        to   { opacity: 1; transform: translateY(0)    scale(1);    }
+      }
+
+      /* Mail icon circle */
+      .mail-badge {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ff8c00 0%, #ff5500 100%);
+        margin: 0 auto 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34px;
+        color: #fff;
+        box-shadow: 0 10px 28px rgba(255,140,0,0.35);
+        position: relative;
+        animation: bouncePop 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.3s both;
+      }
+
+      @keyframes bouncePop {
+        from { transform: scale(0.6); opacity: 0; }
+        to   { transform: scale(1);   opacity: 1; }
+      }
+
+      .mail-badge::after {
+        content: "";
+        position: absolute;
+        inset: -6px;
+        border-radius: 50%;
+        border: 2px dashed rgba(255,140,0,0.30);
+        animation: rotateRing 8s linear infinite;
+      }
+
+      @keyframes rotateRing { to { transform: rotate(360deg); } }
+
+      .card-title {
+        font-size: 24px;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.4px;
+        margin-bottom: 8px;
+      }
+
+      .card-sub {
+        font-size: 14px;
+        color: #64748b;
+        line-height: 1.65;
+        margin-bottom: 30px;
+      }
+
+      /* OTP boxes */
+      .otp-label {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 12px;
+        text-align: left;
+      }
+
+      .otp-boxes {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 24px;
+      }
+
+      .otp-box {
+        width: 54px;
+        height: 60px;
+        border: 2px solid #e2e8f0;
+        border-radius: 14px;
+        background: #f8fafc;
+        font-size: 24px;
+        font-weight: 800;
+        color: #0f172a;
+        text-align: center;
+        outline: none;
+        transition: all 0.25s ease;
+        caret-color: #ff8c00;
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+
+      .otp-box:focus {
+        border-color: #ff8c00;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(255,140,0,0.13);
+        transform: translateY(-3px);
+      }
+
+      .otp-box.filled {
+        border-color: #ff5500;
+        background: #fff5ee;
+        color: #ff5500;
+      }
+
+      /* Timer */
+      .timer-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-bottom: 22px;
+        font-size: 13px;
+        color: #64748b;
+      }
+
+      .timer-badge {
+        background: linear-gradient(135deg, #ff8c00, #ff5500);
+        color: #fff;
+        font-weight: 800;
+        font-size: 13px;
+        padding: 2px 10px;
+        border-radius: 20px;
+        min-width: 44px;
+        text-align: center;
+        display: inline-block;
+      }
+
+      .timer-badge.expired { background: #e2e8f0; color: #94a3b8; }
+
+      /* Submit button */
+      .btn-verify {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #ff8c00 0%, #ff5500 100%);
+        border: none;
+        border-radius: 13px;
+        color: #fff;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 15.5px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 8px 20px rgba(255,140,0,0.30);
+      }
+
+      .btn-verify:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(255,85,0,0.38);
+      }
+
+      .btn-verify:active { transform: scale(0.98); }
+
+      hr.divider {
+        border: none;
+        border-top: 1px solid #f1f5f9;
+        margin: 22px 0 18px;
+      }
+
+      .resend-row {
+        font-size: 13.5px;
+        color: #94a3b8;
+        margin-bottom: 14px;
+      }
+
+      .resend-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-weight: 700;
+        font-size: 13.5px;
+        color: #ff8c00;
+        padding: 0;
+        transition: color 0.2s;
+      }
+
+      .resend-btn:hover { color: #ff5500; }
+      .resend-btn:disabled { color: #cbd5e1; cursor: not-allowed; }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: #64748b;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+      .back-link:hover { color: #ff8c00; }
+
+      /* Error banner */
+      .error-banner {
+        background: rgba(239,68,68,0.08);
+        border: 1px solid rgba(239,68,68,0.20);
+        color: #ef4444;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 22px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="glass-card">
+
+      <div class="admin-chip">
+        <i class="ri-shield-keyhole-line"></i> Admin Registration
+      </div>
+
+      <div class="mail-badge">
         <i class="ri-mail-check-line"></i>
       </div>
 
-      <h1>Verify Email</h1>
-      <p>
-        We sent a code to <strong>your email</strong>.<br />Enter it below to
-        complete registration.
+      <h1 class="card-title">Verify Your Email</h1>
+      <p class="card-sub">
+        A 6-digit verification code has been sent to<br />
+        <strong style="color:#0f172a;">your registered email address.</strong>
       </p>
 
-      <form method="POST" action="/admin/verify_registration">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      {% if error %}
+      <div class="error-banner">
+        <i class="ri-error-warning-line"></i> {{ error }}
+      </div>
+      {% endif %}
 
-        <label class="modern-label" style="text-align: left; color: #ccc"
-          >Verification Code</label
-        >
-        <div class="input-wrapper">
-          <i class="ri-key-2-line input-icon"></i>
-          <input
-            class="modern-input"
-            type="text"
-            name="otp"
-            placeholder="e.g. 123456"
-            maxlength="6"
-            style="letter-spacing: 5px; font-weight: bold"
-            required
-          />
+      <form method="POST" action="/admin/verify_registration" id="adminOtpForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <input type="hidden" name="otp" id="otpValue" />
+
+        <p class="otp-label">Verification Code</p>
+
+        <div class="otp-boxes">
+          <input class="otp-box" type="text" inputmode="numeric" maxlength="1" data-index="0" autocomplete="off" />
+          <input class="otp-box" type="text" inputmode="numeric" maxlength="1" data-index="1" autocomplete="off" />
+          <input class="otp-box" type="text" inputmode="numeric" maxlength="1" data-index="2" autocomplete="off" />
+          <input class="otp-box" type="text" inputmode="numeric" maxlength="1" data-index="3" autocomplete="off" />
+          <input class="otp-box" type="text" inputmode="numeric" maxlength="1" data-index="4" autocomplete="off" />
+          <input class="otp-box" type="text" inputmode="numeric" maxlength="1" data-index="5" autocomplete="off" />
         </div>
 
-        <button class="primary-btn-glow" type="submit">
-          Complete Registration <i class="ri-check-double-line"></i>
+        <div class="timer-row">
+          <i class="ri-time-line"></i>
+          Expires in&nbsp;<span class="timer-badge" id="timerBadge">05:00</span>
+        </div>
+
+        <button class="btn-verify" type="submit">
+          <i class="ri-check-double-line"></i>
+          Complete Registration
         </button>
       </form>
+
+      <hr class="divider" />
+
+      <div class="resend-row">
+        Didn't get the code?&nbsp;
+        <button class="resend-btn" id="resendBtn" disabled onclick="handleResend()">
+          Resend Code
+        </button>
+      </div>
+
+      <a href="/admin/login" class="back-link">
+        <i class="ri-arrow-left-line"></i> Back to Admin Login
+      </a>
     </div>
 
-    {% if error %}
     <script>
-      alert("{{ error }}");
+      const boxes    = document.querySelectorAll(".otp-box");
+      const otpVal   = document.getElementById("otpValue");
+      const form     = document.getElementById("adminOtpForm");
+      const badge    = document.getElementById("timerBadge");
+      const resendBtn = document.getElementById("resendBtn");
+
+      /* OTP navigation */
+      boxes.forEach((box, idx) => {
+        box.addEventListener("input", (e) => {
+          const v = e.target.value.replace(/\D/g, "");
+          e.target.value = v.slice(-1);
+          if (v && idx < boxes.length - 1) boxes[idx + 1].focus();
+          box.classList.toggle("filled", !!e.target.value);
+          sync();
+        });
+
+        box.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace" && !box.value && idx > 0) {
+            boxes[idx - 1].value = "";
+            boxes[idx - 1].classList.remove("filled");
+            boxes[idx - 1].focus();
+            sync();
+          }
+        });
+
+        box.addEventListener("paste", (e) => {
+          e.preventDefault();
+          const pasted = (e.clipboardData || window.clipboardData)
+            .getData("text").replace(/\D/g, "").slice(0, 6);
+          pasted.split("").forEach((ch, i) => {
+            if (boxes[i]) { boxes[i].value = ch; boxes[i].classList.add("filled"); }
+          });
+          sync();
+          const next = [...boxes].findIndex(b => !b.value);
+          (next === -1 ? boxes[5] : boxes[next]).focus();
+        });
+      });
+
+      function sync() {
+        otpVal.value = [...boxes].map(b => b.value).join("");
+      }
+
+      /* Countdown */
+      let seconds = 300;
+      const timer = setInterval(() => {
+        seconds--;
+        const m = String(Math.floor(seconds / 60)).padStart(2, "0");
+        const s = String(seconds % 60).padStart(2, "0");
+        badge.textContent = `${m}:${s}`;
+        if (seconds <= 0) {
+          clearInterval(timer);
+          badge.textContent = "Expired";
+          badge.classList.add("expired");
+          resendBtn.disabled = false;
+        }
+      }, 1000);
+
+      function handleResend() { window.location.href = "/admin/register"; }
+
+      boxes[0].focus();
     </script>
-    {% endif %}
   </body>
 </html>

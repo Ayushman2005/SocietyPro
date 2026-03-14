@@ -590,7 +590,7 @@ def admin_dashboard():
             if user_id and amount:
                 cur.execute(
                     "INSERT INTO bills (user_id, amount, status) VALUES (%s, %s, 'Unpaid')",
-                    (user_id, amount),
+                    (user_id, float(amount)),
                 )
                 db.commit()
         except Exception:
@@ -1001,7 +1001,7 @@ def add_bill():
         cur = db.cursor()
         cur.execute(
             "INSERT INTO bills (user_id, amount, status) VALUES (%s, %s, 'Unpaid')",
-            (user_id, amount),
+            (user_id, float(amount)),
         )
         db.commit()
         cur.close()

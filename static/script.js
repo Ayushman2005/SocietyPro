@@ -26,12 +26,12 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // --- 2. NUMBER COUNTER ANIMATION ---
-  const counters = document.querySelectorAll(".stat-number, .card-amount");
+  const counters = document.querySelectorAll(".stat-number"); // Removed .card-amount to prevent currency mangle
   counters.forEach((counter) => {
-    const target = +counter.innerText.replace(/[^0-9]/g, ""); // Extract number
+    const target = +counter.innerText.replace(/[^0-9.]/g, ""); // Extract number but keep decimal
     if (target > 0) {
       let count = 0;
-      const increment = target / 50; // Speed
+      const increment = target / 50;
       const updateCount = () => {
         count += increment;
         if (count < target) {
