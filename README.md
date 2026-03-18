@@ -4,11 +4,12 @@
   <p><strong>Smart Residential Management System</strong></p>
 
   <p>
-    <a href="#-about-the-project">About The Project</a> •
-    <a href="#-key-features">Key Features</a> •
+    <a href="#-about-the-project">About</a> •
+    <a href="#-project-structure">Structure</a> •
+    <a href="#-key-features">Features</a> •
     <a href="#%EF%B8%8F-tech-stack">Tech Stack</a> •
     <a href="#-installation--setup">Setup</a> •
-    <a href="#-future-roadmap">Future Roadmap</a>
+    <a href="#%EF%B8%8F-deployment">Deployment</a>
   </p>
 
   <p>
@@ -18,6 +19,7 @@
     <img alt="HTML5" src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" />
     <img alt="CSS3" src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" />
     <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+    <img alt="Vercel" src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" />
   </p>
 </div>
 
@@ -36,6 +38,26 @@ This project was designed and developed by a dedicated team of Full Stack Develo
 * **Ayushman Kar** 
 * **Satwik Barik** 
 * **Nilamani Kundu** 
+
+---
+
+## 📁 Project Structure
+
+The codebase is organized into a clean separation of backend logic and frontend assets, optimized for scalable deployment:
+
+```text
+SocietyPro/
+├── backend/
+│   ├── app.py                # Main Flask application logic & routes
+│   ├── requirements.txt      # Python dependencies
+│   ├── society_db.sql        # Database schema for MySQL
+│   └── test_db.py            # Test script for Database connectivity
+├── frontend/
+│   ├── static/               # CSS, JS, Images, Icons
+│   └── templates/            # HTML templates rendered via Jinja2
+├── vercel.json               # Vercel Serverless deployment configuration
+└── README.md                 # Project documentation
+```
 
 ---
 
@@ -60,8 +82,8 @@ This project was designed and developed by a dedicated team of Full Stack Develo
 - **Profile Management:** Update personal contact details and secure passwords.
 
 ### 🌐 System-Wide Features
-- **Responsive & Modern UI:** Optimized for all devices with Dark/Light theme support (Vibrant Orange & Dark aesthetics).
-- **Asynchronous Email Notifications:** Automated, responsive HTML email alerts for contact inquiries, user boarding, and password resets via SMTP (using background threads for performance).
+- **Responsive & Modern UI:** Optimized for all devices with Dark/Light theme support.
+- **Asynchronous Email Notifications:** Automated, responsive HTML email alerts for contact inquiries, user boarding, and password resets via SMTP.
 - **Cloud Database Support:** Seamlessly connect to remote cloud databases (e.g., Aiven) using SSL, with a graceful fallback to Local MySQL.
 - **Security First:** Role-based access control (Admin vs. User), CSRF protection, and secure session management.
 
@@ -103,10 +125,10 @@ cd SocietyPro
 ### 2. Set Up the Database
 - Open MySQL Workbench or your preferred SQL client.
 - Create a database named `society_db`.
-- Import the provided `society_db.sql` file to scaffold the necessary tables (`users`, `admins`, `bills`, `complaints`, etc.).
+- Import the provided `society_db.sql` file (located in the `backend/` folder) to scaffold the necessary tables (`users`, `admins`, `bills`, `complaints`, etc.).
 
 ### 3. Configure Environment Variables
-Create a `.env` file in the root directory and add your credentials:
+Create a `.env` file in the `backend/` directory and add your credentials:
 ```env
 # Local Database Config
 DB_HOST=localhost
@@ -137,15 +159,36 @@ WEATHER_API_KEY=your_weather_api_key
 ```
 
 ### 4. Install Dependencies
+It is recommended to use a virtual environment:
 ```bash
+cd backend
+python -m venv venv
+
+# On Windows:
+venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
+
 pip install -r requirements.txt
 ```
 
 ### 5. Launch the Application
+Make sure you are still in the `backend/` directory:
 ```bash
 python app.py
 ```
 Open your web browser and visit: **http://127.0.0.1:5000** 🚀
+
+---
+
+## ☁️ Deployment
+
+SocietyPro is fully configured to be deployed on **Vercel** serverless functions, leveraging the included `vercel.json`.
+
+1. Install the Vercel CLI or link directly through the Vercel Dashboard.
+2. In your Vercel project settings, set the root directory to the main `SocietyPro` folder (where `vercel.json` is located).
+3. Ensure all your environment variables from `.env` are applied in Vercel's Environment Variables section.
+4. Deploy and enjoy a scalable, globally distributed full-stack application.
 
 ---
 
