@@ -31,7 +31,12 @@ from email.mime.multipart import MIMEMultipart
 
 load_dotenv()
 
-app = Flask(__name__)
+base_dir = os.path.dirname(os.path.abspath(__file__))
+frontend_dir = os.path.join(os.path.dirname(base_dir), 'frontend')
+
+app = Flask(__name__, 
+            template_folder=os.path.join(frontend_dir, 'templates'), 
+            static_folder=os.path.join(frontend_dir, 'static'))
 app.secret_key = os.getenv("SECRET_KEY", "super_secret_key")
 
 csrf = CSRFProtect(app)
