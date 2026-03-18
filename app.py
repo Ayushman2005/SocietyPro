@@ -213,9 +213,9 @@ def send_welcome_email_thread(user_email, user_name, society_name="Society"):
         print(f"❌ Failed to send email: {e}")
 
 
-def send_welcome_email(user_email, user_name):
+def send_welcome_email(user_email, user_name, society_name="Society"):
     thread = threading.Thread(
-        target=send_welcome_email_thread, args=(user_email, user_name)
+        target=send_welcome_email_thread, args=(user_email, user_name, society_name)
     )
     thread.start()
 
@@ -835,8 +835,13 @@ def admin_tenants():
             )
 
             db.commit()
+            
+            cur.execute("SELECT society_name FROM admins WHERE id = %s", (admin_id,))
+            society_row = cur.fetchone()
+            society_name = society_row[0] if society_row else "Society"
+            
             cur.close()
-            send_welcome_email(email, name)
+            send_welcome_email(email, name, society_name)
 
             flash("Tenant added successfully and email sent!", "success")
             return redirect(url_for("admin_tenants"))
