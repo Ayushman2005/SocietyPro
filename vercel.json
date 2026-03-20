@@ -3,7 +3,7 @@
   "redirects": [
     {
       "source": "/(.*)",
-      "destination": "https://societypro-se4b.onrender.com",
+      "destination": "https://societypro-se4b.onrender.com/$1",
       "permanent": false
     }
   ]
