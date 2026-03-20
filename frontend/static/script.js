@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
       observer.observe(el);
     });
 
-  // --- 4. MOBILE MENU ---
+  // --- 4. PUBLIC NAVBAR MOBILE MENU ---
   const hamburger = document.querySelector(".hamburger");
   const navLinks = document.querySelector(".nav-links");
   if (hamburger) {
@@ -76,4 +76,61 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // --- 5. DASHBOARD HAMBURGER DRAWER (Admin & User panels) ---
+  const dashContainer = document.querySelector(".dashboard-container");
+  const sidebar = document.querySelector(".sidebar");
+  if (!dashContainer || !sidebar) return;
+
+  // ── Inject mobile top-bar ──
+  const topBar = document.createElement("div");
+  topBar.id = "mobile-topbar";
+  topBar.innerHTML = `
+    <div id="mob-logo">${sidebar.querySelector(".logo") ? sidebar.querySelector(".logo").innerHTML : "☰ Menu"}</div>
+    <button id="mob-hamburger" aria-label="Open navigation menu" aria-expanded="false">
+      <span class="ham-line"></span>
+      <span class="ham-line"></span>
+      <span class="ham-line"></span>
+    </button>
+  `;
+  document.body.prepend(topBar);
+
+  // ── Inject backdrop overlay ──
+  const overlay = document.createElement("div");
+  overlay.id = "sidebar-overlay";
+  document.body.appendChild(overlay);
+
+  const mobBtn = document.getElementById("mob-hamburger");
+
+  function openDrawer() {
+    sidebar.classList.add("drawer-open");
+    overlay.classList.add("overlay-visible");
+    mobBtn.classList.add("is-open");
+    mobBtn.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeDrawer() {
+    sidebar.classList.remove("drawer-open");
+    overlay.classList.remove("overlay-visible");
+    mobBtn.classList.remove("is-open");
+    mobBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+  }
+
+  mobBtn.addEventListener("click", () => {
+    sidebar.classList.contains("drawer-open") ? closeDrawer() : openDrawer();
+  });
+
+  overlay.addEventListener("click", closeDrawer);
+
+  // Close drawer when any nav link is tapped
+  sidebar.querySelectorAll(".menu a, .logout-btn").forEach((link) => {
+    link.addEventListener("click", closeDrawer);
+  });
+
+  // Close drawer on Escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeDrawer();
+  });
 });
+

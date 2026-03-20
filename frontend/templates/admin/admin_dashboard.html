@@ -71,7 +71,7 @@
               ">
             Total Fund
           </p>
-          <h2 style="color: var(--primary); font-size: 32px; line-height: 1">
+          <h2 id="live-fund" style="color: var(--primary); font-size: 32px; line-height: 1">
             ₹ {{ total_fund }}
           </h2>
         </div>
@@ -79,20 +79,22 @@
 
       <div class="cards" style="margin-bottom: 30px">
         <div class="card">
-          <div class="card-header">Total Residents</div>
-          <div class="card-amount">{{ users|length }}</div>
+          <div class="card-header">Total Residents
+            <span id="live-dot" title="Live" style="display:inline-block;width:8px;height:8px;background:#10b981;border-radius:50%;margin-left:6px;animation:livePulse 2s infinite;"></span>
+          </div>
+          <div class="card-amount" id="stat-residents">{{ users|length }}</div>
           <p style="color: #10b981; font-size: 13px">
             <i class="ri-arrow-up-line"></i> Active Members
           </p>
         </div>
         <div class="card">
           <div class="card-header">Pending Issues</div>
-          <div class="card-amount">3</div>
+          <div class="card-amount" id="stat-issues">—</div>
           <p style="color: #fbbf24; font-size: 13px">Needs Attention</p>
         </div>
         <div class="card">
           <div class="card-header">Visitors Today</div>
-          <div class="card-amount">12</div>
+          <div class="card-amount" id="stat-visitors">—</div>
           <p style="color: var(--text-muted); font-size: 13px">
             Gate Entries
           </p>
@@ -153,31 +155,80 @@
     </main>
   </div>
 
+  <style>
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.3; transform: scale(1.5); }
+    }
+    @keyframes countPop {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.18); }
+      100% { transform: scale(1); }
+    }
+    .stat-pop { animation: countPop 0.35s ease; }
+  </style>
+
   <script src="{{ url_for('static', filename='script.js') }}"></script>
   <script>
+    /* ── Finance chart ── */
     const ctx = document.getElementById('financeChart').getContext('2d');
-    new Chart(ctx, {
+    const finChart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
         datasets: [{
           label: 'Funds Collected',
           data: [12000, 19000, 15000, 22000, 28000, {{ total_fund }}],
-        borderColor: '#ff8c00',
-        backgroundColor: 'rgba(255, 140, 0, 0.1)',
-        fill: true,
-        tension: 0.4
-      }]
-    },
+          borderColor: '#ff8c00',
+          backgroundColor: 'rgba(255, 140, 0, 0.1)',
+          fill: true,
+          tension: 0.4
+        }]
+      },
       options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { color: '#666' }, grid: { display: false } },
-        y: { ticks: { color: '#666' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#666' }, grid: { display: false } },
+          y: { ticks: { color: '#666' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+        }
+      }
+    });
+
+    /* ── Real-time stats poller ── */
+    function animateStat(el, newVal) {
+      const formatted = typeof newVal === 'number' && !Number.isInteger(newVal)
+        ? '₹ ' + newVal.toLocaleString('en-IN', { minimumFractionDigits: 2 })
+        : newVal;
+      if (el.textContent.trim() === String(formatted).trim()) return;
+      el.textContent = formatted;
+      el.classList.remove('stat-pop');
+      void el.offsetWidth;            /* reflow to restart animation */
+      el.classList.add('stat-pop');
+    }
+
+    async function fetchStats() {
+      try {
+        const res = await fetch('/api/dashboard-stats');
+        if (!res.ok) return;
+        const data = await res.json();
+
+        animateStat(document.getElementById('stat-residents'), data.total_residents);
+        animateStat(document.getElementById('stat-issues'),    data.pending_issues);
+        animateStat(document.getElementById('stat-visitors'),  data.visitors_today);
+        animateStat(document.getElementById('live-fund'),
+          '₹ ' + Number(data.total_fund).toLocaleString('en-IN', { minimumFractionDigits: 2 }));
+
+        /* Update chart's last data point with live fund */
+        finChart.data.datasets[0].data[5] = data.total_fund;
+        finChart.update('none');
+      } catch (e) {
+        console.warn('Stats fetch failed:', e);
       }
     }
-      });
+
+    fetchStats();                        /* immediate first load */
+    setInterval(fetchStats, 10000);      /* then every 10 seconds */
   </script>
 </body>
 

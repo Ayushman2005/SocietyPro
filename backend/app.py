@@ -804,7 +804,7 @@ def delete_bill(bill_id):
     except Exception:
         pass
 
-    return redirect("/admin/dashboard")
+    return redirect("/admin/invoices")
 
 
 @app.route("/admin/tenants", methods=["GET", "POST"])
@@ -1825,5 +1825,61 @@ def predict_crowd():
     }
 
 
+@app.route("/api/dashboard-stats")
+def dashboard_stats():
+    """Real-time dashboard stats endpoint — polled by the frontend every 10s."""
+    if "admin_id" not in session:
+        return {"error": "Unauthorized"}, 401
+
+    admin_id = session["admin_id"]
+    db = get_db_connection()
+    if db is None:
+        return {"error": "DB offline"}, 500
+
+    cur = db.cursor()
+
+    # Total residents
+    cur.execute(
+        "SELECT COUNT(*) FROM users WHERE admin_id = %s", (admin_id,)
+    )
+    total_residents = cur.fetchone()[0]
+
+    # Pending / open complaints (status = 'Open' or 'Pending')
+    cur.execute(
+        """SELECT COUNT(*) FROM complaints c
+           JOIN users u ON c.user_id = u.id
+           WHERE u.admin_id = %s AND c.status IN ('Open', 'Pending')""",
+        (admin_id,),
+    )
+    pending_issues = cur.fetchone()[0]
+
+    # Visitors today
+    cur.execute(
+        """SELECT COUNT(*) FROM visitors v
+           JOIN users u ON v.user_id = u.id
+           WHERE u.admin_id = %s AND DATE(v.visit_date) = CURDATE()""",
+        (admin_id,),
+    )
+    visitors_today = cur.fetchone()[0]
+
+    # Total fund
+    cur.execute(
+        "SELECT amount FROM society_fund WHERE admin_id = %s", (admin_id,)
+    )
+    fund_row = cur.fetchone()
+    total_fund = float(fund_row[0]) if fund_row else 0.0
+
+    cur.close()
+    db.close()
+
+    return {
+        "total_residents": total_residents,
+        "pending_issues": pending_issues,
+        "visitors_today": visitors_today,
+        "total_fund": total_fund,
+    }
+
+
 if __name__ == "__main__":
     app.run(debug=True)
+
