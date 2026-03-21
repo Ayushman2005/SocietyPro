@@ -45,8 +45,6 @@ def get_emoji(filename):
     return FAVICON_MAP.get(filename, '🏢')
 
 def remove_existing_favicons(content):
-    # Remove any existing link rel="icon" tags
-    # This regex matches <link...rel="icon"...> or similar across multiple lines
     content = re.sub(r'<link[^>]*rel=["\']icon["\'][^>]*>', '', content, flags=re.IGNORECASE)
     return content
 
@@ -56,14 +54,9 @@ def update_file(filepath):
         
     filename = os.path.basename(filepath)
     emoji = get_emoji(filename)
-    
-    # clean existing
     content = remove_existing_favicons(content)
-    
-    # The new tag to add
     new_favicon_tag = f'\n    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>{emoji}</text></svg>">\n'
     
-    # Find </head> and insert right before it
     if '</head>' in content:
         content = content.replace('</head>', f'{new_favicon_tag}</head>')
     elif '</head>' in content.lower():
