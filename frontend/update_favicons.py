@@ -2,14 +2,12 @@ import os
 import re
 
 FAVICON_MAP = {
-    # Public pages
     'index.html': '🏙️',
     'about.html': '🏙️',
     'features.html': '✨',
     'contact.html': '📞',
     'page.html': '🚀',
     
-    # Auth
     'admin_login.html': '🔐',
     'admin_register.html': '📝',
     'admin_verify_otp.html': '🔢',
@@ -18,7 +16,6 @@ FAVICON_MAP = {
     'user_login.html': '🔐',
     'verify_otp.html': '🔢',
     
-    # Admin
     'admin_dashboard.html': '👑',
     'admin_bookings.html': '📅',
     'admin_complaints.html': '⚖️',
@@ -29,7 +26,6 @@ FAVICON_MAP = {
     'admin_tenants.html': '👥',
     'admin_visitors.html': '🚶',
     
-    # User
     'user_dashboard.html': '🏠',
     'user_bookings.html': '📅',
     'user_complaints.html': '🚨',
