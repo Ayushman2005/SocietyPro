@@ -1756,67 +1756,88 @@ def payment_success(bill_id):
     return render_template("user/payment_success.html", bill_id=bill_id)
 
 
+import re
+
 @app.route("/api/chatbot", methods=["POST"])
 def chatbot_api():
     if "user" not in session:
         return {"error": "Unauthorized"}, 401
     
     data = request.get_json(silent=True)
-    if not data:
-        return {"answer": "I didn't understand that."}, 400
+    if not data or "question" not in data:
+        return {"answer": "I didn't receive a valid question. Could you please try again?"}, 400
         
     question = data.get("question", "").lower()
+    
+    # Use regular expressions to extract words and ensure accurate matching
+    # This avoids false positives (e.g., matching "which" with "hi")
+    words = set(re.findall(r'\b\w+\b', question))
 
-    if any(word in question for word in ["hi", "hello", "hey"]):
-        answer = "Hello! I am your SocietyPro AI Assistant. How can I help you today?"
-    elif any(word in question for word in ["pay", "bill", "maintenance", "due", "money"]):
-        answer = "To pay your maintenance bills, go to the 'Home' dashboard and look under 'Invoice History'."
-    elif any(word in question for word in ["book", "clubhouse", "pool", "gym", "facility"]):
-        answer = "You can book society facilities like the Clubhouse or Swimming Pool from the 'Bookings' tab."
-    elif any(word in question for word in ["visitor", "guest", "delivery"]):
-        answer = "Expecting someone? Pre-approve your guests in the 'Visitors' section."
-    elif any(word in question for word in ["complain", "issue", "plumber", "electrician", "broken", "water", "electricity"]):
-        answer = "You can raise a ticket for any issue in the 'Complaints' section. I will automatically categorize and prioritize it for the admin!"
-    elif any(word in question for word in ["contact", "admin", "emergency", "help"]):
-        answer = "For emergencies, check the 'Emergency' section. For admin issues, please raise a complaint."
+    if {"hi", "hello", "hey", "greetings", "morning", "afternoon", "evening"} & words:
+        answer = "Hello there! I am your SocietyPro AI Assistant. How can I assist you today?"
+    elif {"pay", "bill", "bills", "maintenance", "due", "money", "payment", "invoice", "invoices"} & words:
+        answer = "To pay your maintenance bills, navigate to the 'Home' dashboard and look under the 'Invoice History' section. You can use Stripe for secure payments."
+    elif {"book", "booking", "clubhouse", "pool", "gym", "facility", "facilities", "tennis", "hall"} & words:
+        answer = "You can easily book society facilities like the Clubhouse, Swimming Pool, or Community Hall from the 'Bookings' tab in your sidebar."
+    elif {"visitor", "visitors", "guest", "guests", "delivery", "cab", "auto"} & words:
+        answer = "Expecting someone? You can pre-approve your guests and deliveries in the 'Visitors' section to ensure a smooth entry at the main gate."
+    elif {"complain", "complaint", "complaints", "issue", "plumber", "electrician", "broken", "water", "leak", "electricity", "power"} & words:
+        answer = "You can raise a ticket for any issue in the 'Complaints' section. Please briefly describe the issue, and I will automatically categorize and prioritize it for the admin!"
+    elif {"contact", "admin", "emergency", "help", "support", "police", "fire", "ambulance"} & words:
+        answer = "For emergencies, please check the 'Emergency' section for quick contact numbers (Police, Fire, Ambulance). For admin-related queries, please raise a complaint."
+    elif {"poll", "polls", "vote", "voting", "election"} & words:
+        answer = "You can participate in community decisions by visiting the 'Polls' section in your sidebar. Your vote matters!"
+    elif {"notice", "notices", "announcement", "news", "update"} & words:
+        answer = "Stay updated! You can check the latest community announcements and administrative updates in the 'Notices' section."
+    elif {"profile", "password", "email", "settings"} & words:
+        answer = "You can update your email or password by visiting the 'Profile' section from the top-right menu."
     else:
-        answer = "I am a simple AI and I'm still learning! Could you rephrase that? Or check the specific sections in your sidebar."
+        answer = "I am a simple AI and I'm still learning! Could you rephrase your question, or navigate directly to the relevant section using the sidebar?"
 
-    import time
-    time.sleep(1) # Simulate thinking
+    # Instant response without sleep makes the chatbot more efficient and responsive
     return {"answer": answer}
 
 @app.route("/api/predict_crowd", methods=["GET"])
 def predict_crowd():
     facility = request.args.get("facility", "")
     slot = request.args.get("slot", "")
+    booking_date = request.args.get("date", "")
     
     if not facility or not slot:
         return {"error": "Missing parameters"}, 400
         
-    crowd_probability = 30 # Base
-    
-    if "pool" in facility.lower():
-        if "evening" in slot.lower():
-            crowd_probability += 50
-        elif "afternoon" in slot.lower():
-            crowd_probability += 30
-            
-    if "clubhouse" in facility.lower() or "hall" in facility.lower():
-        if "evening" in slot.lower():
-            crowd_probability += 60
-            
-    if "morning" in slot.lower():
-        crowd_probability += 10
+    db = get_db_connection()
+    if db is None:
+        return {"probability": 10, "level": "Low"} # Default fallback
         
-    import random
-    variation = random.randint(-10, 10)
-    final_prob = min(max(crowd_probability + variation, 10), 95)
+    cur = db.cursor()
+    
+    try:
+        if booking_date:
+            cur.execute(
+                "SELECT COUNT(*) FROM bookings WHERE facility_name = %s AND booking_date = %s AND time_slot = %s AND status IN ('Confirmed', 'Pending')",
+                (facility, booking_date, slot)
+            )
+        else:
+            cur.execute(
+                "SELECT COUNT(*) FROM bookings WHERE facility_name = %s AND time_slot = %s AND status IN ('Confirmed', 'Pending')",
+                (facility, slot)
+            )
+        count = cur.fetchone()[0]
+        
+        # Base 10% + 20% per active booking (cap at 100)
+        final_prob = min(10 + (count * 20), 100)
+    except Exception as e:
+        print("Crowd DB Error:", e)
+        final_prob = 10
+    finally:
+        cur.close()
+        db.close()
     
     level = "Low"
     if final_prob > 75:
         level = "High"
-    elif final_prob > 40:
+    elif final_prob >= 40:
         level = "Medium"
         
     return {

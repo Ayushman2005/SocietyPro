@@ -136,6 +136,7 @@
     document.addEventListener("DOMContentLoaded", () => {
       const facilitySelect = document.querySelector('select[name="facility"]');
       const slotSelect = document.querySelector('select[name="slot"]');
+      const dateInput = document.querySelector('input[name="date"]'); // New binding
 
       if (!facilitySelect || !slotSelect) return;
 
@@ -155,12 +156,13 @@
       function updatePrediction() {
         const facility = facilitySelect.value;
         const slot = slotSelect.value;
+        const date = dateInput ? dateInput.value : '';
         if (!facility || !slot) return;
 
         // Reset display with fade effect
         predictionBox.style.opacity = "0";
 
-        fetch(`/api/predict_crowd?facility=${encodeURIComponent(facility)}&slot=${encodeURIComponent(slot)}`)
+        fetch(`/api/predict_crowd?facility=${encodeURIComponent(facility)}&slot=${encodeURIComponent(slot)}&date=${encodeURIComponent(date)}`)
           .then(r => r.json())
           .then(data => {
             predictionBox.style.display = "flex";
@@ -177,7 +179,7 @@
               <div style="flex: 1;">
                 <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
                   <strong style="font-family:'Outfit'; font-size:15px; letter-spacing:0.5px;">
-                     AI Crowd Prediction
+                     Real-Time Crowd Prediction
                   </strong>
                   <span style="font-weight:700;">${data.level}</span>
                 </div>
@@ -185,7 +187,7 @@
                   <div style="width: ${width}; height: 100%; border-radius: 10px; background: currentColor; opacity:0.8; transition: width 1s ease-in-out;"></div>
                 </div>
                 <div style="font-size: 13px; margin-top: 6px; opacity: 0.9;">
-                  Based on historical data, we expect around <strong>${data.probability}%</strong> capacity.
+                  Based on current active reservations, we expect around <strong>${data.probability}%</strong> capacity.
                 </div>
               </div>
             `;
@@ -216,6 +218,9 @@
 
       facilitySelect.addEventListener('change', updatePrediction);
       slotSelect.addEventListener('change', updatePrediction);
+      if (dateInput) {
+        dateInput.addEventListener('change', updatePrediction);
+      }
 
       updatePrediction();
     });
