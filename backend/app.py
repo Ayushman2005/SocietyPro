@@ -1768,33 +1768,89 @@ def chatbot_api():
         return {"answer": "I didn't receive a valid question. Could you please try again?"}, 400
         
     question = data.get("question", "").lower()
+    user_id = session["user"]
     
-    # Use regular expressions to extract words and ensure accurate matching
-    # This avoids false positives (e.g., matching "which" with "hi")
     words = set(re.findall(r'\b\w+\b', question))
+    
+    db = get_db_connection()
+    cur = db.cursor() if db else None
+
+    answer = None
 
     if {"hi", "hello", "hey", "greetings", "morning", "afternoon", "evening"} & words:
-        answer = "Hello there! I am your SocietyPro AI Assistant. How can I assist you today?"
-    elif {"pay", "bill", "bills", "maintenance", "due", "money", "payment", "invoice", "invoices"} & words:
-        answer = "To pay your maintenance bills, navigate to the 'Home' dashboard and look under the 'Invoice History' section. You can use Stripe for secure payments."
-    elif {"book", "booking", "clubhouse", "pool", "gym", "facility", "facilities", "tennis", "hall"} & words:
-        answer = "You can easily book society facilities like the Clubhouse, Swimming Pool, or Community Hall from the 'Bookings' tab in your sidebar."
+        answer = "Hello there! I am your SocietyPro AI Assistant. Ask me about your pending bills, latest bookings, visitors, or complaints!"
+    elif {"pay", "bill", "bills", "maintenance", "due", "dues", "amount", "money", "payment", "invoice", "invoices"} & words:
+        if cur:
+            cur.execute("SELECT SUM(amount) FROM bills WHERE user_id=%s AND status='Unpaid'", (user_id,))
+            total_due = cur.fetchone()[0]
+            if total_due:
+                answer = f"You currently have pending maintenance dues of ₹{float(total_due):,.2f}. You can pay them instantly from your Dashboard."
+            else:
+                answer = "Great news! You have no pending maintenance bills right now."
+        else:
+            answer = "To pay your maintenance bills, navigate to the 'Home' dashboard and look under the 'Invoice History' section."
+    elif {"book", "booking", "bookings", "clubhouse", "pool", "gym", "facility", "facilities", "hall", "tennis"} & words:
+        if cur:
+            cur.execute("SELECT facility_name, DATE_FORMAT(booking_date, '%d %b %Y'), status FROM bookings WHERE user_id=%s ORDER BY id DESC LIMIT 1", (user_id,))
+            b = cur.fetchone()
+            if b:
+                answer = f"Your latest booking is for the {b[0]} on {b[1]} (Status: {b[2]}). Manage your bookings in the 'Bookings' section."
+            else:
+                answer = "You haven't made any bookings recently. Head over to the 'Bookings' tab to reserve society facilities!"
+        else:
+            answer = "You can easily book society facilities like the Clubhouse or Community Hall from the 'Bookings' tab."
     elif {"visitor", "visitors", "guest", "guests", "delivery", "cab", "auto"} & words:
-        answer = "Expecting someone? You can pre-approve your guests and deliveries in the 'Visitors' section to ensure a smooth entry at the main gate."
+        if cur:
+            cur.execute("SELECT name, DATE_FORMAT(visit_date, '%d %b %Y'), status FROM visitors WHERE user_id=%s ORDER BY id DESC LIMIT 1", (user_id,))
+            v = cur.fetchone()
+            if v:
+                answer = f"Your last registered visitor was '{v[0]}' on {v[1]} (Status: {v[2]}). Pre-approve new guests in the 'Visitors' tab."
+            else:
+                answer = "You have no registered visitors. You can pre-approve guests and deliveries in the 'Visitors' section."
+        else:
+            answer = "Expecting someone? You can pre-approve your guests and deliveries in the 'Visitors' section."
     elif {"complain", "complaint", "complaints", "issue", "plumber", "electrician", "broken", "water", "leak", "electricity", "power"} & words:
-        answer = "You can raise a ticket for any issue in the 'Complaints' section. Please briefly describe the issue, and I will automatically categorize and prioritize it for the admin!"
-    elif {"contact", "admin", "emergency", "help", "support", "police", "fire", "ambulance"} & words:
-        answer = "For emergencies, please check the 'Emergency' section for quick contact numbers (Police, Fire, Ambulance). For admin-related queries, please raise a complaint."
+        if cur:
+            cur.execute("SELECT subject, status FROM complaints WHERE user_id=%s ORDER BY id DESC LIMIT 1", (user_id,))
+            c = cur.fetchone()
+            if c:
+                answer = f"Your latest complaint regarding '{c[0]}' is currently '{c[1]}'. You can track or raise new issues in the 'Complaints' tab."
+            else:
+                answer = "You have no active complaints. To raise a ticket for any issue, visit the 'Complaints' section."
+        else:
+            answer = "You can raise a ticket for any issue in the 'Complaints' section. I will automatically categorize and prioritize it!"
+    elif {"contact", "admin", "emergency", "help", "support", "police", "fire", "ambulance", "security"} & words:
+        answer = "For emergencies: Police (100), Fire (101), Ambulance (102). For maintenance issues or society admin queries, check the 'Emergency' section."
     elif {"poll", "polls", "vote", "voting", "election"} & words:
-        answer = "You can participate in community decisions by visiting the 'Polls' section in your sidebar. Your vote matters!"
+        if cur:
+            cur.execute("SELECT question FROM polls ORDER BY id DESC LIMIT 1")
+            p = cur.fetchone()
+            if p:
+                answer = f"The latest community poll is: '{p[0]}'. Visit the 'Polls' section to cast your vote and see the results!"
+            else:
+                answer = "There are no active polls right now. Check back later in the 'Polls' section."
+        else:
+            answer = "You can participate in community decisions by visiting the 'Polls' section in your sidebar."
     elif {"notice", "notices", "announcement", "news", "update"} & words:
-        answer = "Stay updated! You can check the latest community announcements and administrative updates in the 'Notices' section."
+        if cur:
+            cur.execute("SELECT title FROM notices ORDER BY id DESC LIMIT 1")
+            n = cur.fetchone()
+            if n:
+                answer = f"The latest notice from the admin is '{n[0]}'. Read the full announcement in the 'Notices' section."
+            else:
+                answer = "There are no new notices right now. Stay tuned in the 'Notices' section."
+        else:
+            answer = "Stay updated! You can check the latest community announcements and administrative updates in the 'Notices' section."
     elif {"profile", "password", "email", "settings"} & words:
-        answer = "You can update your email or password by visiting the 'Profile' section from the top-right menu."
+        answer = "You can update your email, profile picture, or password by visiting the 'Profile' section from the top-right menu."
     else:
-        answer = "I am a simple AI and I'm still learning! Could you rephrase your question, or navigate directly to the relevant section using the sidebar?"
+        answer = "I'm a society assistant designed to help with bills, visitors, complaints, and bookings! Try asking 'What are my pending bills?' or 'Who was my last visitor?'"
 
-    # Instant response without sleep makes the chatbot more efficient and responsive
+    if cur:
+        cur.close()
+    if db:
+        db.close()
+
     return {"answer": answer}
 
 @app.route("/api/predict_crowd", methods=["GET"])
