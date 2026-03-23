@@ -10,3 +10,5 @@ backend/pylint_errors.txt
 __pycache__/
 backend/__pycache__/
 diff.txt
+backend/ca.pem
+backend/ca.pem
