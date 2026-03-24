@@ -11,6 +11,7 @@
 
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body class="auth-body">
@@ -23,7 +24,28 @@
       Create a new digital space for your community.
     </p>
 
-    <form action="/admin/register" method="POST">
+    <!-- Google Sign Up Helper -->
+    <div id="g_id_onload"
+         data-client_id="{{ GOOGLE_CLIENT_ID }}"
+         data-context="signup"
+         data-ux_mode="popup"
+         data-callback="handleGoogleSignup"
+         data-auto_prompt="false">
+    </div>
+    <div class="g_id_signin"
+         data-type="standard"
+         data-shape="rectangular"
+         data-theme="outline"
+         data-text="signup_with"
+         data-size="large"
+         data-logo_alignment="center"
+         style="display: flex; justify-content: center; margin-bottom: 20px;">
+    </div>
+    <div style="text-align: center; margin-bottom: 20px; color: var(--text-muted); font-size: 14px; font-weight: 600;">
+      OR manually enter details
+    </div>
+
+    <form action="/admin/register" method="POST" id="registerForm">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
       <div class="split-grid-1-1" style="gap: 15px; text-align: left;">
@@ -57,6 +79,35 @@
       <a href="/admin/login" class="auth-link">Login Here</a>
     </div>
   </div>
+
+  <script>
+    function handleGoogleSignup(response) {
+      try {
+          const payload = JSON.parse(atob(response.credential.split('.')[1]));
+          document.querySelector('input[name="name"]').value = payload.name || "";
+          document.querySelector('input[name="email"]').value = payload.email || "";
+          
+          let flashDev = document.getElementById('jsSuccess');
+          if (!flashDev) {
+              flashDev = document.createElement('div');
+              flashDev.id = 'jsSuccess';
+              flashDev.style.background = 'rgba(34, 197, 94, 0.1)';
+              flashDev.style.color = '#16a34a';
+              flashDev.style.padding = '12px';
+              flashDev.style.borderRadius = '10px';
+              flashDev.style.marginBottom = '20px';
+              flashDev.style.fontSize = '14px';
+              flashDev.style.border = '1px solid rgba(34, 197, 94, 0.2)';
+              
+              const form = document.getElementById('registerForm');
+              form.parentNode.insertBefore(flashDev, form);
+          }
+          flashDev.innerText = "Google details securely retrieved. Please enter Society Name and your new Password, then Create Account.";
+      } catch (e) {
+          console.error("Error decoding token");
+      }
+    }
+  </script>
 </body>
 
 </html>

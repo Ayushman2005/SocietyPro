@@ -116,6 +116,7 @@
     </style>
   
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔐</text></svg>">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
   <body class="auth-body">
     <div class="glass-card">
@@ -144,6 +145,42 @@
         <i class="ri-error-warning-line"></i> {{ error }}
       </div>
       {% endif %}
+
+      <div
+        id="jsError"
+        style="
+          display: none;
+          background: rgba(239, 68, 68, 0.1);
+          color: #ef4444;
+          padding: 12px;
+          border-radius: 10px;
+          margin-bottom: 25px;
+          font-size: 14px;
+          border: 1px solid rgba(239, 68, 68, 0.2);
+        "
+      >
+      </div>
+
+      <!-- Google Sign In Button Initialization -->
+      <div id="g_id_onload"
+           data-client_id="{{ GOOGLE_CLIENT_ID }}"
+           data-context="signin"
+           data-ux_mode="popup"
+           data-callback="handleGoogleLogin"
+           data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin"
+           data-type="standard"
+           data-shape="rectangular"
+           data-theme="outline"
+           data-text="signin_with"
+           data-size="large"
+           data-logo_alignment="center"
+           style="display: flex; justify-content: center; margin-bottom: 20px;">
+      </div>
+      <div style="text-align: center; margin-bottom: 20px; color: #64748b; font-size: 14px; font-weight: 600;">
+        OR
+      </div>
 
       <form action="/user/login" method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -202,5 +239,29 @@
         </a>
       </div>
     </div>
+    <script>
+      function handleGoogleLogin(response) {
+        const credential = response.credential;
+        fetch('/user/google_login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+            },
+            body: JSON.stringify({ credential: credential })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = data.redirect;
+            } else {
+                const errDiv = document.getElementById('jsError');
+                errDiv.style.display = 'block';
+                errDiv.innerText = data.error || 'The mail id is not valid';
+            }
+        })
+        .catch(err => console.error('Error:', err));
+      }
+    </script>
   </body>
 </html>

@@ -18,6 +18,7 @@ import string
 import random
 import stripe
 import threading
+import re
 from datetime import date
 from dotenv import load_dotenv
 from flask_wtf.csrf import CSRFProtect
@@ -28,6 +29,8 @@ from reportlab.lib import colors
 from reportlab.platypus import Table, TableStyle
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 
 load_dotenv()
 
@@ -38,6 +41,10 @@ app = Flask(__name__,
             template_folder=os.path.join(frontend_dir, 'templates'), 
             static_folder=os.path.join(frontend_dir, 'static'))
 app.secret_key = os.getenv("SECRET_KEY", "super_secret_key")
+
+@app.context_processor
+def inject_google_client_id():
+    return dict(GOOGLE_CLIENT_ID=os.getenv("GOOGLE_CLIENT_ID", "YOUR_GOOGLE_CLIENT_ID"))
 
 csrf = CSRFProtect(app)
 
@@ -247,7 +254,10 @@ def admin_register():
         db.close()
 
         if existing_admin:
-            return "Email already registered! Please login."
+            return render_template("auth/admin_register.html", error="Email already registered! Please login.")
+            
+        if not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email):
+            return render_template("auth/admin_register.html", error="The mail id is not valid")
 
         otp = str(random.randint(100000, 999999))
 
@@ -320,6 +330,41 @@ def admin_verify_registration():
     return render_template("auth/admin_verify_otp.html")
 
 
+@app.route("/admin/google_login", methods=["POST"])
+def admin_google_login():
+    data = request.get_json()
+    token = data.get("credential") if data else None
+    if not token:
+        return {"success": False, "error": "Missing Google token."}
+    
+    try:
+        client_id = os.getenv("GOOGLE_CLIENT_ID", "YOUR_GOOGLE_CLIENT_ID")
+        idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), client_id)
+        email = idinfo.get("email")
+
+        db = get_db_connection()
+        if db is None:
+            return {"success": False, "error": "Database is currently offline."}
+
+        cur = db.cursor()
+        cur.execute("SELECT * FROM admins WHERE email=%s", (email,))
+        admin = cur.fetchone()
+
+        if admin:
+            session.pop("captcha", None)
+            session["admin_id"] = admin[0]
+            cur.close()
+            db.close()
+            return {"success": True, "redirect": url_for("admin_dashboard")}
+        else:
+            cur.close()
+            db.close()
+            return {"success": False, "error": "The mail id is not valid"}
+            
+    except ValueError:
+        return {"success": False, "error": "Invalid Google token or Client ID."}
+
+
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
     if request.method == "POST":
@@ -343,23 +388,63 @@ def admin_login():
         cur.execute("SELECT * FROM admins WHERE email=%s", (email,))
         admin = cur.fetchone()
 
-        if admin and check_password_hash(admin[3], password):
-            session.pop("captcha", None)
-            session["admin_id"] = admin[0]
+        if admin:
+            if check_password_hash(admin[3], password):
+                session.pop("captcha", None)
+                session["admin_id"] = admin[0]
 
-            cur.close()
-            db.close()
+                cur.close()
+                db.close()
 
-            return redirect(url_for("admin_dashboard"))
+                return redirect(url_for("admin_dashboard"))
+            else:
+                cur.close()
+                db.close()
+                return render_template("auth/admin_login.html", error="Invalid password")
 
         cur.close()
         db.close()
 
         return render_template(
-            "auth/admin_login.html", error="Invalid email or password"
+            "auth/admin_login.html", error="The mail id is not valid"
         )
 
     return render_template("auth/admin_login.html")
+
+
+@app.route("/user/google_login", methods=["POST"])
+def user_google_login():
+    data = request.get_json()
+    token = data.get("credential") if data else None
+    if not token:
+        return {"success": False, "error": "Missing Google token."}
+    
+    try:
+        client_id = os.getenv("GOOGLE_CLIENT_ID", "YOUR_GOOGLE_CLIENT_ID")
+        idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), client_id)
+        email = idinfo.get("email")
+
+        db = get_db_connection()
+        if db is None:
+            return {"success": False, "error": "System maintenance: Database is currently offline."}
+
+        cur = db.cursor()
+        cur.execute("SELECT id FROM users WHERE email=%s", (email,))
+        user = cur.fetchone()
+
+        if user:
+            session.clear()
+            session["user"] = user[0]
+            cur.close()
+            db.close()
+            return {"success": True, "redirect": "/user/dashboard"}
+        
+        cur.close()
+        db.close()
+        return {"success": False, "error": "The mail id is not valid"}
+
+    except ValueError:
+        return {"success": False, "error": "Invalid Google token or Client ID."}
 
 
 @app.route("/user/login", methods=["GET", "POST"])
@@ -381,13 +466,16 @@ def user_login():
         cur.close()
         db.close()
 
-        if user and check_password_hash(user[1], password):
-            session.clear()
-            session["user"] = user[0]
-            return redirect("/user/dashboard")
+        if user:
+            if check_password_hash(user[1], password):
+                session.clear()
+                session["user"] = user[0]
+                return redirect("/user/dashboard")
+            else:
+                return render_template("auth/user_login.html", error="Invalid password")
 
         return render_template(
-            "auth/user_login.html", error="Invalid Credentials"
+            "auth/user_login.html", error="The mail id is not valid"
         )
 
     return render_template("auth/user_login.html")
@@ -429,7 +517,7 @@ def forgot_password():
             return redirect("/verify_otp")
         else:
             return render_template(
-                "auth/forgot_password.html", error="Admin email not found"
+                "auth/forgot_password.html", error="The mail id is not valid"
             )
 
     return render_template("auth/forgot_password.html")
