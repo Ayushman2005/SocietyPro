@@ -12,3 +12,4 @@ backend/__pycache__/
 diff.txt
 backend/ca.pem
 backend/render.yaml
+backend/ca.pem
