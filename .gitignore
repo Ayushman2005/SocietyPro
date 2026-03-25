@@ -1,15 +1,31 @@
+# Visual Studio Code
+.vscode/
+
+# Vercel
+.vercel/
+
+# Virtual Environments
+venv/
+env/
+.env/
+.venv/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Current and Custom Ignores
+.git/
 backend/.env
 backend/society_db.sql
-.git
 backend/test_db.py
 backend/flake8_output.txt
 backend/flake8_errors.txt
 backend/.flake8
 backend/output.txt
 backend/pylint_errors.txt
-__pycache__
-backend/__pycache__/
 diff.txt
 backend/ca.pem
 backend/render.yaml
-backend/ca.pem
