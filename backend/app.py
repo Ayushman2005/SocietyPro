@@ -64,9 +64,10 @@ def get_db_connection():
         if not os.path.isabs(ssl_path):
             ssl_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ssl_path)
 
+        cloud_port = os.getenv("CLOUD_DB_PORT")
         cloud_conn = mysql.connector.connect(
             host=os.getenv("CLOUD_DB_HOST"),
-            port=os.getenv("CLOUD_DB_PORT"),
+            port=int(cloud_port) if cloud_port else 3306,
             user=os.getenv("CLOUD_DB_USER"),
             password=os.getenv("CLOUD_DB_PASSWORD"),
             database=os.getenv("CLOUD_DB_NAME"),
@@ -135,7 +136,7 @@ def send_welcome_email_thread(user_email, user_name, society_name="Society"):
             f"DEBUG: Preparing to send Welcome Email to {user_email} ({user_name})"
         )
         msg = MIMEMultipart()
-        msg["From"] = os.getenv("MAIL_USERNAME")
+        msg["From"] = os.getenv("MAIL_USERNAME", "")
         msg["To"] = user_email
         msg["Subject"] = (
             f"Welcome to {society_name} - Your Digital Home Awaits!"
@@ -211,13 +212,14 @@ def send_welcome_email_thread(user_email, user_name, society_name="Society"):
 
         msg.attach(MIMEText(body, "html"))
 
+        mail_port = os.getenv("MAIL_PORT", "587")
         server = smtplib.SMTP(
-            os.getenv("MAIL_SERVER", ""), int(os.getenv("MAIL_PORT"))
+            os.getenv("MAIL_SERVER", ""), int(mail_port) if mail_port else 587
         )
         server.starttls()
-        server.login(os.getenv("MAIL_USERNAME"), os.getenv("MAIL_PASSWORD"))
+        server.login(os.getenv("MAIL_USERNAME", ""), os.getenv("MAIL_PASSWORD", ""))
         server.sendmail(
-            os.getenv("MAIL_USERNAME"), user_email, msg.as_string()
+            os.getenv("MAIL_USERNAME", ""), user_email, msg.as_string()
         )
         server.quit()
         print(f"✅ Impressive Welcome email sent to {user_email}")
@@ -575,8 +577,8 @@ def reset_password():
 
 
 def send_email(to_email, otp, subject, heading, message_text):
-    sender_email = os.getenv("MAIL_USERNAME")
-    sender_password = os.getenv("MAIL_PASSWORD")
+    sender_email = os.getenv("MAIL_USERNAME", "")
+    sender_password = os.getenv("MAIL_PASSWORD", "")
     print(f"DEBUG: OTP sent to {to_email} is: {otp}")
     body = f"""
     <html>
@@ -695,7 +697,7 @@ def admin_dashboard():
     fund_row = cur.fetchone()
 
     if fund_row:
-        total_fund = fund_row[0]
+        total_fund = fund_row[0] or 0.0
     else:
         cur.execute(
             "INSERT INTO society_fund (admin_id, amount) VALUES (%s, 0)",
@@ -2032,7 +2034,7 @@ def dashboard_stats():
         "SELECT amount FROM society_fund WHERE admin_id = %s", (admin_id,)
     )
     fund_row = cur.fetchone()
-    total_fund = float(fund_row[0]) if fund_row else 0.0
+    total_fund = float(fund_row[0] or 0.0) if fund_row else 0.0
 
     cur.close()
     db.close()

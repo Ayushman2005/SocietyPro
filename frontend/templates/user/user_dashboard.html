@@ -92,7 +92,7 @@
             Maintenance Bill
           </h3>
 
-          <div class="card-amount">₹ {{ "{:,.2f}".format(b[1]) }}</div>
+          <div class="card-amount">₹ {{ "{:,.2f}".format(b[1] or 0) }}</div>
 
           <div style="
                 display: flex;
