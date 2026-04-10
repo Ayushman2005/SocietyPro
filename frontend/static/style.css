@@ -5,12 +5,12 @@
   --primary-glow: rgba(0, 191, 255, 0.7);
   --secondary: #ff2e63;
   --secondary-glow: rgba(255, 46, 99, 0.6);
-   --bg-deep: #e2e8f0; /* Soft cool gray for better glass contrast */
-   --glass-surface: rgba(255, 255, 255, 0.45); /* High transparency white */
-   --glass-border: rgba(255, 255, 255, 0.6); /* Frosted white border */
-   --glass-highlight: rgba(255, 255, 255, 0.8); /* Bright inner reflection */
-   --text-white: #0f172a; /* Slate 900 for primary text */
-   --text-muted: #64748b; /* Slate 500 for secondary text */
+   --bg-deep: #e2e8f0; 
+   --glass-surface: rgba(255, 255, 255, 0.45); 
+   --glass-border: rgba(255, 255, 255, 0.6); 
+   --glass-highlight: rgba(255, 255, 255, 0.8); 
+   --text-white: #0f172a; 
+   --text-muted: #64748b; 
   --radius-xl: 24px;
   --radius-md: 12px;
   --radius-pill: 100px;
@@ -62,7 +62,7 @@ body {
   position: relative;
 }
 
-/* Dynamic Aurora Background */
+
 body::before {
   content: "";
   position: fixed;
@@ -115,9 +115,7 @@ img {
   animation: fadeInUp 0.8s ease-out;
 }
 
-/* ═══════════════════════════════════════
-   WEATHER WIDGET — themed to match site
-   ═══════════════════════════════════════ */
+
 #weather-box {
   position: fixed;
   top: 80px;
@@ -144,7 +142,7 @@ img {
     0 0 40px rgba(0, 191, 255, 0.12);
 }
 
-/* Top bar: city name + toggle btn */
+
 .weather-top-bar {
   display: flex;
   align-items: center;
@@ -193,7 +191,7 @@ img {
   border-color: var(--primary);
 }
 
-/* Main temp + icon row */
+
 .weather-main-row {
   display: flex;
   align-items: center;
@@ -227,7 +225,7 @@ img {
   background-clip: text;
 }
 
-/* Condition pill */
+
 .weather-pill {
   display: inline-block;
   padding: 3px 10px;
@@ -275,7 +273,7 @@ img {
   border: 1px solid rgba(0, 191, 255, 0.25);
 }
 
-/* Details 2x2 grid */
+
 .weather-details-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -315,7 +313,7 @@ img {
   font-family: "Outfit", sans-serif;
 }
 
-/* Error state */
+
 .weather-error {
   display: flex;
   align-items: center;
@@ -411,10 +409,10 @@ img {
   color: black !important;
 }
 
-/* --- NEW: Animated Auth Buttons --- */
+
 .btn-auth {
   background: linear-gradient(45deg, #87cefa, #00bfff, #87cefa);
-  /* Vibrant Gradient */
+  
   background-size: 200% auto;
   color: var(--text-white);
   padding: 14px 32px;
@@ -426,17 +424,17 @@ img {
   text-transform: uppercase;
   letter-spacing: 1px;
   box-shadow: 0 0 20px rgba(135, 206, 250, 0.6);
-  /* Neon Glow */
+  
   transition: all 0.4s ease;
   width: 100%;
   animation: gradientMove 3s linear infinite;
-  /* Constant movement */
+  
 }
 
 .btn-auth:hover {
   transform: translateY(-3px) scale(1.02);
   box-shadow: 0 0 30px rgba(0, 191, 255, 0.8);
-  /* Stronger Glow on Hover */
+  
   background-position: right center;
 }
 
@@ -629,7 +627,7 @@ img {
   font-size: 15px;
 }
 
-/* --- SIDEBAR FIX START --- */
+
 .dashboard-container {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -663,14 +661,14 @@ img {
   gap: 8px;
   flex: 1;
   overflow-y: auto;
-  /* SCROLL IF MENU IS TOO LONG */
+  
   min-height: 0;
-  /* CRITICAL FOR FLEX SCROLLING */
+  
   padding-right: 5px;
-  /* Space for scrollbar */
+  
 }
 
-/* Custom Scrollbar for Menu */
+
 .menu::-webkit-scrollbar {
   width: 4px;
 }
@@ -691,7 +689,7 @@ img {
   font-size: 14px;
   transition: 0.3s;
   flex-shrink: 0;
-  /* Prevents items from squishing */
+  
 }
 
 .menu a:hover,
@@ -704,7 +702,7 @@ img {
 
 .logout-btn {
   margin-top: 20px;
-  /* Separates from menu */
+  
   padding: 14px 18px;
   border-radius: 12px;
   color: #ef4444;
@@ -717,7 +715,7 @@ img {
   border: 1px solid rgba(239, 68, 68, 0.1);
   transition: 0.3s;
   flex-shrink: 0;
-  /* Ensures logout button never shrinks */
+  
 }
 
 .logout-btn:hover {
@@ -727,7 +725,7 @@ img {
   transform: translateY(-2px);
 }
 
-/* --- SIDEBAR FIX END --- */
+
 
 .main-content {
   padding: 40px;
@@ -932,7 +930,7 @@ textarea:focus {
   margin-bottom: 10px;
 }
 
-/* Input wrapper for icon+input combos (forgot/reset password) */
+
 .input-wrapper {
   position: relative;
   margin-bottom: 5px;
@@ -1001,7 +999,7 @@ textarea:focus {
   border: 1px solid var(--glass-border);
 }
 
-/* --- TABLE STYLES --- */
+
 table {
   width: 100%;
   border-collapse: separate;
@@ -1042,7 +1040,7 @@ tbody tr {
 
 tbody tr:hover td {
   background: rgba(0, 191, 255, 0.08);
-  /* slight orange tint */
+  
   transform: scale(1.001);
 }
 
@@ -1083,7 +1081,7 @@ tbody tr:hover td {
   align-items: start;
 }
 
-/* ─── MISSING UTILITY CLASSES ─── */
+
 .landing-body {
   min-height: 100vh;
   display: flex;
@@ -1136,7 +1134,7 @@ tbody tr:hover td {
   }
 }
 
-/* --- CUSTOM GLOBAL SCROLLBAR --- */
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -1156,10 +1154,10 @@ tbody tr:hover td {
   background: var(--primary-glow);
 }
 
-/* ─── TABLET & MOBILE: 900px ─── */
+
 @media (max-width: 900px) {
 
-  /* Navbar */
+  
   .navbar {
     padding: 12px 5%;
     margin: 0;
@@ -1199,7 +1197,7 @@ tbody tr:hover td {
     display: block;
   }
 
-  /* Hero section */
+  
   .hero {
     flex-direction: column !important;
     text-align: center !important;
@@ -1234,11 +1232,9 @@ tbody tr:hover td {
   }
 
 
-  /* ═══════════════════════════════════════════════
-     DASHBOARD — HAMBURGER DRAWER (mobile ≤ 900px)
-     ═══════════════════════════════════════════════ */
+  
 
-  /* ── Mobile top-bar ── */
+  
   #mobile-topbar {
     display: flex;
     align-items: center;
@@ -1272,7 +1268,7 @@ tbody tr:hover td {
     font-size: 22px;
   }
 
-  /* ── Hamburger button ── */
+  
   #mob-hamburger {
     background: none;
     border: none;
@@ -1305,7 +1301,7 @@ tbody tr:hover td {
     transform-origin: center;
   }
 
-  /* Hamburger → × animation */
+  
   #mob-hamburger.is-open .ham-line:nth-child(1) {
     transform: translateY(7.5px) rotate(45deg);
   }
@@ -1317,7 +1313,7 @@ tbody tr:hover td {
     transform: translateY(-7.5px) rotate(-45deg);
   }
 
-  /* ── Sidebar: hidden off-screen left ── */
+  
   .dashboard-container {
     display: flex;
     flex-direction: column;
@@ -1357,7 +1353,7 @@ tbody tr:hover td {
     font-size: 18px;
   }
 
-  /* Full vertical menu inside drawer */
+  
   .sidebar .menu {
     margin-top: 10px;
     flex-direction: column;
@@ -1434,7 +1430,7 @@ tbody tr:hover td {
     color: #dc2626;
   }
 
-  /* ── Overlay backdrop ── */
+  
   #sidebar-overlay {
     display: none;
     position: fixed;
@@ -1451,12 +1447,12 @@ tbody tr:hover td {
     opacity: 1;
   }
 
-  /* ── Push main content below the topbar ── */
+  
   .main-content {
     padding: 80px 16px 30px !important;
   }
 
-  /* All split grids collapse */
+  
   .split-grid-2-1,
   .split-grid-1-1 {
     grid-template-columns: 1fr !important;
@@ -1471,7 +1467,7 @@ tbody tr:hover td {
   }
 
 
-  /* Weather widget: move to bottom on mobile */
+  
   #weather-box {
     position: fixed;
     top: auto !important;
@@ -1482,7 +1478,7 @@ tbody tr:hover td {
     animation: none;
   }
 
-  /* Chatbot moves to bottom left */
+  
   #ai-chat-widget {
     bottom: 12px;
     right: 12px;
@@ -1495,7 +1491,7 @@ tbody tr:hover td {
   }
 }
 
-/* ─── MOBILE: 600px ─── */
+
 @media (max-width: 600px) {
   .hero h1 {
     font-size: 30px;
@@ -1558,7 +1554,7 @@ tbody tr:hover td {
     padding: 25px 5%;
   }
 
-  /* Full-width weather on small phones */
+  
   #weather-box {
     right: 8px;
     width: calc(100vw - 16px);
@@ -1566,7 +1562,7 @@ tbody tr:hover td {
     bottom: 75px;
   }
 
-  /* Hero image hidden on very small */
+  
   .hero-image .glass-panel {
     transform: none !important;
   }
@@ -1576,7 +1572,7 @@ tbody tr:hover td {
   }
 }
 
-/* ─── EXTRA SMALL: 400px ─── */
+
 @media (max-width: 400px) {
   .hero h1 {
     font-size: 26px;
@@ -1630,7 +1626,7 @@ tbody tr:hover td {
   }
 }
 
-/* ─── DESKTOP: ensure injected mobile elements stay hidden ─── */
+
 @media (min-width: 901px) {
   #mobile-topbar,
   #sidebar-overlay {

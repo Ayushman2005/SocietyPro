@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // --- 1. 3D TILT EFFECT FOR CARDS ---
   const cards = document.querySelectorAll(
     ".card, .feature-box, .hero-image img",
   );
@@ -24,8 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
         "perspective(1000px) rotateX(0) rotateY(0) scale(1)";
     });
   });
-
-  // --- 2. NUMBER COUNTER ANIMATION ---
   const counters = document.querySelectorAll(".stat-number"); // Removed .card-amount to prevent currency mangle
   counters.forEach((counter) => {
     const target = +counter.innerText.replace(/[^0-9.]/g, ""); // Extract number but keep decimal
@@ -44,8 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
       updateCount();
     }
   });
-
-  // --- 3. SCROLL REVEAL ---
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -66,8 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
       el.style.transition = "all 0.6s ease-out";
       observer.observe(el);
     });
-
-  // --- 4. PUBLIC NAVBAR MOBILE MENU ---
   const hamburger = document.querySelector(".hamburger");
   const navLinks = document.querySelector(".nav-links");
   if (hamburger) {
@@ -75,13 +68,9 @@ document.addEventListener("DOMContentLoaded", () => {
       navLinks.classList.toggle("active");
     });
   }
-
-  // --- 5. DASHBOARD HAMBURGER DRAWER (Admin & User panels) ---
   const dashContainer = document.querySelector(".dashboard-container");
   const sidebar = document.querySelector(".sidebar");
   if (!dashContainer || !sidebar) return;
-
-  // ── Inject mobile top-bar ──
   const topBar = document.createElement("div");
   topBar.id = "mobile-topbar";
   topBar.innerHTML = `
@@ -93,8 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
     </button>
   `;
   document.body.prepend(topBar);
-
-  // ── Inject backdrop overlay ──
   const overlay = document.createElement("div");
   overlay.id = "sidebar-overlay";
   document.body.appendChild(overlay);
@@ -122,13 +109,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   overlay.addEventListener("click", closeDrawer);
-
-  // Close drawer when any nav link is tapped
   sidebar.querySelectorAll(".menu a, .logout-btn").forEach((link) => {
     link.addEventListener("click", closeDrawer);
   });
-
-  // Close drawer on Escape key
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeDrawer();
   });

@@ -1815,8 +1815,6 @@ def payment_success(bill_id):
     db = get_db_connection()
     if db:
         cur = db.cursor()
-
-        # 1. Fetch the amount and the admin_id for this specific bill
         query_fetch = """
             SELECT b.amount, u.admin_id 
             FROM bills b 
@@ -1829,13 +1827,9 @@ def payment_success(bill_id):
         if bill_data:
             paid_amount = bill_data[0]
             admin_id = bill_data[1]
-
-            # 2. Update the bill status to 'Paid'
             cur.execute(
                 "UPDATE bills SET status = 'Paid', paid_at = CURRENT_TIMESTAMP WHERE id = %s", (bill_id,)
             )
-
-            # 3. Automatically add the paid amount to the Society Fund
             cur.execute(
                 "UPDATE society_fund SET amount = amount + %s WHERE admin_id = %s",
                 (paid_amount, admin_id),
@@ -1976,8 +1970,6 @@ def predict_crowd():
                 (facility, slot)
             )
         count = cur.fetchone()[0]
-        
-        # Base 10% + 20% per active booking (cap at 100)
         final_prob = min(10 + (count * 20), 100)
     except Exception as e:
         print("Crowd DB Error:", e)
@@ -2010,14 +2002,10 @@ def dashboard_stats():
         return {"error": "DB offline"}, 500
 
     cur = db.cursor()
-
-    # Total residents
     cur.execute(
         "SELECT COUNT(*) FROM users WHERE admin_id = %s", (admin_id,)
     )
     total_residents = cur.fetchone()[0]
-
-    # Pending / open complaints (status = 'Open' or 'Pending')
     cur.execute(
         """SELECT COUNT(*) FROM complaints c
            JOIN users u ON c.user_id = u.id
@@ -2025,8 +2013,6 @@ def dashboard_stats():
         (admin_id,),
     )
     pending_issues = cur.fetchone()[0]
-
-    # Visitors today
     cur.execute(
         """SELECT COUNT(*) FROM visitors v
            JOIN users u ON v.user_id = u.id
@@ -2034,8 +2020,6 @@ def dashboard_stats():
         (admin_id,),
     )
     visitors_today = cur.fetchone()[0]
-
-    # Total fund
     cur.execute(
         "SELECT amount FROM society_fund WHERE admin_id = %s", (admin_id,)
     )
