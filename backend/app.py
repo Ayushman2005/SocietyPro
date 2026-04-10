@@ -925,7 +925,7 @@ def admin_tenants():
 
             user_id = cur.lastrowid
             cur.execute(
-                "INSERT INTO bills (user_id, amount, status) VALUES (%s, 0, 'Paid')",
+                "INSERT INTO bills (user_id, amount, status, paid_at) VALUES (%s, 0, 'Paid', CURRENT_TIMESTAMP)",
                 (user_id,),
             )
 
@@ -1127,6 +1127,12 @@ def user_dashboard():
         )
 
     cur = db.cursor()
+    cur.execute(
+        "DELETE FROM bills WHERE user_id = %s AND status = 'Paid' AND paid_at <= NOW() - INTERVAL 24 HOUR",
+        (user_id,)
+    )
+    db.commit()
+
     cur.execute(
         "SELECT id, amount, status FROM bills WHERE user_id = %s ORDER BY id DESC",
         (user_id,),
@@ -1826,7 +1832,7 @@ def payment_success(bill_id):
 
             # 2. Update the bill status to 'Paid'
             cur.execute(
-                "UPDATE bills SET status = 'Paid' WHERE id = %s", (bill_id,)
+                "UPDATE bills SET status = 'Paid', paid_at = CURRENT_TIMESTAMP WHERE id = %s", (bill_id,)
             )
 
             # 3. Automatically add the paid amount to the Society Fund
