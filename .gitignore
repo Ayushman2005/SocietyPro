@@ -28,6 +28,5 @@ backend/output.txt
 backend/pylint_errors.txt
 diff.txt
 backend/ca.pem
-backend/render.yaml
 
 FILES

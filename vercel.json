@@ -1,10 +1,15 @@
 {
   "version": 2,
-  "redirects": [
+  "builds": [
     {
-      "source": "/(.*)",
-      "destination": "https://societypro-se4b.onrender.com/$1",
-      "permanent": false
+      "src": "backend/app.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "backend/app.py"
     }
   ]
 }
