@@ -38,13 +38,8 @@
     </div>
   </nav>
 
-  <section class="hero" style="
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 100px 5%;
-      ">
-    <div class="hero-content" style="flex: 1; max-width: 600px">
+  <section class="hero">
+    <div class="hero-content">
       <div style="
             color: var(--primary);
             font-weight: 700;
@@ -81,7 +76,7 @@
       </div>
     </div>
 
-    <div class="hero-image" style="flex: 1; display: flex; justify-content: center">
+    <div class="hero-image">
       <div style="
             padding: 20px;
             animation: float 6s ease-in-out infinite;
@@ -91,17 +86,9 @@
     </div>
   </section>
 
-  <div style="
-        display: flex;
-        justify-content: center;
-        gap: 80px;
-        padding: 60px 0;
-        border-top: 1px solid var(--glass-border);
-        border-bottom: 1px solid var(--glass-border);
-        background: rgba(255, 255, 255, 0.6);
-      ">
+  <div class="stats-banner">
     <div style="text-align: center">
-      <div class="stat-number" style="font-size: 48px; font-weight: 800; color: var(--text-white);">
+      <div class="stat-number">
         1200+
       </div>
       <div style="
@@ -115,7 +102,7 @@
       </div>
     </div>
     <div style="text-align: center">
-      <div class="stat-number" style="font-size: 48px; font-weight: 800; color: var(--text-white);">
+      <div class="stat-number">
         5000+
       </div>
       <div style="
@@ -129,7 +116,7 @@
       </div>
     </div>
     <div style="text-align: center">
-      <div class="stat-number" style="font-size: 48px; font-weight: 800; color: var(--text-white);">
+      <div class="stat-number">
         99%
       </div>
       <div style="
@@ -337,13 +324,7 @@
     </div>
   </section>
 
-  <section id="features" style="
-        padding: 80px 5%;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 40px;
-        background: rgba(0, 0, 0, 0.02);
-      ">
+  <section id="features" class="features" style="background: rgba(0, 0, 0, 0.02);">
     <div class="card">
       <i class="ri-secure-payment-line" style="font-size: 40px; color: var(--primary); margin-bottom: 20px"></i>
       <h3 style="color: var(--text-white); font-size: 24px; margin-bottom: 10px">
@@ -374,6 +355,36 @@
         phone without manual registers.
       </p>
     </div>
+    <div class="card">
+      <i class="ri-customer-service-2-line" style="font-size: 40px; color: var(--primary); margin-bottom: 20px"></i>
+      <h3 style="color: var(--text-white); font-size: 24px; margin-bottom: 10px">
+        Helpdesk & Tracking
+      </h3>
+      <p style="color: var(--text-muted);">
+        Raise maintenance tickets easily. Track resolution status in real-time
+        with direct updates from the facility team.
+      </p>
+    </div>
+    <div class="card">
+      <i class="ri-calendar-event-line" style="font-size: 40px; color: var(--primary); margin-bottom: 20px"></i>
+      <h3 style="color: var(--text-white); font-size: 24px; margin-bottom: 10px">
+        Event Management
+      </h3>
+      <p style="color: var(--text-muted);">
+        Stay informed about upcoming community events, RSVP directly from your
+        dashboard, and never miss a gathering.
+      </p>
+    </div>
+    <div class="card">
+      <i class="ri-notification-3-line" style="font-size: 40px; color: var(--primary); margin-bottom: 20px"></i>
+      <h3 style="color: var(--text-white); font-size: 24px; margin-bottom: 10px">
+        Digital Notice Board
+      </h3>
+      <p style="color: var(--text-muted);">
+        Receive important announcements and circulars instantly on your phone.
+        Say goodbye to paper notices in the lobby.
+      </p>
+    </div>
   </section>
 
   <section style="padding: 100px 5%; max-width: 900px; margin: 0 auto">
@@ -401,6 +412,30 @@
       <p style="color: var(--text-muted)">
         Absolutely. Our Stripe integration supports credit cards, debit cards,
         and net banking.
+      </p>
+    </div>
+    <div class="form-box" style="margin-bottom: 20px">
+      <h4 style="color: var(--primary); margin-bottom: 10px">
+        How do I add a family member to my unit?
+      </h4>
+      <p style="color: var(--text-muted)">
+        As a primary resident, you can easily add family members from your dashboard under the "My Profile" tab.
+      </p>
+    </div>
+    <div class="form-box" style="margin-bottom: 20px">
+      <h4 style="color: var(--primary); margin-bottom: 10px">
+        What happens if I forget my password?
+      </h4>
+      <p style="color: var(--text-muted)">
+        You can use the 'Forgot Password' link on the login page to securely reset your password via email.
+      </p>
+    </div>
+    <div class="form-box" style="margin-bottom: 20px">
+      <h4 style="color: var(--primary); margin-bottom: 10px">
+        Can I book amenities in advance?
+      </h4>
+      <p style="color: var(--text-muted)">
+        Yes, you can pre-book amenities up to two weeks in advance, depending on your society's specific rules.
       </p>
     </div>
   </section>
