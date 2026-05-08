@@ -9,7 +9,8 @@ from flask import (
     send_file,
     Response,
 )
-import mysql.connector
+import psycopg2
+from psycopg2 import Error
 import os
 import io
 import smtplib
@@ -60,31 +61,27 @@ WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 
 def get_db_connection():
     try:
-        ssl_path = os.getenv("SSL_CA_PATH", "ca.pem")
-        if not os.path.isabs(ssl_path):
-            ssl_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ssl_path)
-
-        cloud_port = os.getenv("CLOUD_DB_PORT")
-        cloud_conn = mysql.connector.connect(
-            host=os.getenv("CLOUD_DB_HOST"),
-            port=int(cloud_port) if cloud_port else 3306,
-            user=os.getenv("CLOUD_DB_USER"),
-            password=os.getenv("CLOUD_DB_PASSWORD"),
-            database=os.getenv("CLOUD_DB_NAME"),
-            ssl_ca=ssl_path,
-            connection_timeout=10,
-        )
-        if cloud_conn.is_connected():
-            print("✅ Connected to Cloud Database (Aiven)")
-            return cloud_conn
-    except mysql.connector.Error as err:
-        print(f"⚠️ Cloud connection failed: {err}. Switching to Local...")
+        # Supabase connection using the SERVICE_URI from .env
+        service_uri = os.getenv("SERVIECE_URI")
+        if service_uri and "supabase" in service_uri:
+            conn = psycopg2.connect(service_uri)
+            print("✅ Connected to Supabase (PostgreSQL)")
+            return conn
+    except Exception as err:
+        print(f"⚠️ Supabase connection failed: {err}. Switching to Local...")
 
     try:
-        local_conn = mysql.connector.connect(**db_config)
-        print("🏠 Connected to Local MySQL Database")
+        # Local PostgreSQL connection
+        local_conn = psycopg2.connect(
+            host=os.getenv("DB_HOST", "localhost"),
+            port=os.getenv("DB_PORT", "5432"),
+            user=os.getenv("DB_USER", "postgres"),
+            password=os.getenv("DB_PASSWORD", ""),
+            database=os.getenv("DB_NAME", "society_db")
+        )
+        print("🏠 Connected to Local PostgreSQL Database")
         return local_conn
-    except mysql.connector.Error as err:
+    except Exception as err:
         print(f"❌ Local connection also failed: {err}")
         return None
 
@@ -919,11 +916,11 @@ def admin_tenants():
         try:
             cur = db.cursor()
             cur.execute(
-                "INSERT INTO users (name, email, password, admin_id) VALUES (%s, %s, %s, %s)",
+                "INSERT INTO users (name, email, password, admin_id) VALUES (%s, %s, %s, %s) RETURNING id",
                 (name, email, password, admin_id),
             )
 
-            user_id = cur.lastrowid
+            user_id = cur.fetchone()[0]
             cur.execute(
                 "INSERT INTO bills (user_id, amount, status, paid_at) VALUES (%s, 0, 'Paid', CURRENT_TIMESTAMP)",
                 (user_id,),
@@ -940,7 +937,7 @@ def admin_tenants():
 
             flash("Tenant added successfully and email sent!", "success")
             return redirect(url_for("admin_tenants"))
-        except mysql.connector.Error as err:
+        except Error as err:
             print(f"Error: {err}")
 
     cur = db.cursor()
@@ -1128,7 +1125,7 @@ def user_dashboard():
 
     cur = db.cursor()
     cur.execute(
-        "DELETE FROM bills WHERE user_id = %s AND status = 'Paid' AND paid_at <= NOW() - INTERVAL 24 HOUR",
+        "DELETE FROM bills WHERE user_id = %s AND status = 'Paid' AND paid_at <= NOW() - INTERVAL '24 hours'",
         (user_id,)
     )
     db.commit()
@@ -1180,7 +1177,7 @@ def admin_notices():
         db.commit()
 
     cur.execute(
-        "SELECT id, title, content, DATE_FORMAT(created_at, '%d %b %Y') FROM notices WHERE admin_id = %s ORDER BY id DESC",
+        "SELECT id, title, content, TO_CHAR(created_at, 'DD Mon YYYY') FROM notices WHERE admin_id = %s ORDER BY id DESC",
         (admin_id,),
     )
     notices = cur.fetchall()
@@ -1254,7 +1251,7 @@ def user_notices():
 
     cur = db.cursor()
     cur.execute(
-        "SELECT title, content, DATE_FORMAT(created_at, '%d %b %Y') as date FROM notices ORDER BY id DESC"
+        "SELECT title, content, TO_CHAR(created_at, 'DD Mon YYYY') as date FROM notices ORDER BY id DESC"
     )
     notices = cur.fetchall()
     cur.close()
@@ -1453,11 +1450,11 @@ def admin_complaints():
 
     query = """
         SELECT c.id, u.email, c.subject, c.description, c.status, 
-               DATE_FORMAT(c.created_at, '%d %b %Y') as date, c.category, c.priority
+               TO_CHAR(c.created_at, 'DD Mon YYYY') as date, c.category, c.priority
         FROM complaints c
         JOIN users u ON c.user_id = u.id
         WHERE u.admin_id = %s
-        ORDER BY FIELD(c.priority, 'High', 'Normal') ASC, c.status ASC, c.created_at DESC
+        ORDER BY CASE c.priority WHEN 'High' THEN 1 WHEN 'Normal' THEN 2 ELSE 3 END ASC, c.status ASC, c.created_at DESC
     """
     cur.execute(query, (admin_id,))
     complaints = cur.fetchall()
@@ -1881,7 +1878,7 @@ def chatbot_api():
             answer = "To pay your maintenance bills, navigate to the 'Home' dashboard and look under the 'Invoice History' section."
     elif {"book", "booking", "bookings", "clubhouse", "pool", "gym", "facility", "facilities", "hall", "tennis"} & words:
         if cur:
-            cur.execute("SELECT facility_name, DATE_FORMAT(booking_date, '%d %b %Y'), status FROM bookings WHERE user_id=%s ORDER BY id DESC LIMIT 1", (user_id,))
+            cur.execute("SELECT facility_name, TO_CHAR(booking_date, 'DD Mon YYYY'), status FROM bookings WHERE user_id=%s ORDER BY id DESC LIMIT 1", (user_id,))
             b = cur.fetchone()
             if b:
                 answer = f"Your latest booking is for the {b[0]} on {b[1]} (Status: {b[2]}). Manage your bookings in the 'Bookings' section."
@@ -1891,7 +1888,7 @@ def chatbot_api():
             answer = "You can easily book society facilities like the Clubhouse or Community Hall from the 'Bookings' tab."
     elif {"visitor", "visitors", "guest", "guests", "delivery", "cab", "auto"} & words:
         if cur:
-            cur.execute("SELECT name, DATE_FORMAT(visit_date, '%d %b %Y'), status FROM visitors WHERE user_id=%s ORDER BY id DESC LIMIT 1", (user_id,))
+            cur.execute("SELECT name, TO_CHAR(visit_date, 'DD Mon YYYY'), status FROM visitors WHERE user_id=%s ORDER BY id DESC LIMIT 1", (user_id,))
             v = cur.fetchone()
             if v:
                 answer = f"Your last registered visitor was '{v[0]}' on {v[1]} (Status: {v[2]}). Pre-approve new guests in the 'Visitors' tab."
@@ -2016,7 +2013,7 @@ def dashboard_stats():
     cur.execute(
         """SELECT COUNT(*) FROM visitors v
            JOIN users u ON v.user_id = u.id
-           WHERE u.admin_id = %s AND DATE(v.visit_date) = CURDATE()""",
+           WHERE u.admin_id = %s AND DATE(v.visit_date) = CURRENT_DATE""",
         (admin_id,),
     )
     visitors_today = cur.fetchone()[0]

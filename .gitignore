@@ -20,6 +20,7 @@ __pycache__/
 .git/
 backend/.env
 backend/society_db.sql
+backend/supabase_schema.sql
 backend/test_db.py
 backend/flake8_output.txt
 backend/flake8_errors.txt
