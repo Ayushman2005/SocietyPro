@@ -1,4 +1,31 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Inject mouse glowing blob
+  const glow = document.createElement("div");
+  glow.className = "glow-blob";
+  document.body.appendChild(glow);
+
+  document.addEventListener("mousemove", (e) => {
+    glow.style.left = `${e.clientX}px`;
+    glow.style.top = `${e.clientY}px`;
+    glow.style.opacity = "1";
+  });
+
+  document.addEventListener("mouseleave", () => {
+    glow.style.opacity = "0";
+  });
+
+  // Navbar scrolled effect
+  const navbar = document.querySelector(".navbar");
+  if (navbar) {
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add("scrolled");
+      } else {
+        navbar.classList.remove("scrolled");
+      }
+    });
+  }
+
   const cards = document.querySelectorAll(
     ".card, .feature-box, .hero-image img",
   );

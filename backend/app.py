@@ -37,14 +37,16 @@ load_dotenv()
 base_dir = os.path.dirname(os.path.abspath(__file__))
 frontend_dir = os.path.join(os.path.dirname(base_dir), 'frontend')
 
-app = Flask(__name__, 
-            template_folder=os.path.join(frontend_dir, 'templates'), 
+app = Flask(__name__,
+            template_folder=os.path.join(frontend_dir, 'templates'),
             static_folder=os.path.join(frontend_dir, 'static'))
 app.secret_key = os.getenv("SECRET_KEY", "super_secret_key")
+
 
 @app.context_processor
 def inject_google_client_id():
     return dict(GOOGLE_CLIENT_ID=os.getenv("GOOGLE_CLIENT_ID", "YOUR_GOOGLE_CLIENT_ID"))
+
 
 csrf = CSRFProtect(app)
 
@@ -263,7 +265,7 @@ def admin_register():
 
         if existing_admin:
             return render_template("auth/admin_register.html", error="Email already registered! Please login.")
-            
+
         if not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email):
             return render_template("auth/admin_register.html", error="The mail id is not valid")
 
@@ -344,10 +346,12 @@ def admin_google_login():
     token = data.get("credential") if data else None
     if not token:
         return {"success": False, "error": "Missing Google token."}
-    
+
     try:
         client_id = os.getenv("GOOGLE_CLIENT_ID", "YOUR_GOOGLE_CLIENT_ID")
-        idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), client_id)
+        idinfo = id_token.verify_oauth2_token(
+            token, google_requests.Request(), client_id, clock_skew_in_seconds=10
+        )
         email = idinfo.get("email")
 
         db = get_db_connection()
@@ -368,9 +372,10 @@ def admin_google_login():
             cur.close()
             db.close()
             return {"success": False, "error": "The mail id is not valid"}
-            
-    except ValueError:
-        return {"success": False, "error": "Invalid Google token or Client ID."}
+
+    except ValueError as e:
+        print(f"Google Login Error (Admin): {e}")
+        return {"success": False, "error": f"Invalid Google token or Client ID: {str(e)}"}
 
 
 @app.route("/admin/login", methods=["GET", "POST"])
@@ -426,10 +431,12 @@ def user_google_login():
     token = data.get("credential") if data else None
     if not token:
         return {"success": False, "error": "Missing Google token."}
-    
+
     try:
         client_id = os.getenv("GOOGLE_CLIENT_ID", "YOUR_GOOGLE_CLIENT_ID")
-        idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), client_id)
+        idinfo = id_token.verify_oauth2_token(
+            token, google_requests.Request(), client_id, clock_skew_in_seconds=10
+        )
         email = idinfo.get("email")
 
         db = get_db_connection()
@@ -446,13 +453,14 @@ def user_google_login():
             cur.close()
             db.close()
             return {"success": True, "redirect": "/user/dashboard"}
-        
+
         cur.close()
         db.close()
         return {"success": False, "error": "The mail id is not valid"}
 
-    except ValueError:
-        return {"success": False, "error": "Invalid Google token or Client ID."}
+    except ValueError as e:
+        print(f"Google Login Error (User): {e}")
+        return {"success": False, "error": f"Invalid Google token or Client ID: {str(e)}"}
 
 
 @app.route("/user/login", methods=["GET", "POST"])
@@ -936,11 +944,11 @@ def admin_tenants():
             )
 
             db.commit()
-            
+
             cur.execute("SELECT society_name FROM admins WHERE id = %s", (admin_id,))
             society_row = cur.fetchone()
             society_name = society_row[0] if society_row else "Society"
-            
+
             cur.close()
             send_welcome_email(email, name, society_name)
 
@@ -1397,7 +1405,7 @@ def user_complaints():
     if request.method == "POST":
         subject = request.form["subject"]
         description = request.form["description"]
-        
+
         text = (subject + " " + description).lower()
         category = "General"
         if any(word in text for word in ["leak", "pipe", "water", "plumb", "tap"]):
@@ -1408,7 +1416,7 @@ def user_complaints():
             category = "Security"
         elif any(word in text for word in ["garbage", "dirt", "dust", "sweep", "clean"]):
             category = "Cleanliness"
-            
+
         priority = "Normal"
         if any(word in text for word in ["emergency", "urgent", "immediate", "burst", "shock", "fire", "critical", "broken", "danger"]):
             priority = "High"
@@ -1852,22 +1860,20 @@ def payment_success(bill_id):
     return render_template("user/payment_success.html", bill_id=bill_id)
 
 
-import re
-
 @app.route("/api/chatbot", methods=["POST"])
 def chatbot_api():
     if "user" not in session:
         return {"error": "Unauthorized"}, 401
-    
+
     data = request.get_json(silent=True)
     if not data or "question" not in data:
         return {"answer": "I didn't receive a valid question. Could you please try again?"}, 400
-        
+
     question = data.get("question", "").lower()
     user_id = session["user"]
-    
+
     words = set(re.findall(r'\b\w+\b', question))
-    
+
     db = get_db_connection()
     cur = db.cursor() if db else None
 
@@ -1887,7 +1893,8 @@ def chatbot_api():
             answer = "To pay your maintenance bills, navigate to the 'Home' dashboard and look under the 'Invoice History' section."
     elif {"book", "booking", "bookings", "clubhouse", "pool", "gym", "facility", "facilities", "hall", "tennis"} & words:
         if cur:
-            cur.execute("SELECT facility_name, DATE_FORMAT(booking_date, '%d %b %Y'), status FROM bookings WHERE user_id=%s ORDER BY id DESC LIMIT 1", (user_id,))
+            cur.execute(
+                "SELECT facility_name, DATE_FORMAT(booking_date, '%d %b %Y'), status FROM bookings WHERE user_id=%s ORDER BY id DESC LIMIT 1", (user_id,))
             b = cur.fetchone()
             if b:
                 answer = f"Your latest booking is for the {b[0]} on {b[1]} (Status: {b[2]}). Manage your bookings in the 'Bookings' section."
@@ -1897,7 +1904,8 @@ def chatbot_api():
             answer = "You can easily book society facilities like the Clubhouse or Community Hall from the 'Bookings' tab."
     elif {"visitor", "visitors", "guest", "guests", "delivery", "cab", "auto"} & words:
         if cur:
-            cur.execute("SELECT name, DATE_FORMAT(visit_date, '%d %b %Y'), status FROM visitors WHERE user_id=%s ORDER BY id DESC LIMIT 1", (user_id,))
+            cur.execute(
+                "SELECT name, DATE_FORMAT(visit_date, '%d %b %Y'), status FROM visitors WHERE user_id=%s ORDER BY id DESC LIMIT 1", (user_id,))
             v = cur.fetchone()
             if v:
                 answer = f"Your last registered visitor was '{v[0]}' on {v[1]} (Status: {v[2]}). Pre-approve new guests in the 'Visitors' tab."
@@ -1949,21 +1957,22 @@ def chatbot_api():
 
     return {"answer": answer}
 
+
 @app.route("/api/predict_crowd", methods=["GET"])
 def predict_crowd():
     facility = request.args.get("facility", "")
     slot = request.args.get("slot", "")
     booking_date = request.args.get("date", "")
-    
+
     if not facility or not slot:
         return {"error": "Missing parameters"}, 400
-        
+
     db = get_db_connection()
     if db is None:
-        return {"probability": 10, "level": "Low"} # Default fallback
-        
+        return {"probability": 10, "level": "Low"}  # Default fallback
+
     cur = db.cursor()
-    
+
     try:
         if booking_date:
             cur.execute(
@@ -1983,13 +1992,13 @@ def predict_crowd():
     finally:
         cur.close()
         db.close()
-    
+
     level = "Low"
     if final_prob > 75:
         level = "High"
     elif final_prob >= 40:
         level = "Medium"
-        
+
     return {
         "probability": final_prob,
         "level": level
@@ -2045,4 +2054,3 @@ def dashboard_stats():
 
 if __name__ == "__main__":
     app.run(debug=True)
-

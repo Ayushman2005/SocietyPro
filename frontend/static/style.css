@@ -79,6 +79,19 @@ body::before {
   pointer-events: none;
 }
 
+.glow-blob {
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(0, 191, 255, 0.12) 0%, rgba(255, 46, 99, 0.04) 50%, transparent 100%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -2;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.5s ease;
+  opacity: 0;
+}
+
 a {
   text-decoration: none;
   color: inherit;
@@ -113,6 +126,14 @@ img {
   align-items: center;
   box-shadow: 0 8px 32px rgba(31, 38, 135, 0.08);
   animation: fadeInUp 0.8s ease-out;
+  transition: padding 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.navbar.scrolled {
+  padding: 10px 5%;
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 191, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 
@@ -532,7 +553,7 @@ img {
   font-size: 15px;
   letter-spacing: 0.5px;
   box-shadow: 0 10px 30px rgba(135, 206, 250, 0.3);
-  transition: 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -542,6 +563,23 @@ img {
 .btn-primary:hover {
   transform: translateY(-4px);
   box-shadow: 0 15px 40px rgba(135, 206, 250, 0.5);
+}
+
+.btn-primary i {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-primary:hover i {
+  transform: translateX(4px);
+}
+
+.btn-secondary-save {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-secondary-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 191, 255, 0.1);
 }
 
 .hero-image {
@@ -689,7 +727,10 @@ img {
   font-size: 14px;
   transition: 0.3s;
   flex-shrink: 0;
-  
+}
+
+.menu a i {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .menu a:hover,
@@ -700,9 +741,14 @@ img {
   transform: translateX(5px);
 }
 
+.menu a:hover i,
+.menu a.active i {
+  transform: scale(1.15) rotate(5deg);
+  color: var(--primary);
+}
+
 .logout-btn {
   margin-top: 20px;
-  
   padding: 14px 18px;
   border-radius: 12px;
   color: #ef4444;
@@ -715,7 +761,10 @@ img {
   border: 1px solid rgba(239, 68, 68, 0.1);
   transition: 0.3s;
   flex-shrink: 0;
-  
+}
+
+.logout-btn i {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .logout-btn:hover {
@@ -723,6 +772,10 @@ img {
   border-color: rgba(239, 68, 68, 0.3);
   color: var(--text-white);
   transform: translateY(-2px);
+}
+
+.logout-btn:hover i {
+  transform: translateX(3px) scale(1.1);
 }
 
 
@@ -793,6 +846,13 @@ img {
   margin: 5px 0;
   word-break: break-word;
   overflow-wrap: break-word;
+  transition: transform 0.3s ease, text-shadow 0.3s ease;
+  transform-origin: left center;
+}
+
+.card:hover .card-amount {
+  transform: scale(1.04);
+  text-shadow: 0 0 12px rgba(0, 191, 255, 0.25);
 }
 
 .card h3 {
@@ -944,6 +1004,12 @@ textarea:focus {
   color: #94a3b8;
   font-size: 18px;
   pointer-events: none;
+  transition: color 0.3s ease, filter 0.3s ease;
+}
+
+.input-wrapper:focus-within .input-icon {
+  color: var(--primary);
+  filter: drop-shadow(0 0 5px var(--primary-glow));
 }
 
 .modern-input {
