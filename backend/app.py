@@ -29,8 +29,15 @@ from reportlab.lib import colors
 from reportlab.platypus import Table, TableStyle
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from google.oauth2 import id_token
-from google.auth.transport import requests as google_requests
+import requests
+try:
+    from google.oauth2 import id_token
+    from google.auth.transport import requests as google_requests
+    GOOGLE_AUTH_AVAILABLE = True
+except ImportError:
+    id_token = None
+    google_requests = None
+    GOOGLE_AUTH_AVAILABLE = False
 
 load_dotenv()
 
@@ -44,8 +51,85 @@ app.secret_key = os.getenv("SECRET_KEY", "super_secret_key")
 
 
 @app.context_processor
-def inject_google_client_id():
-    return dict(GOOGLE_CLIENT_ID=os.getenv("GOOGLE_CLIENT_ID", "YOUR_GOOGLE_CLIENT_ID"))
+def inject_auth_config():
+    return dict(
+        GOOGLE_CLIENT_ID=os.getenv("GOOGLE_CLIENT_ID", "YOUR_GOOGLE_CLIENT_ID"),
+        FIREBASE_CONFIG={
+            "apiKey": os.getenv("FIREBASE_API_KEY", ""),
+            "authDomain": os.getenv("FIREBASE_AUTH_DOMAIN", ""),
+            "projectId": os.getenv("FIREBASE_PROJECT_ID", ""),
+            "storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET", ""),
+            "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID", ""),
+            "appId": os.getenv("FIREBASE_APP_ID", ""),
+            "measurementId": os.getenv("FIREBASE_MEASUREMENT_ID", "")
+        }
+    )
+
+
+def verify_firebase_token(token):
+    """
+    Verifies a Firebase ID token using:
+    1. Firebase Identity Toolkit REST API (if FIREBASE_API_KEY is configured).
+    2. google-auth verify_firebase_token (if FIREBASE_PROJECT_ID is configured).
+    3. Legacy google-auth OAuth2 token verification (as fallback).
+    Returns a dict with 'email', 'name', 'uid' on success, or None on failure.
+    """
+    if not token:
+        return None
+
+    # Method 1: Firebase Auth REST API (works across all serverless & containers without private key)
+    firebase_api_key = os.getenv("FIREBASE_API_KEY")
+    if firebase_api_key:
+        try:
+            url = f"https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={firebase_api_key}"
+            resp = requests.post(url, json={"idToken": token}, timeout=10)
+            if resp.status_code == 200:
+                data = resp.json()
+                users = data.get("users", [])
+                if users:
+                    user_info = users[0]
+                    return {
+                        "email": user_info.get("email"),
+                        "name": user_info.get("displayName"),
+                        "uid": user_info.get("localId"),
+                        "email_verified": user_info.get("emailVerified", False)
+                    }
+        except Exception as e:
+            print(f"Firebase REST verification exception: {e}")
+
+    # Method 2: Google oauth2 verify_firebase_token
+    project_id = os.getenv("FIREBASE_PROJECT_ID")
+    if project_id and GOOGLE_AUTH_AVAILABLE:
+        try:
+            idinfo = id_token.verify_firebase_token(
+                token, google_requests.Request(), audience=project_id, clock_skew_in_seconds=10
+            )
+            return {
+                "email": idinfo.get("email"),
+                "name": idinfo.get("name"),
+                "uid": idinfo.get("sub"),
+                "email_verified": idinfo.get("email_verified", False)
+            }
+        except Exception as e:
+            print(f"verify_firebase_token exception: {e}")
+
+    # Method 3: Fallback OAuth2 verification
+    client_id = os.getenv("GOOGLE_CLIENT_ID")
+    if client_id and client_id != "YOUR_GOOGLE_CLIENT_ID" and GOOGLE_AUTH_AVAILABLE:
+        try:
+            idinfo = id_token.verify_oauth2_token(
+                token, google_requests.Request(), client_id, clock_skew_in_seconds=10
+            )
+            return {
+                "email": idinfo.get("email"),
+                "name": idinfo.get("name"),
+                "uid": idinfo.get("sub"),
+                "email_verified": idinfo.get("email_verified", False)
+            }
+        except Exception as e:
+            print(f"verify_oauth2_token fallback exception: {e}")
+
+    return None
 
 
 csrf = CSRFProtect(app)
@@ -343,23 +427,23 @@ def admin_verify_registration():
 @app.route("/admin/google_login", methods=["POST"])
 def admin_google_login():
     data = request.get_json()
-    token = data.get("credential") if data else None
+    token = (data.get("idToken") or data.get("credential")) if data else None
     if not token:
-        return {"success": False, "error": "Missing Google token."}
+        return {"success": False, "error": "Missing authentication token."}
 
     try:
-        client_id = os.getenv("GOOGLE_CLIENT_ID", "YOUR_GOOGLE_CLIENT_ID")
-        idinfo = id_token.verify_oauth2_token(
-            token, google_requests.Request(), client_id, clock_skew_in_seconds=10
-        )
-        email = idinfo.get("email")
+        user_info = verify_firebase_token(token)
+        if not user_info or not user_info.get("email"):
+            return {"success": False, "error": "Unable to verify Firebase authentication. Please try again."}
+
+        email = user_info.get("email")
 
         db = get_db_connection()
         if db is None:
             return {"success": False, "error": "Database is currently offline."}
 
         cur = db.cursor()
-        cur.execute("SELECT * FROM admins WHERE email=%s", (email,))
+        cur.execute("SELECT id, name, society_name FROM admins WHERE email=%s", (email,))
         admin = cur.fetchone()
 
         if admin:
@@ -371,11 +455,11 @@ def admin_google_login():
         else:
             cur.close()
             db.close()
-            return {"success": False, "error": "The mail id is not valid"}
+            return {"success": False, "error": f"No admin account found for {email}. Please register your society first."}
 
-    except ValueError as e:
-        print(f"Google Login Error (Admin): {e}")
-        return {"success": False, "error": f"Invalid Google token or Client ID: {str(e)}"}
+    except Exception as e:
+        print(f"Firebase Login Error (Admin): {e}")
+        return {"success": False, "error": f"Authentication error: {str(e)}"}
 
 
 @app.route("/admin/login", methods=["GET", "POST"])
@@ -428,23 +512,23 @@ def admin_login():
 @app.route("/user/google_login", methods=["POST"])
 def user_google_login():
     data = request.get_json()
-    token = data.get("credential") if data else None
+    token = (data.get("idToken") or data.get("credential")) if data else None
     if not token:
-        return {"success": False, "error": "Missing Google token."}
+        return {"success": False, "error": "Missing authentication token."}
 
     try:
-        client_id = os.getenv("GOOGLE_CLIENT_ID", "YOUR_GOOGLE_CLIENT_ID")
-        idinfo = id_token.verify_oauth2_token(
-            token, google_requests.Request(), client_id, clock_skew_in_seconds=10
-        )
-        email = idinfo.get("email")
+        user_info = verify_firebase_token(token)
+        if not user_info or not user_info.get("email"):
+            return {"success": False, "error": "Unable to verify Firebase authentication. Please try again."}
+
+        email = user_info.get("email")
 
         db = get_db_connection()
         if db is None:
             return {"success": False, "error": "System maintenance: Database is currently offline."}
 
         cur = db.cursor()
-        cur.execute("SELECT id FROM users WHERE email=%s", (email,))
+        cur.execute("SELECT id, name FROM users WHERE email=%s", (email,))
         user = cur.fetchone()
 
         if user:
@@ -456,11 +540,11 @@ def user_google_login():
 
         cur.close()
         db.close()
-        return {"success": False, "error": "The mail id is not valid"}
+        return {"success": False, "error": f"No resident account found for {email}. Please contact your society admin."}
 
-    except ValueError as e:
-        print(f"Google Login Error (User): {e}")
-        return {"success": False, "error": f"Invalid Google token or Client ID: {str(e)}"}
+    except Exception as e:
+        print(f"Firebase Login Error (User): {e}")
+        return {"success": False, "error": f"Authentication error: {str(e)}"}
 
 
 @app.route("/user/login", methods=["GET", "POST"])

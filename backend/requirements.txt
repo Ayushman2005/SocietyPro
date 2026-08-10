@@ -9,3 +9,4 @@ gunicorn==21.2.0
 stripe==8.5.0
 google-auth==2.30.0
 requests==2.32.3
+firebase-admin==6.5.0
