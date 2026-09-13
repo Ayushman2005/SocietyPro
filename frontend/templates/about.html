@@ -5,12 +5,426 @@
   <meta charset="UTF-8" />
   <title>About Us - SocietyPro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Discover SocietyPro — the comprehensive smart residential society and apartment management platform built for modern communities." />
   <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet" />
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 
-
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏙️</text></svg>">
+
+  <style>
+    .about-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 18px;
+      border-radius: var(--radius-pill);
+      background: rgba(0, 191, 255, 0.12);
+      border: 1px solid rgba(0, 191, 255, 0.3);
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .about-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 5%;
+    }
+
+    .about-header {
+      text-align: center;
+      padding: 110px 20px 40px 20px;
+    }
+
+    .about-header h1 {
+      font-size: 50px;
+      font-family: "Outfit", sans-serif;
+      font-weight: 800;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, var(--primary), #3b82f6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .about-intro-text {
+      color: var(--text-muted);
+      font-size: 19px;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.8;
+    }
+
+    .mission-section {
+      padding: 60px 0;
+    }
+
+    .mission-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .glass-card {
+      background: var(--glass-surface);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      backdrop-filter: blur(32px);
+      -webkit-backdrop-filter: blur(32px);
+      box-shadow: 0 12px 40px rgba(31, 38, 135, 0.06);
+      transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 16px 45px rgba(0, 191, 255, 0.12);
+    }
+
+    .mission-title {
+      font-family: "Outfit", sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      line-height: 1.3;
+    }
+
+    .mission-desc {
+      color: var(--text-muted);
+      font-size: 16px;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .check-icon-circle {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      border-radius: 50%;
+      background: rgba(0, 191, 255, 0.15);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      margin-top: 2px;
+    }
+
+    .checklist-content strong {
+      display: block;
+      color: var(--text-white);
+      font-size: 15px;
+      margin-bottom: 2px;
+    }
+
+    .checklist-content span {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .value-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .value-card {
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .value-card:hover {
+      background: rgba(255, 255, 255, 0.85);
+      border-color: var(--primary);
+      transform: translateY(-4px);
+    }
+
+    .value-card i {
+      font-size: 28px;
+      color: var(--primary);
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .value-card h4 {
+      font-family: "Outfit", sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .value-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .section-title-wrap {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .section-title-wrap h2 {
+      font-family: "Outfit", sans-serif;
+      font-size: 38px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .section-title-wrap p {
+      color: var(--text-muted);
+      font-size: 17px;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .pillars-section {
+      padding: 70px 0;
+    }
+
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+    }
+
+    .audience-section {
+      padding: 70px 0;
+    }
+
+    .audience-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 35px;
+    }
+
+    .audience-card {
+      background: var(--glass-surface);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: 44px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    .audience-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary), #3b82f6);
+    }
+
+    .audience-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 45px rgba(0, 191, 255, 0.1);
+    }
+
+    .audience-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: var(--radius-pill);
+      background: rgba(0, 191, 255, 0.1);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .audience-card h3 {
+      font-family: "Outfit", sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .audience-card p {
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .audience-items {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .audience-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+      color: var(--text-white);
+    }
+
+    .audience-item i {
+      color: var(--primary);
+      font-size: 20px;
+    }
+
+    .tech-banner {
+      background: var(--glass-surface);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: 44px;
+      margin: 40px 0;
+      text-align: center;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    .tech-pills-row {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    .tech-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-white);
+    }
+
+    .tech-tag i {
+      color: var(--primary);
+      font-size: 16px;
+    }
+
+    .cta-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.45));
+      border: 1px solid var(--glass-highlight);
+      border-radius: var(--radius-xl);
+      padding: 60px 40px;
+      text-align: center;
+      margin: 60px 0 80px 0;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-card::after {
+      content: "";
+      position: absolute;
+      top: -120px;
+      right: -120px;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    .cta-card h2 {
+      font-family: "Outfit", sans-serif;
+      font-size: 38px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .cta-card p {
+      color: var(--text-muted);
+      font-size: 18px;
+      max-width: 650px;
+      margin: 0 auto 30px auto;
+      line-height: 1.7;
+    }
+
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .btn-secondary-custom {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--text-white);
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary-custom:hover {
+      background: #ffffff;
+      border-color: var(--primary);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    @media (max-width: 900px) {
+      .about-header h1 {
+        font-size: 36px;
+      }
+
+      .mission-grid,
+      .audience-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .value-cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-banner {
+        flex-direction: column;
+        gap: 30px;
+        padding: 40px 20px;
+      }
+    }
+  </style>
 </head>
 
 <body class="landing-body">
@@ -19,7 +433,7 @@
     <div class="nav-links">
       <a href="/">Home</a>
       <a href="/features">Features</a>
-      <a href="/about">About</a>
+      <a href="/about" style="color: var(--primary); font-weight: 700;">About</a>
       <a href="/contact">Contact</a>
     </div>
     <div class="nav-actions" style="display: flex; align-items: center; gap: 15px;">
@@ -31,115 +445,331 @@
     </div>
   </nav>
 
-  <section class="about-header" style="text-align: center; padding: 80px 20px">
-    <h1 style="font-size: 48px; margin-bottom: 10px">Meet the Team</h1>
-    <p style="color: var(--text-muted); font-size: 18px">
-      The innovative minds behind SocietyPro.
+  <!-- Hero Header -->
+  <section class="about-header">
+    <div class="about-badge">
+      <i class="ri-building-4-line"></i> About SocietyPro
+    </div>
+    <h1>
+      The Operating System for <br />
+      <span class="gradient-text">Modern Residential Communities</span>
+    </h1>
+    <p class="about-intro-text">
+      SocietyPro is a unified, cloud-native platform built to simplify apartment complex operations,
+      bring absolute financial transparency, strengthen gate security, and empower residents with a seamless digital
+      lifestyle.
     </p>
   </section>
 
-  <section class="features" style="padding-top: 0">
-    <div class="feature-card" style="text-align: center">
-      <img src="{{ url_for('static', filename='Ayushman.png') }}" alt="Ayushman" style="
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: 0 auto 20px auto;
-            border: 3px solid var(--primary);
-          " />
-      <h3 class="team-name">Ayushman Kar</h3>
-      <span style="
-            color: var(--primary);
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 700;
-          ">Team Lead & Full Stack</span>
-      <p style="margin-top: 15px">
-        Lead developer responsible for the core system architecture, backend
-        logic, and overall project integration.
+  <!-- Animated Stats Banner -->
+  <div class="stats-banner">
+    <div style="text-align: center">
+      <div class="stat-number">100</div>
+      <div class="stat-label">Paperless Operations (%)</div>
+    </div>
+    <div style="text-align: center">
+      <div class="stat-number">24</div>
+      <div class="stat-label">Gate & Visitor Security (/7)</div>
+    </div>
+    <div style="text-align: center">
+      <div class="stat-number">5</div>
+      <div class="stat-label">X Faster Ticket Resolution</div>
+    </div>
+    <div style="text-align: center">
+      <div class="stat-number">99</div>
+      <div class="stat-label">Point 9% Platform Reliability (%)</div>
+    </div>
+  </div>
+
+  <div class="about-container">
+    <!-- Mission & Vision Section -->
+    <section class="mission-section">
+      <div class="mission-grid">
+        <div>
+          <div class="about-badge">
+            <i class="ri-compass-3-line"></i> Our Mission
+          </div>
+          <h2 class="mission-title">
+            Replacing Manual Chaos with Effortless Digital Harmony
+          </h2>
+          <p class="mission-desc">
+            Traditional residential societies and gated complexes often rely on paper registers, chaotic messaging
+            groups, untracked cash collections, and overlooked maintenance complaints.
+          </p>
+          <p class="mission-desc">
+            SocietyPro was created to solve these core operational challenges. By connecting managing committees,
+            residents, and security personnel into a single intelligent platform, we bring accountability,
+            convenience, and peace of mind to community living.
+          </p>
+          <div class="checklist">
+            <div class="checklist-item">
+              <div class="check-icon-circle"><i class="ri-check-line"></i></div>
+              <div class="checklist-content">
+                <strong>100% Financial Accountability</strong>
+                <span>Real-time central society fund tracking, automated monthly billing, and instant PDF
+                  invoices.</span>
+              </div>
+            </div>
+            <div class="checklist-item">
+              <div class="check-icon-circle"><i class="ri-check-line"></i></div>
+              <div class="checklist-content">
+                <strong>Streamlined Maintenance Helpdesk</strong>
+                <span>Direct complaint logging for plumbing, electrical, and facility issues with live resolution
+                  status.</span>
+              </div>
+            </div>
+            <div class="checklist-item">
+              <div class="check-icon-circle"><i class="ri-check-line"></i></div>
+              <div class="checklist-content">
+                <strong>Smart Visitor & Gate Security</strong>
+                <span>Pre-approved guest access, delivery personnel logging, and verified resident directories.</span>
+              </div>
+            </div>
+            <div class="checklist-item">
+              <div class="check-icon-circle"><i class="ri-check-line"></i></div>
+              <div class="checklist-content">
+                <strong>Connected & Democratic Living</strong>
+                <span>Verified community polls, instant digital notice broadcasts, and seamless amenity
+                  reservations.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-family: 'Outfit'; font-size: 22px; font-weight: 700; margin-bottom: 24px;">
+            <i class="ri-shield-star-line" style="color: var(--primary); margin-right: 8px;"></i>
+            Why Communities Trust SocietyPro
+          </h3>
+          <div class="value-cards-grid">
+            <div class="value-card">
+              <i class="ri-cloud-line"></i>
+              <h4>Cloud-First</h4>
+              <p>Accessible anytime, anywhere with automatic cloud backups and high availability.</p>
+            </div>
+            <div class="value-card">
+              <i class="ri-lock-2-line"></i>
+              <h4>Bank-Grade Safety</h4>
+              <p>Encrypted data protection, role-based access, and secure OTP verification.</p>
+            </div>
+            <div class="value-card">
+              <i class="ri-file-pdf-line"></i>
+              <h4>Instant Invoicing</h4>
+              <p>Automated PDF billing receipts generated in seconds for record-keeping.</p>
+            </div>
+            <div class="value-card">
+              <i class="ri-smartphone-line"></i>
+              <h4>Cross-Device</h4>
+              <p>Designed to work seamlessly across desktops, tablets, and smartphones.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Platform Pillars Section -->
+    <section class="pillars-section">
+      <div class="section-title-wrap">
+        <div class="about-badge">
+          <i class="ri-stack-line"></i> Platform Features
+        </div>
+        <h2>What SocietyPro Delivers</h2>
+        <p>
+          A modular suite of tools designed to handle every facet of modern apartment and residential society management.
+        </p>
+      </div>
+
+      <div class="pillars-grid">
+        <div class="feature-card">
+          <div class="icon"><i class="ri-wallet-3-line"></i></div>
+          <h3>Automated Billing & Dues</h3>
+          <p>
+            Automate monthly maintenance calculation, track pending dues, send reminder alerts, and allow residents
+            to download official PDF receipts with full transparency.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon"><i class="ri-shield-user-line"></i></div>
+          <h3>Gate & Visitor Management</h3>
+          <p>
+            Pre-approve guests, log daily visitors and service staff, keep vehicle registries, and ensure that only
+            authorized individuals gain access to your premises.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon"><i class="ri-customer-service-2-line"></i></div>
+          <h3>Helpdesk & Complaint Resolution</h3>
+          <p>
+            Residents can lodge maintenance complaints (water, power, elevators) directly to management and track the
+            workflow from submission to verified resolution.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon"><i class="ri-notification-3-line"></i></div>
+          <h3>Digital Notice Broadcasts</h3>
+          <p>
+            Eliminate paper notices pinned to notice boards. Broadcast urgent announcements, meeting minutes,
+            and society circulars straight to residents in real time.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon"><i class="ri-vote-line"></i></div>
+          <h3>Democratic Community Polls</h3>
+          <p>
+            Conduct democratic elections and polls on society improvement projects, rule changes, and annual budgets
+            with verified resident voting.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon"><i class="ri-calendar-check-line"></i></div>
+          <h3>Amenity & Facility Bookings</h3>
+          <p>
+            Book community halls, clubhouses, tennis courts, and barbecue areas online with automated time-slot
+            management to prevent double bookings.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tailored For Admins & Residents -->
+    <section class="audience-section">
+      <div class="section-title-wrap">
+        <div class="about-badge">
+          <i class="ri-group-line"></i> Built for Everyone
+        </div>
+        <h2>Tailored for Admins & Residents</h2>
+        <p>
+          Specialized workflows and dedicated interfaces crafted to meet the exact needs of society committees and
+          apartment owners alike.
+        </p>
+      </div>
+
+      <div class="audience-grid">
+        <div class="audience-card">
+          <span class="audience-pill"><i class="ri-admin-line"></i> For Management Committees</span>
+          <h3>Complete Operational Control</h3>
+          <p>
+            Powerful oversight tools that save committee members dozens of administrative hours every single week.
+          </p>
+          <div class="audience-items">
+            <div class="audience-item">
+              <i class="ri-checkbox-circle-fill"></i>
+              <span>Real-time society fund balance and expenditure logs</span>
+            </div>
+            <div class="audience-item">
+              <i class="ri-checkbox-circle-fill"></i>
+              <span>Tenant & resident directory management with onboarding</span>
+            </div>
+            <div class="audience-item">
+              <i class="ri-checkbox-circle-fill"></i>
+              <span>One-click bulk billing and payment tracking</span>
+            </div>
+            <div class="audience-item">
+              <i class="ri-checkbox-circle-fill"></i>
+              <span>Centralized ticket assignment and maintenance tracking</span>
+            </div>
+            <div class="audience-item">
+              <i class="ri-checkbox-circle-fill"></i>
+              <span>Broadcast digital circulars, notices, and society polls</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="audience-card">
+          <span class="audience-pill"><i class="ri-home-heart-line"></i> For Residents & Tenants</span>
+          <h3>Effortless Modern Living</h3>
+          <p>
+            A personal self-service portal that puts control, convenience, and community connection right at your
+            fingertips.
+          </p>
+          <div class="audience-items">
+            <div class="audience-item">
+              <i class="ri-checkbox-circle-fill"></i>
+              <span>Instant visibility of outstanding dues and payment history</span>
+            </div>
+            <div class="audience-item">
+              <i class="ri-checkbox-circle-fill"></i>
+              <span>Downloadable official PDF invoices for record keeping</span>
+            </div>
+            <div class="audience-item">
+              <i class="ri-checkbox-circle-fill"></i>
+              <span>Raise and monitor maintenance tickets with live progress</span>
+            </div>
+            <div class="audience-item">
+              <i class="ri-checkbox-circle-fill"></i>
+              <span>Pre-approve visitors and deliveries for hassle-free entry</span>
+            </div>
+            <div class="audience-item">
+              <i class="ri-checkbox-circle-fill"></i>
+              <span>Vote in active society polls and book shared facilities</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture & Technology Overview -->
+    <div class="tech-banner">
+      <div class="about-badge" style="margin-bottom: 12px;">
+        <i class="ri-cpu-line"></i> Modern Technology Stack
+      </div>
+      <h3 style="font-family: 'Outfit'; font-size: 26px; font-weight: 700; margin-bottom: 10px;">
+        Built for Speed, Security & Scalability
+      </h3>
+      <p style="color: var(--text-muted); max-width: 650px; margin: 0 auto; font-size: 15px;">
+        SocietyPro combines proven backend engineering with a fluid, responsive frontend to deliver enterprise-grade
+        reliability for residential communities.
       </p>
-      <a href="https://linkedin.com/in/ayushman-kar-08370634b" target="_blank" style="
-            display: inline-block;
-            margin-top: 15px;
-            color: var(--text-white);
-            font-size: 24px;
-          ">
-        <i class="ri-linkedin-box-fill"></i>
-      </a>
+      <div class="tech-pills-row">
+        <div class="tech-tag"><i class="ri-terminal-box-line"></i> Python & Flask Architecture</div>
+        <div class="tech-tag"><i class="ri-database-2-line"></i> MySQL Cloud Database</div>
+        <div class="tech-tag"><i class="ri-file-shield-line"></i> ReportLab Dynamic PDF Invoices</div>
+        <div class="tech-tag"><i class="ri-shield-keyhole-line"></i> Role-Based Access Security</div>
+        <div class="tech-tag"><i class="ri-mail-send-line"></i> Automated Email Notifications</div>
+        <div class="tech-tag"><i class="ri-layout-masonry-line"></i> Responsive Glassmorphism UI</div>
+      </div>
     </div>
 
-    <div class="feature-card" style="text-align: center">
-      <img src="{{ url_for('static', filename='Satwik.jpeg') }}" alt="Satwik Barik" style="
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: 0 auto 20px auto;
-            border: 3px solid var(--primary);
-          " />
-      <h3 class="team-name">Satwik Barik</h3>
-      <span style="
-            color: var(--primary);
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 700;
-          ">Frontend & Design</span>
-      <p style="margin-top: 15px">
-        The creative mind behind the responsive UI/UX, crafting the visual
-        aesthetics and seamless user interactions.
+    <!-- Call to Action -->
+    <div class="cta-card">
+      <h2>Ready to Modernize Your Residential Community?</h2>
+      <p>
+        Say goodbye to manual paperwork, communication gaps, and billing delays. Experience smart living with
+        SocietyPro today.
       </p>
-      <a href="https://linkedin.com/in/satwik-barik-602659335" target="_blank" style="
-            display: inline-block;
-            margin-top: 15px;
-            color: var(--text-white);
-            font-size: 24px;
-          ">
-        <i class="ri-linkedin-box-fill"></i>
-      </a>
+      <div class="cta-buttons">
+        <button class="btn-primary" onclick="location.href = '/features'"
+          style="width: auto; padding: 14px 34px; font-size: 15px;">
+          <i class="ri-apps-line" style="margin-right: 6px;"></i> Explore Features
+        </button>
+        <a href="/contact" class="btn-secondary-custom">
+          <i class="ri-mail-line"></i> Contact Us
+        </a>
+        <button class="btn-secondary-custom" onclick="location.href = '/login'">
+          <i class="ri-login-circle-line"></i> Resident & Admin Login
+        </button>
+      </div>
     </div>
-
-    <div class="feature-card" style="text-align: center">
-      <img src="{{ url_for('static', filename='Nilamani.png') }}" alt="Nilamani Kundu" style="
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: 0 auto 20px auto;
-            border: 3px solid var(--primary);
-          " />
-      <h3 class="team-name">Nilamani Kundu</h3>
-      <span style="
-            color: var(--primary);
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 700;
-          ">Database & Backend</span>
-      <p style="margin-top: 15px">
-        Database architect ensuring secure data management and efficient
-        server-side performance.
-      </p>
-      <a href="https://linkedin.com/in/nilamani-kundu-8924bb259" target="_blank" style="
-            display: inline-block;
-            margin-top: 15px;
-            color: var(--text-white);
-            font-size: 24px;
-          ">
-        <i class="ri-linkedin-box-fill"></i>
-      </a>
-    </div>
-  </section>
+  </div>
 
   <footer style="
         background: #ffffff;
-        padding: 20px;
+        padding: 40px 5%;
         text-align: center;
         color: var(--text-muted);
         border-top: 1px solid #e2e8f0;
       ">
+    <div style="margin-bottom: 20px">
+      <a href="/" style="margin: 0 15px">Home</a>
+      <a href="/features" style="margin: 0 15px">Features</a>
+      <a href="/about" style="margin: 0 15px; color: var(--primary); font-weight: 700;">About</a>
+      <a href="/contact" style="margin: 0 15px">Contact</a>
+    </div>
     &copy; 2026 SocietyPro Management System. All rights reserved.
   </footer>
 
