@@ -37,7 +37,7 @@ Whether you're managing a single building or a large complex, SocietyPro digitiz
 This project was designed and developed by a dedicated team of Full Stack Developers:
 * **Ayushman Kar** 
 * **Satwik Barik** 
-
+* **Nilamani Kundu** 
 ---
 
 ## 📁 Project Structure
